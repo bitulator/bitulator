@@ -6,7 +6,7 @@ A free Bitcoin calculator that runs entirely in the browser. Convert dollars to 
 
 ## What it does
 
-17 cards, all computing live in your browser:
+18 cards, all computing live in your browser:
 
 - **Calculator** — USD ⇄ sats converter at the live price (21 fiat currencies, SAT/BTC switch, custom price entry)
 - **Live BTC chart** — minute to all-time ranges, 200-week moving average, log view, fullscreen
@@ -23,6 +23,7 @@ A free Bitcoin calculator that runs entirely in the browser. Convert dollars to 
 - **Your hour in sats** — an hourly wage expressed in sats, now and in past years
 - **What 1 BTC buys** — gold, silver, oil and everyday goods priced against one bitcoin
 - **House down payment** — how much BTC you'd need, and whether a monthly stacking plan gets there
+- **Bitcoin-only YouTube** — five Bitcoin-only channels with an in-page player (Pleb Underground, BTC Sessions, Bram Kanstein, The Jack Mallers Show, Canadian Bitcoiners)
 - **Bitcoin resources** — the white paper and classic learning links
 
 Cards can be reordered (drag or ↑/↓ buttons), switched between stacked and tile layouts, jumped to from the nav header, and shared to X with their live figures. Your layout is remembered on your device.
@@ -31,13 +32,13 @@ Cards can be reordered (drag or ↑/↓ buttons), switched between stacked and t
 
 **Option 1 — standalone page.** Open `index.html` in a browser, or host that single file anywhere (GitHub Pages, Netlify, Cloudflare Pages, any web server). It is the complete calculator: markup, styles and scripts in one file. Note: opening it as a local file works in a desktop browser; on a phone, serve it over http(s) — some mobile file viewers block its data feeds.
 
-**Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 12 parts in the `carrd/` folder:
+**Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 13 parts in the `carrd/` folder:
 
 | File | Goes in Carrd as |
 | --- | --- |
 | `part-1-css.html` | Embed → Hidden → Head (meta tags, CSS, structured data) |
 | `part-2-html.html` | Embed → Inline (header + all card markup) |
-| `part-3-js.html` … `part-12-js10.html` | Embed → Hidden → Body End, in order |
+| `part-3-js.html` … `part-13-js11.html` | Embed → Hidden → Body End, in order |
 
 `index.html` is assembled from exactly these parts, so both routes run identical code.
 
