@@ -30,6 +30,17 @@ Cards can be reordered (drag or ↑/↓ buttons), switched between stacked and t
 
 ## Run it yourself
 
+## Install it as an app (PWA)
+
+Bitulator can live on your home screen like a native app — no app store, no download. Open https://bitulator.xyz (or the GitHub Pages copy at https://bitulator.github.io/bitulator/) in your phone's browser:
+
+- **Android (Chrome):** tap the **⋮** menu → **Add to Home screen** (on the Pages copy you'll see **Install app**). Tap **Add**/**Install** — the ₿ icon lands on your home screen and Bitulator opens full-screen in its own window.
+- **iPhone / iPad (Safari):** tap the **Share** button → **Add to Home Screen** → **Add**. Same ₿ icon, opens like an app.
+- **Desktop (Chrome / Edge):** click the install icon at the right of the address bar, or open the browser menu → **Save and share** → **Install page as app** (Edge: **Apps** → **Install this site as an app**).
+
+The GitHub Pages copy ships a web app manifest and a small service worker, so it installs as a real PWA and even opens offline (live prices and data still need a connection, of course). Your card layout is remembered on the device either way.
+
+
 **Option 1 — standalone page.** Open `index.html` in a browser, or host that single file anywhere (GitHub Pages, Netlify, Cloudflare Pages, any web server). It is the complete calculator: markup, styles and scripts in one file. Note: opening it as a local file works in a desktop browser; on a phone, serve it over http(s) — some mobile file viewers block its data feeds.
 
 **Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 13 parts in the `carrd/` folder:
