@@ -1,5 +1,5 @@
 <script>(()=>{const pa=document.getElementById("bsats");if(!pa)return;const st=document.createElement("style");st.textContent="#bsats .shb{background:#26334d!important;color:#fde047!important;border:1px solid #334155!important;border-radius:7px!important;padding:4px 10px!important;font-size:12.5px!important;font-weight:800!important;line-height:1.2!important;cursor:pointer;touch-action:manipulation;flex:none}";document.head.appendChild(st);
-const SITE="https://bitulator.xyz/";
+const SITE=s=>"https://bitulator.github.io/bitulator/share/"+s+".html";
 const T=e=>e?e.textContent.trim().replace(/\s+/g," "):"";
 const V=id=>{const e=document.getElementById(id);return e?e.value:""};
 const clip=(s,n)=>s.length>n?s.slice(0,n-1).trim()+"…":s;
@@ -65,7 +65,7 @@ const SIG=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","b
  b.addEventListener("mousedown",e=>e.stopPropagation());
  b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();
    const text=clip(body(sig,c),215)+"\n\n₿ Bitulator — BTC/SATs Calculator";
-   const u="https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(SITE);
+   const u="https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(SITE(sig));
    window.open(u,"_blank","noopener,width=600,height=540");
  });
  hd.appendChild(b);
