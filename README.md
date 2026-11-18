@@ -61,4 +61,4 @@ MIT — see `LICENSE`. Use it, fork it, learn from it.
 
 ---
 
-By **Unit of A Count** · Donations: [coinos.io/bitulator](https://coinos.io/bitulator/receive)
+By **[Unit of A Count](https://x.com/countbitcoin)** · Donations: [coinos.io/bitulator](https://coinos.io/bitulator/receive)
