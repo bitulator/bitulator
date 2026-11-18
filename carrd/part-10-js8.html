@@ -1,0 +1,16 @@
+<script>
+(function(){
+function cardOf(id){var t=document.getElementById(id);return t?(t.closest('.card')||t):null}
+function go(el){if(!el)return;el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1300)}
+var hdr=document.querySelector('#bsats .hdr');
+document.querySelectorAll('[data-j]').forEach(function(b){b.addEventListener('click',function(){go(cardOf(b.getAttribute('data-j')))})});
+var pa=document.getElementById('bsats'),grid=document.querySelector('#bsats .navgrid');
+function syncNav(){if(!grid)return;var btns=[...grid.querySelectorAll('[data-j]')];btns.sort(function(a,b){var ca=cardOf(a.getAttribute('data-j')),cb=cardOf(b.getAttribute('data-j'));if(!ca||!cb)return 0;var pos=ca.compareDocumentPosition(cb);return (pos&Node.DOCUMENT_POSITION_FOLLOWING)?-1:((pos&Node.DOCUMENT_POSITION_PRECEDING)?1:0)});btns.forEach(function(b){grid.appendChild(b)})}
+syncNav();
+if(pa)new MutationObserver(function(){syncNav()}).observe(pa,{childList:true});
+var bt=document.getElementById('btop');
+if(bt)bt.addEventListener('click',function(){go(hdr)});
+var up=document.getElementById('jup');if(up)up.addEventListener('click',function(){go(hdr)});
+var dn=document.getElementById('jdn');if(dn)dn.addEventListener('click',function(){go(bt)});
+})();
+</script>

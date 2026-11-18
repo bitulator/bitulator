@@ -1,0 +1,40 @@
+<script>(()=>{const pa=document.getElementById("bsats");if(!pa)return;
+const t=id=>document.getElementById(id);
+const num=id=>{const e=t(id);return e?parseFloat(String(e.value).replace(/[^0-9.]/g,""))||0:0};
+const price=()=>{const e=t("bp");return e?parseFloat(String(e.value).replace(/[^0-9.]/g,""))||0:0};
+const code=()=>{const s=t("bc");return s&&s.value?s.value:"USD"};
+const fmt=(n,d)=>n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+const mon=n=>fmt(n,2)+" "+code();
+const btcFmt=b=>b>=0.01?b.toFixed(4)+" BTC":b.toFixed(8)+" BTC";
+let ran=false;
+function run(){const P=price(),o=t("bhout");if(!o)return;
+ const home=num("bhp"),pct=num("bhd"),yrs=num("bhy"),mo=num("bhm");
+ let scen=num("bhf");if(!(scen>0))scen=P;
+ if(!(home>0)){o.textContent="Enter a home price above zero.";return}
+ if(!(pct>0&&pct<=100)){o.textContent="Enter a down payment between 1 and 100%.";return}
+ if(!(yrs>0)){o.textContent="Enter the years until you buy, above zero.";return}
+ if(!(P>0)){o.textContent="Live price not loaded yet — try again in a moment.";return}
+ if(!(scen>0)){o.textContent="Enter the bitcoin price to plan around.";return}
+ const down=home*pct/100,months=Math.max(1,Math.round(yrs*12));
+ const needScen=down/scen,needToday=down/P;
+ const totalIn=mo*months,stacked=totalIn/P,worth=stacked*scen,cov=down?worth/down*100:0;
+ const req=needScen*P/months;
+ let h='<div class="grid">';
+ h+='<div class="stat">Down payment<b>'+mon(down)+'</b></div>';
+ h+='<div class="stat">Bitcoin needed at '+mon(scen)+'<b>'+btcFmt(needScen)+'<br>'+fmt(Math.round(needScen*1e8),0)+' sats</b></div>';
+ if(Math.abs(scen-P)/P>0.005)h+='<div class="stat">At today\'s price instead<b>'+btcFmt(needToday)+'</b></div>';
+ if(mo>0){
+  h+='<div class="stat">Your plan: '+mon(mo)+' × '+months+' mo<b>'+fmt(Math.round(stacked*1e8),0)+' sats stacked</b></div>';
+  h+='<div class="stat">Worth at '+mon(scen)+'<b style="color:'+(cov>=100?"#86efac":"#fca5a5")+'">'+mon(worth)+' ('+cov.toFixed(0)+'% of goal)</b></div>';
+  h+='<div class="stat">To hit the goal, stack<b>'+mon(req)+' / month</b></div>';
+ }
+ h+='</div><p class="note">Planning estimate: assumes bitcoin stays near the calculator\'s current price ('+mon(P)+') while you stack, and equals your chosen price when you buy. Not a prediction.</p>';
+ o.innerHTML=h;ran=true;
+ o.dataset.share="House down payment: "+mon(down)+" needs "+btcFmt(needScen)+" if bitcoin is "+mon(scen)+" when I buy"+(mo>0?(" — stacking "+mon(mo)+"/mo for "+yrs+"y gets me to "+cov.toFixed(0)+"% of the goal"):"")+".";
+}
+t("bhg").addEventListener("click",run);
+document.querySelectorAll("[data-hp]").forEach(b=>b.addEventListener("click",()=>{t("bhf").value=b.dataset.hp;run()}));
+["bhp","bhd","bhy","bhf","bhm"].forEach(id=>{const e=t(id);if(e)e.addEventListener("input",()=>{if(ran)run()})});
+const sel=t("bc");if(sel)sel.addEventListener("change",()=>{if(ran)run()});
+let tries=0;const iv=setInterval(()=>{tries++;if(price()>0){run();clearInterval(iv)}else if(tries>20)clearInterval(iv)},800);
+})();</script>
