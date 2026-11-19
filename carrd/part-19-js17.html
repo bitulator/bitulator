@@ -1,0 +1,95 @@
+<script>
+// Part 19 (JS17): tile-and-expand redesign. Cards are small tiles in a grid;
+// tapping a tile expands it full-width, tapping its title again collapses it.
+// The open card is remembered per device (localStorage 'bxopen').
+// The old Tiles mode (Part 5) is retired: its class/storage are neutralized here.
+(function(){
+"use strict";
+var css=[
+"#bsats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-items:start}",
+"#bsats>*:not(.card){grid-column:1/-1}",
+"@media(min-width:720px){#bsats{grid-template-columns:repeat(3,1fr)}}",
+"@media(min-width:1024px){#bsats{grid-template-columns:repeat(4,1fr)}}",
+"#bsats .card{margin:0}",
+"#bsats .card:not(.xopen){cursor:pointer;min-height:92px}",
+"#bsats .card:not(.xopen)>:not(.hd):not(h2):not(.xh):not(.xhx){display:none!important}",
+"#bsats .card:not(.xopen) .hd{display:none!important}",
+"#bsats .card:not(.xopen) h2{font-size:15px;line-height:1.25;margin:0;padding-right:16px}",
+"#bsats .card h2{position:relative}",
+"#bsats .card:not(.xopen) h2::after{content:'▼';position:absolute;right:0;top:0;opacity:.55}",
+"#bsats .card.xopen{grid-column:1/-1}",
+"#bsats .card.xopen h2::after{content:'▲';position:absolute;right:2px;top:0;opacity:.55;cursor:pointer}",
+"#bsats .xh{display:none;font-size:17px;font-weight:700;color:#fde047;margin-top:6px;word-break:break-word}",
+"#bsats .card:not(.xopen) .xh{display:block}",
+"body.blite #bsats .xh{color:#b45309}",
+"#xnote{grid-column:1/-1;color:#94a3b8;font-size:13px;text-align:center;margin:2px 0 0}",
+"body.blite #xnote{color:#475569}"
+].join("\n");
+var st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
+var root=document.getElementById("bsats");if(!root)return;
+// retire the old Tiles mode (Part 5): class off, storage off, switch off
+root.classList.remove("tiles");
+try{localStorage.setItem("btv","0");}catch(e){}
+var tg=document.getElementById("btgl");if(tg)tg.checked=false;
+var tst=document.getElementById("btst");if(tst)tst.textContent="Off";
+var SIGS=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe"];
+var cards=[].slice.call(root.querySelectorAll(".card"));
+function sigOf(c){for(var i=0;i<SIGS.length;i++){if(c.querySelector("#"+SIGS[i]))return SIGS[i];}return null;}
+function bySig(s){for(var i=0;i<cards.length;i++){if(sigOf(cards[i])===s)return cards[i];}return null;}
+var note=document.createElement("div");note.id="xnote";
+note.textContent="Tap a card to expand it. Manage cards (top right) hides or reorders cards.";
+var firstCard=cards[0];if(firstCard)root.insertBefore(note,firstCard);
+cards.forEach(function(c){
+  var h=document.createElement("div");h.className="xh";
+  var h2=c.querySelector("h2");if(h2)h2.parentNode.insertBefore(h,h2.nextSibling);
+  c._xh=h;
+});
+function headline(c){
+  if(c.classList.contains("feat")){var p=document.getElementById("bglp");return p?p.textContent.trim():"";}
+  var b=c.querySelector(".stat b")||c.querySelector(".res b");
+  return b?b.textContent.trim():"";
+}
+function refresh(){cards.forEach(function(c){var t=headline(c);if(t&&t!=="Loading…")c._xh.textContent=t;});}
+function barH(){var b=document.getElementById("bstk");return b?b.offsetHeight:0;}
+function saveOpen(c){try{localStorage.setItem("bxopen",c?sigOf(c)||"":"");}catch(e){}}
+function open(c,scroll){
+  cards.forEach(function(o){o.classList.toggle("xopen",o===c);});
+  saveOpen(c);
+  if(c&&c.querySelector("#bch"))setTimeout(function(){window.dispatchEvent(new Event("resize"));},60);
+  if(c&&scroll)setTimeout(function(){
+    var y=c.getBoundingClientRect().top+window.scrollY-barH()-10;
+    window.scrollTo({top:y,behavior:"smooth"});
+  },30);
+}
+cards.forEach(function(c){
+  c.addEventListener("click",function(e){
+    if(document.body.classList.contains("xman"))return;
+    if(!c.classList.contains("xopen")){
+      if(e.target.closest("button")||e.target.closest("a")||e.target.closest("input")||e.target.closest("select"))return;
+      open(c,true);
+    }else if(e.target.closest("h2")){
+      if(e.target.closest("button"))return;
+      c.classList.remove("xopen");saveOpen(null);
+    }
+  });
+});
+// Jump-to buttons (still wired by Parts 10/17 under the hood) open their card
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-j]");if(!b)return;
+  var t=bySig(b.getAttribute("data-j"));
+  if(t&&!t.classList.contains("xopen"))setTimeout(function(){open(t,false);},80);
+},true);
+// initial open card: ?card= deep link wins, else the remembered card, else the calculator
+var sig=(location.search.match(/[?&]card=([a-z]+)/)||[])[1];
+var startCard=null;
+if(sig){startCard=bySig(sig);}
+if(!startCard){
+  var saved="";try{saved=localStorage.getItem("bxopen")||"";}catch(e){}
+  if(saved)startCard=bySig(saved);
+  if(startCard&&startCard.style.display==="none")startCard=null;
+}
+if(!startCard)startCard=root.querySelector(".card.feat")||cards[0];
+if(startCard){if(sig)setTimeout(function(){open(startCard,true);},900);else open(startCard,false);}
+setTimeout(refresh,3500);setInterval(refresh,4000);
+})();
+</script>
