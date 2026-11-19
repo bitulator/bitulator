@@ -1,7 +1,7 @@
 <script>
 (function(){
 var pa=document.getElementById('bsats');if(!pa)return;
-var st=document.createElement('style');st.textContent='#bsats .navgrid [data-j]{position:relative}#bsats .navgrid .hbx{position:absolute;top:-7px;right:-7px;width:16px;height:16px;line-height:15px;text-align:center;font-size:11px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #fde047;cursor:pointer;z-index:6}#bsats .navgrid [data-j].hdim{opacity:.42;outline:1px dashed #94a3b8;outline-offset:-1px}#bsats .hdr.jclosed .navgrid{display:none}#bsats .hdr.jclosed p.note{display:none}#bsats .jrst{float:right}#bsats .jnote{color:#94a3b8;font-size:11.5px;margin-left:8px}#bsats .jtog{margin-left:10px;background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer;vertical-align:middle}';document.head.appendChild(st);
+var st=document.createElement('style');st.textContent='#bsats .navgrid [data-j]{position:relative}#bsats .navgrid .hbx{position:absolute;top:-7px;right:-7px;width:16px;height:16px;line-height:15px;text-align:center;font-size:11px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #fde047;cursor:pointer;z-index:6}#bsats .navgrid [data-j].hdim{opacity:.42;outline:1px dashed #94a3b8;outline-offset:-1px}#bsats .hdr.jclosed .navgrid{display:none}#bsats .hdr.jclosed p.note{display:none}#bsats .hdr.jclosed .jmsg{display:none}#bsats .jmsg{color:#94a3b8;font-size:12.5px;margin:8px 0 2px}#bsats .jrst{float:right}#bsats .jnote{color:#94a3b8;font-size:11.5px;margin-left:8px}#bsats .jtog{margin-left:10px;background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer;vertical-align:middle}';document.head.appendChild(st);
 var IDS=['bp','bch','bhw','bda','bno','bgo','bmyo','bwi','bga','bfa','bmto','bsuo','bdio','bhra','bbbo','breso','bhp','byt','blk','bln','blu','bep','bml','bfe'];
 function cardOf(id){var e=document.getElementById(id);return e?e.closest('.card'):null}
 var grid=pa.querySelector('.navgrid');
@@ -28,8 +28,7 @@ if(grid){
   if(b.classList.contains('hdim')){e.stopPropagation();e.preventDefault();show(id)}
  },true);
  var hdr=pa.querySelector('.hdr');
- var hintP=hdr?hdr.querySelector('p.note'):null;
- if(hintP)hintP.textContent+=' Tap a button\u2019s \u2715 to hide its card; tap a dimmed button to bring it back.';
+ var msg=document.createElement('p');msg.className='jmsg';msg.textContent='You can hide individual cards from showing: tap a button\u2019s \u2715 to hide one \u2014 tap a dimmed button to bring it back.';grid.parentNode.insertBefore(msg,grid);
  var jlab=pa.querySelector('.jlab');
  if(hdr&&jlab){
   var tg=document.createElement('button');tg.type='button';tg.className='jtog';
