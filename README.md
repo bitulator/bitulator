@@ -6,13 +6,19 @@ A free Bitcoin calculator that runs entirely in the browser. Convert dollars to 
 
 ## What it does
 
-18 cards, all computing live in your browser:
+24 cards, all computing live in your browser:
 
 - **Calculator** — USD ⇄ sats converter at the live price (21 fiat currencies, SAT/BTC switch, custom price entry)
 - **Live BTC chart** — minute to all-time ranges, 200-week moving average, log view, fullscreen
 - **Historical prices** — what BTC cost on any date back to July 2015
 - **DCA calculator** — dollar-cost-average simulator, with a DCA vs. lump-sum comparison
 - **Bitcoin network** — block height, halving countdown, current send fees (incl. the dollar cost of a typical send)
+- **Latest blocks** — the most recent blocks: sizes, transaction counts, fees and miners
+- **Lightning Network** — capacity, channels and nodes
+- **Address & transaction lookup** — balance, history and confirmations for any address or transaction ID
+- **Halving epoch** — progress through the current epoch and the miner reward
+- **Bitcoin milestones** — block 1,000,000, 99% mined, and the last satoshi
+- **Fee calculator** — what a transaction costs at each speed, by transaction type
 - **Fear & Greed** — the daily sentiment index on a gauge
 - **Mayer Multiple & ATH** — price vs. its 200-day average, all-time high and distance from it
 - **What $100 did** — cash vs. Bitcoin over time, inflation-adjusted
@@ -43,13 +49,13 @@ The GitHub Pages copy ships a web app manifest and a small service worker, so it
 
 **Option 1 — standalone page.** Open `index.html` in a browser, or host that single file anywhere (GitHub Pages, Netlify, Cloudflare Pages, any web server). It is the complete calculator: markup, styles and scripts in one file. Note: opening it as a local file works in a desktop browser; on a phone, serve it over http(s) — some mobile file viewers block its data feeds.
 
-**Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 14 parts in the `carrd/` folder:
+**Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 16 parts in the `carrd/` folder:
 
 | File | Goes in Carrd as |
 | --- | --- |
 | `part-1-css.html` | Embed → Hidden → Head (meta tags, CSS, structured data) |
 | `part-2-html.html` | Embed → Inline (header + all card markup) |
-| `part-3-js.html` … `part-14-js12.html` | Embed → Hidden → Body End, in order |
+| `part-3-js.html` … `part-16-js14.html` | Embed → Hidden → Body End, in order |
 
 `index.html` is assembled from exactly these parts, so both routes run identical code.
 
