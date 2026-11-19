@@ -291,7 +291,7 @@ const bfe=()=>{const out=$("bfeo");if(!out)return;const vb=parseInt($("bfet").va
 <script>
 (function(){
 var pa=document.getElementById('bsats');if(!pa)return;
-var st=document.createElement('style');st.textContent='#bsats .navgrid [data-j]{position:relative}#bsats .navgrid .hbx{position:absolute;top:-7px;right:-7px;width:16px;height:16px;line-height:15px;text-align:center;font-size:11px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #fde047;cursor:pointer;z-index:6}#bsats .navgrid [data-j].hdim{opacity:.42;outline:1px dashed #94a3b8;outline-offset:-1px}#bsats .hdr.jclosed .navgrid{display:none}#bsats .hdr.jclosed p.note{display:none}#bsats .hdr.jclosed .jmsg{display:none}#bsats .jmsg{color:#94a3b8;font-size:12.5px;margin:8px 0 2px}#bsats .jrst{float:right}#bsats .jnote{color:#94a3b8;font-size:11.5px;margin-left:8px}#bsats .jtog{margin-left:10px;background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer;vertical-align:middle}';document.head.appendChild(st);
+var st=document.createElement('style');st.textContent='#bsats .navgrid [data-j]{position:relative}#bsats .navgrid .hbx{position:absolute;top:-7px;right:-7px;width:16px;height:16px;line-height:15px;text-align:center;font-size:11px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #fde047;cursor:pointer;z-index:6}#bsats .navgrid [data-j].hdim{opacity:.42;outline:1px dashed #94a3b8;outline-offset:-1px}#bsats .hdr.jclosed .navgrid{display:none}#bsats .hdr.jclosed p.note{display:none}#bsats .hdr.jclosed .jmsg{display:none}#bsats .jmsg{color:#94a3b8;font-size:12.5px;margin:8px 0 2px}#bsats .jrrow{margin-top:8px}#bsats .hdr.jclosed .jrrow{display:none}#bsats .jnote{color:#94a3b8;font-size:11.5px;margin-left:8px}#bsats .jtog{margin-left:10px;background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer;vertical-align:middle}#bsats .jshow,#bsats .jrst2{background:#fde047!important;color:#0b0f17!important;border-color:#fde047!important}#bsats #brs{background:#fde047!important;color:#0b0f17!important;border-color:#fde047!important}';document.head.appendChild(st);
 var IDS=['bp','bch','bhw','bda','bno','bgo','bmyo','bwi','bga','bfa','bmto','bsuo','bdio','bhra','bbbo','breso','bhp','byt','blk','bln','blu','bep','bml','bfe'];
 function cardOf(id){var e=document.getElementById(id);return e?e.closest('.card'):null}
 var grid=pa.querySelector('.navgrid');
@@ -321,17 +321,20 @@ if(grid){
  var msg=document.createElement('p');msg.className='jmsg';msg.textContent='You can hide individual cards from showing: tap a button\u2019s \u2715 to hide one \u2014 tap a dimmed button to bring it back.';grid.parentNode.insertBefore(msg,grid);
  var jlab=pa.querySelector('.jlab');
  if(hdr&&jlab){
-  var tg=document.createElement('button');tg.type='button';tg.className='jtog';
+  var tg=document.createElement('button');tg.type='button';tg.className='jtog jshow';
   var sn=document.createElement('span');sn.className='jnote';
-  function paint(){var cl=hdr.classList.contains('jclosed');tg.textContent=cl?'\u25B8 Show':'\u25BE Hide';sn.textContent=cl?'Reveal to rearrange the cards':''}
+  function paint(){var cl=hdr.classList.contains('jclosed');tg.textContent=cl?'\u25B8 Show':'\u25BE Hide';sn.textContent=cl?'Reveal to customize your view':''}
   var jc=true;try{jc=localStorage.getItem('bjc')!=='0'}catch(e){}
   if(jc)hdr.classList.add('jclosed');paint();
   tg.addEventListener('click',function(){hdr.classList.toggle('jclosed');try{localStorage.setItem('bjc',hdr.classList.contains('jclosed')?'1':'0')}catch(e){}paint()});
   jlab.appendChild(tg);jlab.appendChild(sn);
-  var rb=document.createElement('button');rb.type='button';rb.className='jtog jrst';rb.textContent='Reset layout';rb.title='Reset card order and unhide all cards';
-  rb.addEventListener('click',function(){unhideAll();if(brs)brs.click()});
-  jlab.appendChild(rb);
  }
+ var jrrow=document.createElement('div');jrrow.className='jrrow';
+ var rb2=document.createElement('button');rb2.type='button';rb2.className='jtog jrst2';rb2.textContent='Reset layout';rb2.title='Reset card order and unhide all cards';
+ rb2.addEventListener('click',function(){unhideAll();if(brs)brs.click()});
+ jrrow.appendChild(rb2);
+ var hintEl=grid.nextElementSibling;
+ if(hintEl)hintEl.parentNode.insertBefore(jrrow,hintEl.nextSibling);else grid.parentNode.insertBefore(jrrow,grid.nextSibling);
 }
 })();
 </script>
