@@ -37,6 +37,6 @@ function paintL(){if(lgd)lgd.textContent=isLite()?'Blue line: 200-week MA':'Oran
 paintL();
 function failScan(){pa.querySelectorAll('.card *').forEach(function(el){if(el.children.length===0&&el.textContent&&el.textContent.trim()==='Loading…'){el.textContent='Couldn’t load — tap to retry';el.classList.add('lfailed')}})}
 pa.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('lfailed'))location.reload()});
-setTimeout(failScan,15000);setInterval(failScan,20000);
+setTimeout(function(){failScan();setInterval(failScan,20000)},45000);
 })();
 </script>
