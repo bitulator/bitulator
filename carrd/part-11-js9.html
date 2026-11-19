@@ -20,12 +20,13 @@ bdio:"The difficulty adjustment countdown and estimated change.",
 bhra:"Your hour in sats: what an hour of work buys in bitcoin.",
 bbbo:"What 1 BTC buys: gold, silver, oil, steaks, iPhones — even a slice of a house.",
 breso:"Bitcoin resources: the White Paper, 21 Lessons, the Nakamoto Institute and more.",
-bhp:"House down payment: how much bitcoin to stack for a house deposit.",byt:"Bitcoin-only YouTube: Pleb Underground, BTC Sessions, Bram Kanstein, The Jack Mallers Show, Canadian Bitcoiners."};
-const OUT={bhw:"bho",bda:"bdo",bwi:"bwo",bga:"bgout",bfa:"bfo",bhra:"bhro"};
+bhp:"House down payment: how much bitcoin to stack for a house deposit.",byt:"Bitcoin-only YouTube: Pleb Underground, BTC Sessions, Bram Kanstein, The Jack Mallers Show, Canadian Bitcoiners.",blk:"The most recent blocks mined: sizes, transaction counts, fees and miners.",bln:"The Lightning Network: how much bitcoin it holds, and its channels and nodes.",blu:"Look up any bitcoin address or transaction: balance, history and confirmations.",bep:"The current halving epoch: how far through it we are and what miners earn per block.",bml:"Bitcoin milestones: block 1,000,000, 99% mined, and the last satoshi.",bfe:"Fee calculator: what a transaction costs in sats and dollars at each speed."};
+const OUT={bhw:"bho",bda:"bdo",bwi:"bwo",bga:"bgout",bfa:"bfo",bhra:"bhro",bfe:"bfeo"};
 function body(sig,card){
  const cur=document.getElementById("bc");
  const code=cur&&cur.value?cur.value:"USD";
  const price=parseFloat(V("bp").replace(/,/g,""))||0;
+ if(card&&card.dataset&&card.dataset.share)return card.dataset.share;
  if(sig==="bp"){
    const unit=document.getElementById("bbt")&&!document.getElementById("bbt").classList.contains("ghost")?"BTC":"sats";
    const get=V("br");
@@ -55,7 +56,7 @@ function body(sig,card){
  const h2=card.querySelector("h2");
  return (DEF[sig]||(h2?T(h2):"A Bitulator tool"));
 }
-const SIG=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt"];
+const SIG=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe"];
 [...pa.querySelectorAll(".card")].forEach(c=>{
  const hd=c.querySelector(".hd");if(!hd||hd.querySelector(".shb"))return;
  let sig=null;for(const s of SIG)if(c.querySelector("#"+s)){sig=s;break}
