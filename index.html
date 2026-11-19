@@ -393,6 +393,175 @@ pa.addEventListener('click',function(e){if(e.target.classList&&e.target.classLis
 setTimeout(function(){failScan();setInterval(failScan,20000)},45000);
 })();
 </script>
+<script>
+// Part 19 (JS17): tile-and-expand redesign. Cards are small tiles in a grid;
+// tapping a tile expands it full-width, tapping its title again collapses it.
+// The open card is remembered per device (localStorage 'bxopen').
+// The old Tiles mode (Part 5) is retired: its class/storage are neutralized here.
+(function(){
+"use strict";
+var css=[
+"#bsats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-items:start}",
+"#bsats>*:not(.card){grid-column:1/-1}",
+"@media(min-width:720px){#bsats{grid-template-columns:repeat(3,1fr)}}",
+"@media(min-width:1024px){#bsats{grid-template-columns:repeat(4,1fr)}}",
+"#bsats .card{margin:0}",
+"#bsats .card:not(.xopen){cursor:pointer;min-height:92px}",
+"#bsats .card:not(.xopen)>:not(.hd):not(h2):not(.xh):not(.xhx){display:none!important}",
+"#bsats .card:not(.xopen) .hd{display:none!important}",
+"#bsats .card:not(.xopen) h2{font-size:15px;line-height:1.25;margin:0;padding-right:16px}",
+"#bsats .card h2{position:relative}",
+"#bsats .card:not(.xopen) h2::after{content:'▼';position:absolute;right:0;top:0;opacity:.55}",
+"#bsats .card.xopen{grid-column:1/-1}",
+"#bsats .card.xopen h2::after{content:'▲';position:absolute;right:2px;top:0;opacity:.55;cursor:pointer}",
+"#bsats .xh{display:none;font-size:17px;font-weight:700;color:#fde047;margin-top:6px;word-break:break-word}",
+"#bsats .card:not(.xopen) .xh{display:block}",
+"body.blite #bsats .xh{color:#b45309}",
+"#xnote{grid-column:1/-1;color:#94a3b8;font-size:13px;text-align:center;margin:2px 0 0}",
+"body.blite #xnote{color:#475569}"
+].join("\n");
+var st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
+var root=document.getElementById("bsats");if(!root)return;
+// retire the old Tiles mode (Part 5): class off, storage off, switch off
+root.classList.remove("tiles");
+try{localStorage.setItem("btv","0");}catch(e){}
+var tg=document.getElementById("btgl");if(tg)tg.checked=false;
+var tst=document.getElementById("btst");if(tst)tst.textContent="Off";
+var SIGS=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe"];
+var cards=[].slice.call(root.querySelectorAll(".card"));
+function sigOf(c){for(var i=0;i<SIGS.length;i++){if(c.querySelector("#"+SIGS[i]))return SIGS[i];}return null;}
+function bySig(s){for(var i=0;i<cards.length;i++){if(sigOf(cards[i])===s)return cards[i];}return null;}
+var note=document.createElement("div");note.id="xnote";
+note.textContent="Tap a card to expand it. Manage cards (top right) hides or reorders cards.";
+var firstCard=cards[0];if(firstCard)root.insertBefore(note,firstCard);
+cards.forEach(function(c){
+  var h=document.createElement("div");h.className="xh";
+  var h2=c.querySelector("h2");if(h2)h2.parentNode.insertBefore(h,h2.nextSibling);
+  c._xh=h;
+});
+function headline(c){
+  if(c.classList.contains("feat")){var p=document.getElementById("bglp");return p?p.textContent.trim():"";}
+  var b=c.querySelector(".stat b")||c.querySelector(".res b");
+  return b?b.textContent.trim():"";
+}
+function refresh(){cards.forEach(function(c){var t=headline(c);if(t&&t!=="Loading…")c._xh.textContent=t;});}
+function barH(){var b=document.getElementById("bstk");return b?b.offsetHeight:0;}
+function saveOpen(c){try{localStorage.setItem("bxopen",c?sigOf(c)||"":"");}catch(e){}}
+function open(c,scroll){
+  cards.forEach(function(o){o.classList.toggle("xopen",o===c);});
+  saveOpen(c);
+  if(c&&c.querySelector("#bch"))setTimeout(function(){window.dispatchEvent(new Event("resize"));},60);
+  if(c&&scroll)setTimeout(function(){
+    var y=c.getBoundingClientRect().top+window.scrollY-barH()-10;
+    window.scrollTo({top:y,behavior:"smooth"});
+  },30);
+}
+cards.forEach(function(c){
+  c.addEventListener("click",function(e){
+    if(document.body.classList.contains("xman"))return;
+    if(!c.classList.contains("xopen")){
+      if(e.target.closest("button")||e.target.closest("a")||e.target.closest("input")||e.target.closest("select"))return;
+      open(c,true);
+    }else if(e.target.closest("h2")){
+      if(e.target.closest("button"))return;
+      c.classList.remove("xopen");saveOpen(null);
+    }
+  });
+});
+// Jump-to buttons (still wired by Parts 10/17 under the hood) open their card
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-j]");if(!b)return;
+  var t=bySig(b.getAttribute("data-j"));
+  if(t&&!t.classList.contains("xopen"))setTimeout(function(){open(t,false);},80);
+},true);
+// initial open card: ?card= deep link wins, else the remembered card, else the calculator
+var sig=(location.search.match(/[?&]card=([a-z]+)/)||[])[1];
+var startCard=null;
+if(sig){startCard=bySig(sig);}
+if(!startCard){
+  var saved="";try{saved=localStorage.getItem("bxopen")||"";}catch(e){}
+  if(saved)startCard=bySig(saved);
+  if(startCard&&startCard.style.display==="none")startCard=null;
+}
+if(!startCard)startCard=root.querySelector(".card.feat")||cards[0];
+if(startCard){if(sig)setTimeout(function(){open(startCard,true);},900);else open(startCard,false);}
+setTimeout(refresh,3500);setInterval(refresh,4000);
+})();
+</script>
+
+<script>
+// Part 20 (JS18): navigation moves into the cards (companion to Part 19).
+// - Top bar keeps ONLY the glance strip (buttons and the ₿ mark are hidden)
+// - Jump-to panel (grid, filter, message, hint, reset row) and the old Tiles
+//   switch row are hidden
+// - The header's label row keeps just the Light/Dark toggle + a "Manage cards"
+//   button. Manage mode: tiles show their handle row (drag, up/down, info,
+//   share) and an X badge to hide/restore a card (same localStorage 'bhd'
+//   store Part 17 uses); the Reset layout button appears in manage mode.
+(function(){
+"use strict";
+var css=[
+"#bstk .bstk-row,#bstk .bstk-m{display:none!important}",
+"#bsats .hdr .jmsg,#bsats .hdr .jfilter,#bsats .hdr .jnomatch,#bsats .hdr .navgrid,#bsats .hdr .jrrow{display:none!important}",
+"#bsats .hdr .note{display:none!important}",
+"#bsats .trow{display:none!important}",
+"#bsats .hdr .jlab{font-size:0;display:flex;justify-content:flex-end;align-items:center;gap:8px}",
+"#bsats .hdr .jlab .jshow,#bsats .hdr .jlab .jnote{display:none!important}",
+"#bsats .hdr .jlab button{font-size:13px}",
+"#xmanbtn{background:#26334d;color:#e2e8f0;border:1px solid #3b4a68;border-radius:8px;padding:5px 10px;cursor:pointer}",
+"body.blite #xmanbtn{background:#e2e8f0;color:#0f172a;border-color:#cbd5e1}",
+"body.xman #xmanbtn{background:#fde047;color:#0b0f17;border-color:#fde047}",
+"#bsats .card{position:relative}",
+"body.xman #bsats .card:not(.xopen) .hd{display:flex!important}",
+"#bsats .xhx{display:none;position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #f59e0b;font-size:13px;line-height:1;cursor:pointer;text-align:center;padding:0}",
+"body.xman #bsats .xhx{display:block}",
+"#bsats .card.xgost{opacity:.38;outline:1.5px dashed #f59e0b;outline-offset:-1.5px}",
+"#brs{display:none!important}",
+"body.xman #brs{display:inline-block!important}"
+].join("\n");
+var st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
+var SIGS=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe"];
+var root=document.getElementById("bsats");if(!root)return;
+var cards=[].slice.call(root.querySelectorAll(".card"));
+function sigOf(c){for(var i=0;i<SIGS.length;i++){if(c.querySelector("#"+SIGS[i]))return SIGS[i];}return null;}
+function getBhd(){try{var v=JSON.parse(localStorage.getItem("bhd")||"[]");return Array.isArray(v)?v:[];}catch(e){return[];}}
+function setBhd(a){try{localStorage.setItem("bhd",JSON.stringify(a));}catch(e){}}
+var jlab=root.querySelector(".hdr .jlab");
+var mbtn=document.createElement("button");mbtn.type="button";mbtn.id="xmanbtn";mbtn.textContent="Manage cards";
+if(jlab)jlab.appendChild(mbtn);
+cards.forEach(function(c){
+  var x=document.createElement("button");x.type="button";x.className="xhx";x.textContent="✕";x.title="Hide / restore this card";
+  x.addEventListener("click",function(e){
+    e.stopPropagation();
+    var sig=sigOf(c);if(!sig)return;
+    var bhd=getBhd();
+    if(c.classList.contains("xgost")){c.classList.remove("xgost");setBhd(bhd.filter(function(s){return s!==sig;}));}
+    else{c.classList.add("xgost");if(bhd.indexOf(sig)<0)bhd.push(sig);setBhd(bhd);}
+  });
+  c.appendChild(x);
+});
+function enterManage(){
+  document.body.classList.add("xman");
+  mbtn.textContent="Done managing";
+  var bhd=getBhd();
+  cards.forEach(function(c){
+    var sig=sigOf(c);
+    if(sig&&bhd.indexOf(sig)>=0){c.style.display="";c.classList.add("xgost");}
+  });
+}
+function exitManage(){
+  document.body.classList.remove("xman");
+  mbtn.textContent="Manage cards";
+  cards.forEach(function(c){if(c.classList.contains("xgost"))c.style.display="none";});
+}
+mbtn.addEventListener("click",function(){
+  if(document.body.classList.contains("xman"))exitManage();else enterManage();
+});
+// let Part 10's fit() re-measure the slimmer top bar
+[150,600,1500].forEach(function(t){setTimeout(function(){window.dispatchEvent(new Event("resize"));},t);});
+})();
+</script>
+
 </script>
 
 </script>
