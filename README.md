@@ -49,13 +49,13 @@ The GitHub Pages copy ships a web app manifest and a small service worker, so it
 
 **Option 1 — standalone page.** Open `index.html` in a browser, or host that single file anywhere (GitHub Pages, Netlify, Cloudflare Pages, any web server). It is the complete calculator: markup, styles and scripts in one file. Note: opening it as a local file works in a desktop browser; on a phone, serve it over http(s) — some mobile file viewers block its data feeds.
 
-**Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 16 parts in the `carrd/` folder:
+**Option 2 — Carrd.** The live site runs on Carrd, which caps each Embed element at ~16,384 characters, so the code ships as 17 parts in the `carrd/` folder:
 
 | File | Goes in Carrd as |
 | --- | --- |
 | `part-1-css.html` | Embed → Hidden → Head (meta tags, CSS, structured data) |
 | `part-2-html.html` | Embed → Inline (header + all card markup) |
-| `part-3-js.html` … `part-16-js14.html` | Embed → Hidden → Body End, in order |
+| `part-3-js.html` … `part-17-js15.html` | Embed → Hidden → Body End, in order |
 
 `index.html` is assembled from exactly these parts, so both routes run identical code.
 
