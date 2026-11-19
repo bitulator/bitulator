@@ -1,0 +1,39 @@
+<script>
+(function(){
+var pa=document.getElementById('bsats');if(!pa)return;
+var st=document.createElement('style');st.textContent='#bsats .cpyok{margin-left:8px;color:#4ade80;font-size:12.5px;font-weight:700;vertical-align:middle}#bsats .jfilter{margin:8px 0 2px}#bsats .jnomatch{color:#94a3b8;font-size:12.5px;margin:6px 0 2px}#bsats .navgrid [data-j].fno{display:none!important}#bsats .hdr.jclosed .jfilter,#bsats .hdr.jclosed .jnomatch{display:none!important}#bsats .lfailed{color:#fca5a5!important;cursor:pointer;text-decoration:underline dotted}body.blite{background:#f1f5f9}body.blite #bsats{background:#f8fafc;color:#0f172a}body.blite #bsats .card{background:#ffffff;border-color:#e2e8f0}body.blite #bsats label{color:#64748b}body.blite #bsats input,body.blite #bsats select{background:#ffffff;border-color:#cbd5e1;color:#0f172a}body.blite #bsats button.ghost{background:#e2e8f0;color:#0f172a}body.blite #bsats .note{color:#64748b}body.blite #bsats .stat{background:#f1f5f9}body.blite #bsats svg{background:#f1f5f9}body.blite #bsats .hd{color:#64748b}body.blite #bsats .fs{background:#f8fafc;color:#0f172a}body.blite #bsats .feat{border-color:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.18)}body.blite #bsats .warn{color:#dc2626}body.blite #bsats .btile,body.blite #bsats .bbar{background:#f1f5f9;border-color:#e2e8f0}body.blite #bsats .jmsg,body.blite #bsats .jnote,body.blite #bsats .jnomatch{color:#64748b}body.blite #bsats .jtog:not(.jshow):not(.jrst2){color:#64748b!important;border-color:#cbd5e1!important}body.blite #bsats .lfailed{color:#dc2626!important}body.blite #bsats .cpyok{color:#16a34a}body.blite #bstk{background:#ffffff;border-bottom-color:#e2e8f0;box-shadow:0 4px 14px rgba(15,23,42,.08)}body.blite #bstk #bgl{color:#64748b;border-bottom-color:#e2e8f0}body.blite #bstk #bgl b{color:#0f172a}body.blite #bstk #bgl .bglp{color:#d97706}body.blite #bstk .bstk-m{color:#d97706}body.blite #bstk [data-j]{background:#e2e8f0;color:#0f172a}';document.head.appendChild(st);
+var br=document.getElementById('br');
+if(br){
+ br.title='Tap to copy';br.style.cursor='pointer';
+ var ok=document.createElement('span');ok.className='cpyok';ok.textContent='Copied ✓';ok.style.display='none';br.parentNode.insertBefore(ok,br.nextSibling);
+ function done(){ok.style.display='inline-block';setTimeout(function(){ok.style.display='none'},1200)}
+ br.addEventListener('click',function(){
+  var v=(br.value||'').replace(/[,$\s]/g,'');if(!v||v==='Loading…')return;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(done).catch(function(){try{br.select();document.execCommand('copy');done()}catch(e){}})}
+  else{try{br.select();document.execCommand('copy');done()}catch(e){}}
+ });
+}
+var grid=pa.querySelector('.navgrid'),hdr=pa.querySelector('.hdr');
+if(grid&&hdr){
+ var fi=document.createElement('input');fi.className='jfilter';fi.type='text';fi.placeholder='Filter buttons… try “fee” or “dca”';fi.setAttribute('aria-label','Filter Jump to buttons');
+ var nm=document.createElement('p');nm.className='jnomatch';nm.textContent='No buttons match — clear the filter to see them all.';nm.style.display='none';
+ grid.parentNode.insertBefore(fi,grid);grid.parentNode.insertBefore(nm,grid);
+ function applyF(){var q=fi.value.trim().toLowerCase(),n=0;grid.querySelectorAll('[data-j]').forEach(function(b){var hit=!q||b.textContent.toLowerCase().indexOf(q)>=0;b.classList.toggle('fno',!hit);if(hit)n++});nm.style.display=(q&&n===0)?'block':'none'}
+ fi.addEventListener('input',applyF);
+ fi.addEventListener('keydown',function(e){if(e.key==='Escape'){fi.value='';applyF()}});
+}
+var jlab=pa.querySelector('.jlab');
+function isLite(){return document.body.classList.contains('blite')}
+try{if(localStorage.getItem('blite')==='1')document.body.classList.add('blite')}catch(e){}
+if(jlab){
+ var tb=document.createElement('button');tb.type='button';tb.className='jtog thtg';
+ function paintT(){tb.textContent=isLite()?'🌙 Dark':'☀ Light'}
+ paintT();
+ tb.addEventListener('click',function(){document.body.classList.toggle('blite');try{localStorage.setItem('blite',isLite()?'1':'0')}catch(e){}paintT()});
+ jlab.appendChild(tb);
+}
+function failScan(){pa.querySelectorAll('.card *').forEach(function(el){if(el.children.length===0&&el.textContent&&el.textContent.trim()==='Loading…'){el.textContent='Couldn’t load — tap to retry';el.classList.add('lfailed')}})}
+pa.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('lfailed'))location.reload()});
+setTimeout(failScan,15000);setInterval(failScan,20000);
+})();
+</script>
