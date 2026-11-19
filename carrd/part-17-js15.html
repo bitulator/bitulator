@@ -1,3 +1,48 @@
 <script>
-(()=>{const pa=document.getElementById("bsats");if(!pa)return;const st=document.createElement("style");st.textContent="#bsats .hdb{background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:4px 9px!important;font-size:13px!important;font-weight:700!important;line-height:1.2!important;cursor:pointer;flex:none}#bsats .hdb:hover{color:#f87171!important;border-color:#f87171!important}#bsats #bhdbar{margin:10px 0}#bsats #bhdbar .chip{margin:2px 6px 2px 0}#bsats .hdr.jclosed .navgrid{display:none}#bsats .hdr.jclosed p.note{display:none}#bsats .jrst{float:right}#bsats .jnote{color:#94a3b8;font-size:11.5px;margin-left:8px}#bsats .jtog{margin-left:10px;background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer;vertical-align:middle}";document.head.appendChild(st);const IDS=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe"];const cardOf=id=>{const e=document.getElementById(id);return e?e.closest(".card"):null};const titleOf=id=>{const c=cardOf(id);const h=c?c.querySelector("h2"):null;return h?h.textContent:id};let hidden=[];try{hidden=JSON.parse(localStorage.getItem("bhd")||"[]")}catch(e){hidden=[]}if(!Array.isArray(hidden))hidden=[];hidden=hidden.filter(id=>IDS.indexOf(id)>=0);const save=()=>{try{localStorage.setItem("bhd",JSON.stringify(hidden))}catch(e){}};const setVis=(id,vis)=>{const c=cardOf(id);if(c)c.style.display=vis?"":"none";document.querySelectorAll('[data-j="'+id+'"]').forEach(b=>{b.style.display=vis?"":"none"})};const bar=document.createElement("div");bar.id="bhdbar";bar.className="note";bar.style.display="none";const brs=document.getElementById("brs");if(brs)pa.insertBefore(bar,brs);else pa.appendChild(bar);function renderBar(){if(!hidden.length){bar.style.display="none";bar.innerHTML="";return}bar.style.display="";bar.innerHTML="Hidden cards: ";hidden.forEach(id=>{const b=document.createElement("button");b.type="button";b.className="ghost chip";b.textContent=titleOf(id);b.title="Show this card again";b.addEventListener("click",()=>show(id));bar.appendChild(b)});const all=document.createElement("button");all.type="button";all.className="ghost chip";all.textContent="Show all";all.addEventListener("click",unhideAll);bar.appendChild(all)}function show(id){hidden=hidden.filter(x=>x!==id);setVis(id,true);save();renderBar()}function hide(id){if(hidden.indexOf(id)<0)hidden.push(id);setVis(id,false);save();renderBar()}function unhideAll(){hidden=[];IDS.forEach(id=>setVis(id,true));save();renderBar()}IDS.forEach(id=>{const c=cardOf(id);if(!c)return;const hd=c.querySelector(".hd");if(!hd||hd.querySelector(".hdb"))return;const b=document.createElement("button");b.type="button";b.className="hdb";b.textContent="✕";b.title="Hide this card";b.setAttribute("aria-label","Hide this card");b.addEventListener("pointerdown",e=>e.stopPropagation());b.addEventListener("mousedown",e=>e.stopPropagation());b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();hide(id)});hd.appendChild(b)});hidden.forEach(id=>setVis(id,false));renderBar();if(brs)brs.addEventListener("click",unhideAll);const hdr=pa.querySelector(".hdr"),jlab=pa.querySelector(".jlab"),grid=pa.querySelector(".navgrid");if(hdr&&jlab&&grid){const tg=document.createElement("button");tg.type="button";tg.className="jtog";const sn=document.createElement("span");sn.className="jnote";const paint=()=>{const cl=hdr.classList.contains("jclosed");tg.textContent=cl?"▸ Show":"▾ Hide";sn.textContent=cl?"Reveal to rearrange the cards":""};let jc=true;try{jc=localStorage.getItem("bjc")!=="0"}catch(e){}if(jc)hdr.classList.add("jclosed");paint();tg.addEventListener("click",()=>{hdr.classList.toggle("jclosed");try{localStorage.setItem("bjc",hdr.classList.contains("jclosed")?"1":"0")}catch(e){}paint()});jlab.appendChild(tg);jlab.appendChild(sn);const rb=document.createElement("button");rb.type="button";rb.className="jtog jrst";rb.textContent="Reset layout";rb.title="Reset card order and unhide all cards";rb.addEventListener("click",()=>{unhideAll();if(brs)brs.click()});jlab.appendChild(rb)}})();
+(function(){
+var pa=document.getElementById('bsats');if(!pa)return;
+var st=document.createElement('style');st.textContent='#bsats .navgrid [data-j]{position:relative}#bsats .navgrid .hbx{position:absolute;top:-7px;right:-7px;width:16px;height:16px;line-height:15px;text-align:center;font-size:11px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #fde047;cursor:pointer;z-index:6}#bsats .navgrid [data-j].hdim{opacity:.42;outline:1px dashed #94a3b8;outline-offset:-1px}#bsats .hdr.jclosed .navgrid{display:none}#bsats .hdr.jclosed p.note{display:none}#bsats .jrst{float:right}#bsats .jnote{color:#94a3b8;font-size:11.5px;margin-left:8px}#bsats .jtog{margin-left:10px;background:transparent!important;color:#94a3b8!important;border:1px solid #334155!important;border-radius:7px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer;vertical-align:middle}';document.head.appendChild(st);
+var IDS=['bp','bch','bhw','bda','bno','bgo','bmyo','bwi','bga','bfa','bmto','bsuo','bdio','bhra','bbbo','breso','bhp','byt','blk','bln','blu','bep','bml','bfe'];
+function cardOf(id){var e=document.getElementById(id);return e?e.closest('.card'):null}
+var grid=pa.querySelector('.navgrid');
+function gbtn(id){return grid?grid.querySelector('[data-j="'+id+'"]'):null}
+var hidden=[];try{hidden=JSON.parse(localStorage.getItem('bhd')||'[]')}catch(e){hidden=[]}
+if(!Array.isArray(hidden))hidden=[];hidden=hidden.filter(function(id){return IDS.indexOf(id)>=0});
+function save(){try{localStorage.setItem('bhd',JSON.stringify(hidden))}catch(e){}}
+function apply(id){var c=cardOf(id),hid=hidden.indexOf(id)>=0;if(c)c.style.display=hid?'none':'';document.querySelectorAll('#bstk [data-j="'+id+'"]').forEach(function(b){b.style.display=hid?'none':''});var g=gbtn(id);if(g)g.classList.toggle('hdim',hid)}
+function hide(id){if(hidden.indexOf(id)<0)hidden.push(id);apply(id);save()}
+function show(id){hidden=hidden.filter(function(x){return x!==id});apply(id);save()}
+function unhideAll(){hidden=[];IDS.forEach(function(id){apply(id)});save()}
+hidden.forEach(function(id){apply(id)});
+var brs=document.getElementById('brs');
+if(brs)brs.addEventListener('click',unhideAll);
+if(grid){
+ grid.querySelectorAll('[data-j]').forEach(function(b){var x=document.createElement('span');x.className='hbx';x.textContent='✕';b.appendChild(x)});
+ var lastDragEnd=0;
+ grid.addEventListener('pointerdown',function(e){var sx=e.clientX,sy=e.clientY,moved=false;function mv(ev){if(Math.abs(ev.clientX-sx)>9||Math.abs(ev.clientY-sy)>9)moved=true}function up(){if(moved)lastDragEnd=Date.now();document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up)}document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up)},true);
+ grid.addEventListener('click',function(e){
+  if(Date.now()-lastDragEnd<200)return;
+  var b=e.target.closest?e.target.closest('[data-j]'):null;if(!b||!grid.contains(b))return;
+  var id=b.getAttribute('data-j');
+  if(e.target.classList&&e.target.classList.contains('hbx')){e.stopPropagation();e.preventDefault();hide(id);return}
+  if(b.classList.contains('hdim')){e.stopPropagation();e.preventDefault();show(id)}
+ },true);
+ var hdr=pa.querySelector('.hdr');
+ var hintP=hdr?hdr.querySelector('p.note'):null;
+ if(hintP)hintP.textContent+=' Tap a button\u2019s \u2715 to hide its card; tap a dimmed button to bring it back.';
+ var jlab=pa.querySelector('.jlab');
+ if(hdr&&jlab){
+  var tg=document.createElement('button');tg.type='button';tg.className='jtog';
+  var sn=document.createElement('span');sn.className='jnote';
+  function paint(){var cl=hdr.classList.contains('jclosed');tg.textContent=cl?'\u25B8 Show':'\u25BE Hide';sn.textContent=cl?'Reveal to rearrange the cards':''}
+  var jc=true;try{jc=localStorage.getItem('bjc')!=='0'}catch(e){}
+  if(jc)hdr.classList.add('jclosed');paint();
+  tg.addEventListener('click',function(){hdr.classList.toggle('jclosed');try{localStorage.setItem('bjc',hdr.classList.contains('jclosed')?'1':'0')}catch(e){}paint()});
+  jlab.appendChild(tg);jlab.appendChild(sn);
+  var rb=document.createElement('button');rb.type='button';rb.className='jtog jrst';rb.textContent='Reset layout';rb.title='Reset card order and unhide all cards';
+  rb.addEventListener('click',function(){unhideAll();if(brs)brs.click()});
+  jlab.appendChild(rb);
+ }
+}
+})();
 </script>
