@@ -394,7 +394,7 @@ setTimeout(function(){failScan();setInterval(failScan,20000)},45000);
 })();
 </script>
 <script>
-// Part 19 (JS17) v3: tile-and-expand with mini-card tiles + desktop hover
+// Part 19 (JS17) v3.1: tile-and-expand with mini-card tiles + desktop hover
 // preview. Cards are small
 // tiles in a grid; each collapsed tile shows a scaled-down live copy of the
 // card's own content under its title (a miniature of the card), refreshed
@@ -402,7 +402,8 @@ setTimeout(function(){failScan();setInterval(failScan,20000)},45000);
 // collapses it. The open card is remembered per device (localStorage
 // 'bxopen'). On desktop (mouse) browsers, hovering a collapsed tile for
 // ~250ms shows an enlarged preview panel (#xpop) of that card next to the
-// tile; it hides on mouse-leave/scroll and never appears in Manage mode or
+// tile, scaled to fit so the WHOLE card shows; it hides on
+// mouse-leave/scroll and never appears in Manage mode or
 // on touch devices. The old Tiles mode (Part 5) is retired: its
 // class/storage are neutralized here.
 (function(){
@@ -432,10 +433,8 @@ var css=[
 "#bsats #xpop .xpt{font-size:15px;font-weight:700;margin:0 0 8px;color:#e2e8f0}",
 "#bsats #xpop .xpv{position:relative;overflow:hidden}",
 "#bsats #xpop .xpin{width:640px;transform-origin:top left;transform:scale(.56)}",
-"#bsats #xpop .xpv::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(rgba(26,36,54,0),#1a2436)}",
 "body.blite #bsats #xpop{background:#ffffff;border-color:#e2e8f0}",
 "body.blite #bsats #xpop .xpt{color:#0f172a}",
-"body.blite #bsats #xpop .xpv::after{background:linear-gradient(rgba(255,255,255,0),#ffffff)}",
 "#xnote{grid-column:1/-1;color:#94a3b8;font-size:13px;text-align:center;margin:2px 0 0}",
 "body.blite #xnote{color:#475569}"
 ].join("\n");
@@ -535,8 +534,12 @@ function showPop(c){
     if(ch.tagName==="H2"||ch.tagName==="SCRIPT")return;
     var cl=cleanClone(ch);if(cl)popIn.appendChild(cl);
   });
-  popV.style.height=Math.min(300,Math.max(40,popIn.scrollHeight*0.56))+"px";
   pop.style.visibility="hidden";pop.classList.add("on");
+  var fh=popIn.scrollHeight,maxH=Math.round(window.innerHeight*0.72);
+  var sc=Math.min(0.56,maxH/Math.max(1,fh));if(sc<0.3)sc=0.3;
+  popIn.style.transform="scale("+sc+")";
+  popV.style.height=Math.ceil(fh*sc)+"px";
+  pop.style.width=Math.ceil(640*sc+30)+"px";
   var r=c.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;
   var left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8));
   var top=r.top-ph-10;
@@ -585,6 +588,9 @@ var css=[
 "#bsats #xmanbtn{background:#26334d;color:#e2e8f0;border:1px solid #3b4a68;border-radius:8px;padding:5px 10px;cursor:pointer}",
 "body.blite #bsats #xmanbtn{background:#e2e8f0;color:#0f172a;border-color:#cbd5e1}",
 "body.xman #bsats #xmanbtn{background:#fde047;color:#0b0f17;border-color:#fde047}",
+"#bsats #xrstbtn{display:none}",
+"body.xman #bsats #xrstbtn{display:inline-block;background:#26334d;color:#e2e8f0;border:1px solid #3b4a68;border-radius:8px;padding:5px 10px;cursor:pointer;margin-left:8px}",
+"body.blite.xman #bsats #xrstbtn{background:#e2e8f0;color:#0f172a;border-color:#cbd5e1}",
 "#bsats .card{position:relative}",
 "body.xman #bsats .card:not(.xopen) .hd{display:flex!important}",
 "#bsats .card{min-width:0}",
@@ -608,6 +614,9 @@ function setBhd(a){try{localStorage.setItem("bhd",JSON.stringify(a));}catch(e){}
 var jlab=root.querySelector(".hdr .jlab");
 var mbtn=document.createElement("button");mbtn.type="button";mbtn.id="xmanbtn";mbtn.textContent="Manage cards";
 if(jlab)jlab.appendChild(mbtn);
+var rbtn=document.createElement("button");rbtn.type="button";rbtn.id="xrstbtn";rbtn.textContent="Reset layout";
+if(jlab)jlab.appendChild(rbtn);
+rbtn.addEventListener("click",function(){var b=document.getElementById("brs");if(b)b.click();});
 cards.forEach(function(c){
   var x=document.createElement("button");x.type="button";x.className="xhx";x.textContent="✕";x.title="Hide / restore this card";
   x.addEventListener("click",function(e){
