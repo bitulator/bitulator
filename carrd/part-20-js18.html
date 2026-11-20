@@ -26,7 +26,9 @@ var css=[
 "body.xman #bsats .card .hd{flex-wrap:wrap;row-gap:4px}",
 "body.xman #bsats .card:not(.xopen) .hd button{padding:5px 8px;font-size:12px}",
 "#bsats .xhx{display:none;position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:50%;background:#26334d;color:#fde047;border:1px solid #f59e0b;font-size:13px;line-height:1;cursor:pointer;text-align:center;padding:0}",
+"#bsats .xcol{display:contents}",
 "body.xman #bsats .xhx{display:block}",
+"@media(max-width:640px){body.xman #bsats .xcol{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:auto}body.xman #bsats .xhx{position:static}}",
 "#bsats .card.xgost{opacity:.38;outline:1.5px dashed #f59e0b;outline-offset:-1.5px}",
 "#brs{display:none!important}",
 "body.xman #brs{display:inline-block!important}"
@@ -50,7 +52,12 @@ cards.forEach(function(c){
     if(c.classList.contains("xgost")){c.classList.remove("xgost");setBhd(bhd.filter(function(s){return s!==sig;}));}
     else{c.classList.add("xgost");if(bhd.indexOf(sig)<0)bhd.push(sig);setBhd(bhd);}
   });
-  c.appendChild(x);
+  // stack the hide badge directly above the Share button (manage mode)
+  var hd=c.querySelector(".hd"),shb=hd?hd.querySelector(".shb"):null;
+  if(hd&&shb){
+    var col=document.createElement("span");col.className="xcol";
+    hd.insertBefore(col,shb);col.appendChild(x);col.appendChild(shb);
+  }else{c.appendChild(x);}
 });
 function enterManage(){
   document.body.classList.add("xman");
