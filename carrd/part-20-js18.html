@@ -20,6 +20,9 @@ var css=[
 "#bsats #xmanbtn{background:#26334d;color:#e2e8f0;border:1px solid #3b4a68;border-radius:8px;padding:5px 10px;cursor:pointer}",
 "body.blite #bsats #xmanbtn{background:#e2e8f0;color:#0f172a;border-color:#cbd5e1}",
 "body.xman #bsats #xmanbtn{background:#fde047;color:#0b0f17;border-color:#fde047}",
+"#bsats #xrstbtn{display:none}",
+"body.xman #bsats #xrstbtn{display:inline-block;background:#26334d;color:#e2e8f0;border:1px solid #3b4a68;border-radius:8px;padding:5px 10px;cursor:pointer;margin-left:8px}",
+"body.blite.xman #bsats #xrstbtn{background:#e2e8f0;color:#0f172a;border-color:#cbd5e1}",
 "#bsats .card{position:relative}",
 "body.xman #bsats .card:not(.xopen) .hd{display:flex!important}",
 "#bsats .card{min-width:0}",
@@ -43,6 +46,9 @@ function setBhd(a){try{localStorage.setItem("bhd",JSON.stringify(a));}catch(e){}
 var jlab=root.querySelector(".hdr .jlab");
 var mbtn=document.createElement("button");mbtn.type="button";mbtn.id="xmanbtn";mbtn.textContent="Manage cards";
 if(jlab)jlab.appendChild(mbtn);
+var rbtn=document.createElement("button");rbtn.type="button";rbtn.id="xrstbtn";rbtn.textContent="Reset layout";
+if(jlab)jlab.appendChild(rbtn);
+rbtn.addEventListener("click",function(){var b=document.getElementById("brs");if(b)b.click();});
 cards.forEach(function(c){
   var x=document.createElement("button");x.type="button";x.className="xhx";x.textContent="✕";x.title="Hide / restore this card";
   x.addEventListener("click",function(e){
