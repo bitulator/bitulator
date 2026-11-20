@@ -1,8 +1,15 @@
 <script>
-// Part 19 (JS17): tile-and-expand redesign. Cards are small tiles in a grid;
-// tapping a tile expands it full-width, tapping its title again collapses it.
-// The open card is remembered per device (localStorage 'bxopen').
-// The old Tiles mode (Part 5) is retired: its class/storage are neutralized here.
+// Part 19 (JS17) v3: tile-and-expand with mini-card tiles + desktop hover
+// preview. Cards are small
+// tiles in a grid; each collapsed tile shows a scaled-down live copy of the
+// card's own content under its title (a miniature of the card), refreshed
+// every 6s. Tapping a tile expands it full-width; tapping its title again
+// collapses it. The open card is remembered per device (localStorage
+// 'bxopen'). On desktop (mouse) browsers, hovering a collapsed tile for
+// ~250ms shows an enlarged preview panel (#xpop) of that card next to the
+// tile; it hides on mouse-leave/scroll and never appears in Manage mode or
+// on touch devices. The old Tiles mode (Part 5) is retired: its
+// class/storage are neutralized here.
 (function(){
 "use strict";
 var css=[
@@ -11,23 +18,34 @@ var css=[
 "@media(min-width:720px){#bsats{grid-template-columns:repeat(3,1fr)}}",
 "@media(min-width:1024px){#bsats{grid-template-columns:repeat(4,1fr)}}",
 "#bsats .card{margin:0}",
-"#bsats .card:not(.xopen){cursor:pointer;min-height:92px}",
-"#bsats .card:not(.xopen)>:not(.hd):not(h2):not(.xh):not(.xhx){display:none!important}",
+"#bsats .card:not(.xopen){cursor:pointer}",
+"#bsats .card:not(.xopen)>:not(.hd):not(h2):not(.xmini):not(.xhx){display:none!important}",
 "#bsats .card:not(.xopen) .hd{display:none!important}",
 "#bsats .card:not(.xopen) h2{font-size:15px;line-height:1.25;margin:0;padding-right:16px}",
 "#bsats .card h2{position:relative}",
 "#bsats .card:not(.xopen) h2::after{content:'▼';position:absolute;right:0;top:0;opacity:.55}",
 "#bsats .card.xopen{grid-column:1/-1}",
 "#bsats .card.xopen h2::after{content:'▲';position:absolute;right:2px;top:0;opacity:.55;cursor:pointer}",
-"#bsats .xh{display:none;font-size:17px;font-weight:700;color:#fde047;margin-top:6px;word-break:break-word}",
-"#bsats .card:not(.xopen) .xh{display:block}",
-"body.blite #bsats .xh{color:#b45309}",
+"#bsats .xmini{display:none;position:relative;height:88px;overflow:hidden;margin-top:8px;border-top:1px solid #26334d;padding-top:6px;pointer-events:none}",
+"#bsats .card:not(.xopen) .xmini{display:block}",
+"#bsats .xmin{width:640px;transform-origin:top left}",
+"#bsats .xmini::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(rgba(26,36,54,0),#1a2436)}",
+"body.blite #bsats .xmini{border-top-color:#e2e8f0}",
+"body.blite #bsats .xmini::after{background:linear-gradient(rgba(255,255,255,0),#ffffff)}",
+"#bsats #xpop{position:fixed;z-index:9999;width:386px;display:none;background:#1a2436;border:1px solid #26334d;border-radius:14px;padding:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);pointer-events:none}",
+"#bsats #xpop.on{display:block}",
+"#bsats #xpop .xpt{font-size:15px;font-weight:700;margin:0 0 8px;color:#e2e8f0}",
+"#bsats #xpop .xpv{position:relative;overflow:hidden}",
+"#bsats #xpop .xpin{width:640px;transform-origin:top left;transform:scale(.56)}",
+"#bsats #xpop .xpv::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(rgba(26,36,54,0),#1a2436)}",
+"body.blite #bsats #xpop{background:#ffffff;border-color:#e2e8f0}",
+"body.blite #bsats #xpop .xpt{color:#0f172a}",
+"body.blite #bsats #xpop .xpv::after{background:linear-gradient(rgba(255,255,255,0),#ffffff)}",
 "#xnote{grid-column:1/-1;color:#94a3b8;font-size:13px;text-align:center;margin:2px 0 0}",
 "body.blite #xnote{color:#475569}"
 ].join("\n");
 var st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
 var root=document.getElementById("bsats");if(!root)return;
-// retire the old Tiles mode (Part 5): class off, storage off, switch off
 root.classList.remove("tiles");
 try{localStorage.setItem("btv","0");}catch(e){}
 var tg=document.getElementById("btgl");if(tg)tg.checked=false;
@@ -39,21 +57,42 @@ function bySig(s){for(var i=0;i<cards.length;i++){if(sigOf(cards[i])===s)return 
 var note=document.createElement("div");note.id="xnote";
 note.textContent="Tap a card to expand it. Manage cards (top right) hides or reorders cards.";
 var firstCard=cards[0];if(firstCard)root.insertBefore(note,firstCard);
-cards.forEach(function(c){
-  var h=document.createElement("div");h.className="xh";
-  var h2=c.querySelector("h2");if(h2)h2.parentNode.insertBefore(h,h2.nextSibling);
-  c._xh=h;
-});
-function headline(c){
-  if(c.classList.contains("feat")){var p=document.getElementById("bglp");return p?p.textContent.trim():"";}
-  var b=c.querySelector(".stat b")||c.querySelector(".res b");
-  return b?b.textContent.trim():"";
+function cleanClone(el){
+  var cl=el.cloneNode(true);
+  cl.querySelectorAll("[id]").forEach(function(n){n.removeAttribute("id");});
+  if(cl.hasAttribute&&cl.hasAttribute("id"))cl.removeAttribute("id");
+  cl.querySelectorAll("iframe,script").forEach(function(n){n.remove();});
+  if(cl.tagName==="IFRAME"||cl.tagName==="SCRIPT")return null;
+  cl.querySelectorAll(".xhx,.hd").forEach(function(n){n.remove();});
+  return cl;
 }
-function refresh(){cards.forEach(function(c){var t=headline(c);if(t&&t!=="Loading…")c._xh.textContent=t;});}
+function buildMini(c){
+  var inner=c._xmin;if(!inner)return;
+  inner.innerHTML="";
+  [].slice.call(c.children).forEach(function(ch){
+    if(ch.classList&&(ch.classList.contains("hd")||ch.classList.contains("ip")||ch.classList.contains("xmini")||ch.classList.contains("xhx")))return;
+    if(ch.tagName==="H2"||ch.tagName==="SCRIPT")return;
+    var cl=cleanClone(ch);if(cl)inner.appendChild(cl);
+  });
+}
+function fitMini(c){
+  if(!c._xmin)return;
+  var w=c.clientWidth-32;if(w<40)return;
+  c._xmin.style.transform="scale("+(w/640)+")";
+}
+cards.forEach(function(c){
+  var wrap=document.createElement("div");wrap.className="xmini";
+  var inner=document.createElement("div");inner.className="xmin";
+  wrap.appendChild(inner);
+  var h2=c.querySelector("h2");if(h2)h2.parentNode.insertBefore(wrap,h2.nextSibling);
+  c._xmin=inner;
+});
+function buildAll(){cards.forEach(function(c){if(!c.classList.contains("xopen")){buildMini(c);fitMini(c);}});}
 function barH(){var b=document.getElementById("bstk");return b?b.offsetHeight:0;}
 function saveOpen(c){try{localStorage.setItem("bxopen",c?sigOf(c)||"":"");}catch(e){}}
 function open(c,scroll){
-  cards.forEach(function(o){o.classList.toggle("xopen",o===c);});
+  cards.forEach(function(o){if(o!==c&&o.classList.contains("xopen")){o.classList.remove("xopen");buildMini(o);fitMini(o);}});
+  if(c)c.classList.add("xopen");
   saveOpen(c);
   if(c&&c.querySelector("#bch"))setTimeout(function(){window.dispatchEvent(new Event("resize"));},60);
   if(c&&scroll)setTimeout(function(){
@@ -69,17 +108,15 @@ cards.forEach(function(c){
       open(c,true);
     }else if(e.target.closest("h2")){
       if(e.target.closest("button"))return;
-      c.classList.remove("xopen");saveOpen(null);
+      c.classList.remove("xopen");saveOpen(null);buildMini(c);fitMini(c);
     }
   });
 });
-// Jump-to buttons (still wired by Parts 10/17 under the hood) open their card
 document.addEventListener("click",function(e){
   var b=e.target.closest("[data-j]");if(!b)return;
   var t=bySig(b.getAttribute("data-j"));
   if(t&&!t.classList.contains("xopen"))setTimeout(function(){open(t,false);},80);
 },true);
-// initial open card: ?card= deep link wins, else the remembered card, else the calculator
 var sig=(location.search.match(/[?&]card=([a-z]+)/)||[])[1];
 var startCard=null;
 if(sig){startCard=bySig(sig);}
@@ -90,6 +127,43 @@ if(!startCard){
 }
 if(!startCard)startCard=root.querySelector(".card.feat")||cards[0];
 if(startCard){if(sig)setTimeout(function(){open(startCard,true);},900);else open(startCard,false);}
-setTimeout(refresh,3500);setInterval(refresh,4000);
+// enlarged hover preview (desktop mouse only)
+var hoverOK=window.matchMedia&&matchMedia("(hover:hover) and (pointer:fine)").matches;
+var pop=null,popT=null,popIn=null,popV=null,popTimer=null;
+function hidePop(){if(pop)pop.classList.remove("on");if(popTimer){clearTimeout(popTimer);popTimer=null;}}
+function showPop(c){
+  if(!pop||c.classList.contains("xopen")||document.body.classList.contains("xman"))return;
+  popT.textContent=c.querySelector("h2")?c.querySelector("h2").textContent:"";
+  popIn.innerHTML="";
+  [].slice.call(c.children).forEach(function(ch){
+    if(ch.classList&&(ch.classList.contains("hd")||ch.classList.contains("ip")||ch.classList.contains("xmini")||ch.classList.contains("xhx")))return;
+    if(ch.tagName==="H2"||ch.tagName==="SCRIPT")return;
+    var cl=cleanClone(ch);if(cl)popIn.appendChild(cl);
+  });
+  popV.style.height=Math.min(300,Math.max(40,popIn.scrollHeight*0.56))+"px";
+  pop.style.visibility="hidden";pop.classList.add("on");
+  var r=c.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;
+  var left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8));
+  var top=r.top-ph-10;
+  if(top<barH()+8)top=r.bottom+10;
+  if(top+ph>window.innerHeight-8)top=Math.max(8,window.innerHeight-ph-8);
+  pop.style.left=left+"px";pop.style.top=top+"px";pop.style.visibility="";
+}
+if(hoverOK){
+  pop=document.createElement("div");pop.id="xpop";
+  popT=document.createElement("div");popT.className="xpt";
+  popV=document.createElement("div");popV.className="xpv";
+  popIn=document.createElement("div");popIn.className="xpin";
+  popV.appendChild(popIn);pop.appendChild(popT);pop.appendChild(popV);
+  root.appendChild(pop);
+  cards.forEach(function(c){
+    c.addEventListener("mouseenter",function(){if(popTimer)clearTimeout(popTimer);popTimer=setTimeout(function(){showPop(c);},250);});
+    c.addEventListener("mouseleave",hidePop);
+  });
+  window.addEventListener("scroll",hidePop,{capture:true,passive:true});
+  document.addEventListener("click",hidePop,true);
+}
+window.addEventListener("resize",function(){cards.forEach(fitMini);});
+setTimeout(buildAll,1500);setInterval(buildAll,6000);
 })();
 </script>
