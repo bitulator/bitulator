@@ -1,5 +1,5 @@
 <script>
-// Part 19 (JS17) v3: tile-and-expand with mini-card tiles + desktop hover
+// Part 19 (JS17) v3.1: tile-and-expand with mini-card tiles + desktop hover
 // preview. Cards are small
 // tiles in a grid; each collapsed tile shows a scaled-down live copy of the
 // card's own content under its title (a miniature of the card), refreshed
@@ -7,7 +7,8 @@
 // collapses it. The open card is remembered per device (localStorage
 // 'bxopen'). On desktop (mouse) browsers, hovering a collapsed tile for
 // ~250ms shows an enlarged preview panel (#xpop) of that card next to the
-// tile; it hides on mouse-leave/scroll and never appears in Manage mode or
+// tile, scaled to fit so the WHOLE card shows; it hides on
+// mouse-leave/scroll and never appears in Manage mode or
 // on touch devices. The old Tiles mode (Part 5) is retired: its
 // class/storage are neutralized here.
 (function(){
@@ -37,10 +38,8 @@ var css=[
 "#bsats #xpop .xpt{font-size:15px;font-weight:700;margin:0 0 8px;color:#e2e8f0}",
 "#bsats #xpop .xpv{position:relative;overflow:hidden}",
 "#bsats #xpop .xpin{width:640px;transform-origin:top left;transform:scale(.56)}",
-"#bsats #xpop .xpv::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(rgba(26,36,54,0),#1a2436)}",
 "body.blite #bsats #xpop{background:#ffffff;border-color:#e2e8f0}",
 "body.blite #bsats #xpop .xpt{color:#0f172a}",
-"body.blite #bsats #xpop .xpv::after{background:linear-gradient(rgba(255,255,255,0),#ffffff)}",
 "#xnote{grid-column:1/-1;color:#94a3b8;font-size:13px;text-align:center;margin:2px 0 0}",
 "body.blite #xnote{color:#475569}"
 ].join("\n");
@@ -140,8 +139,12 @@ function showPop(c){
     if(ch.tagName==="H2"||ch.tagName==="SCRIPT")return;
     var cl=cleanClone(ch);if(cl)popIn.appendChild(cl);
   });
-  popV.style.height=Math.min(300,Math.max(40,popIn.scrollHeight*0.56))+"px";
   pop.style.visibility="hidden";pop.classList.add("on");
+  var fh=popIn.scrollHeight,maxH=Math.round(window.innerHeight*0.72);
+  var sc=Math.min(0.56,maxH/Math.max(1,fh));if(sc<0.3)sc=0.3;
+  popIn.style.transform="scale("+sc+")";
+  popV.style.height=Math.ceil(fh*sc)+"px";
+  pop.style.width=Math.ceil(640*sc+30)+"px";
   var r=c.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;
   var left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8));
   var top=r.top-ph-10;
