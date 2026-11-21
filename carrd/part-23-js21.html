@@ -1,0 +1,32 @@
+<script>
+(function(){
+var el=document.getElementById("bse");if(!el)return;
+var FEEDS=[
+["Bitcoin Core","https://bitcoincore.org/en/rss.xml",""],
+["Lopp","https://blog.lopp.net/rss/",""],
+["Optech","https://bitcoinops.org/feed.xml",""],
+["Casa","https://blog.casa.io/rss/",""],
+["Core release","https://github.com/bitcoin/bitcoin/releases.atom","Bitcoin Core "],
+["Electrum","https://github.com/spesmilo/electrum/releases.atom","Electrum "],
+["Sparrow","https://github.com/sparrowwallet/sparrow/releases.atom","Sparrow Wallet "],
+["Hacker News","https://feeds.feedburner.com/TheHackersNews","",/bitcoin|btc/i]];
+function ago(t){var s=(Date.now()-t)/1e3;if(s<3600)return Math.max(1,Math.round(s/60))+"m ago";if(s<86400)return Math.round(s/3600)+"h ago";return Math.round(s/86400)+"d ago"}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function fetchFeed(f){
+var ctl=("AbortController" in window)?new AbortController():null;var tm=ctl?setTimeout(function(){ctl.abort()},15000):0;
+return fetch("https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(f[1]),ctl?{signal:ctl.signal}:{}).then(function(r){if(tm)clearTimeout(tm);if(!r.ok)throw 0;return r.json()}).then(function(j){
+if(!j||!j.items)throw 0;
+return j.items.map(function(it){var t=it.title||"";if(f[3]&&!f[3].test(t))return null;if(f[2]&&t.indexOf(f[2].trim())!==0)t=f[2]+t;return{t:t,l:it.link||"",d:new Date(String(it.pubDate).replace(" ","T")+"Z").getTime(),s:f[0]}}).filter(function(x){return x&&x.t&&x.l&&x.d>0})})}
+function render(items){
+items.sort(function(a,b){return b.d-a.d});
+var seen={},out=[];
+for(var i=0;i<items.length&&out.length<8;i++){var k=items[i].t.toLowerCase().slice(0,60);if(seen[k])continue;seen[k]=1;out.push(items[i])}
+if(!out.length){fail();return}
+el.innerHTML=out.map(function(x){return '<p class="res"><a href="'+esc(x.l)+'" target="_blank" rel="noopener">'+esc(x.t)+'</a><span>'+esc(x.s)+" · "+ago(x.d)+'</span></p>'}).join("")+'<p class="note">Security disclosures, technical writing and software releases from Bitcoin Core, Jameson Lopp, Optech, Casa, Electrum and Sparrow, plus Bitcoin items from The Hacker News — newest first. Tap an item to read it.</p>';
+var c=el.closest(".card");if(c)c.dataset.share=out[0].t}
+function fail(){el.innerHTML='<p class="note">Couldn\'t load the security feed — tap to retry</p>'}
+function load(){Promise.all(FEEDS.map(function(f){return fetchFeed(f).catch(function(){return[]})})).then(function(rs){var all=[];rs.forEach(function(r){all=all.concat(r)});if(!all.length){fail();return}render(all)}).catch(fail)}
+el.addEventListener("click",function(){if(el.textContent.indexOf("Couldn")===0)load()});
+load();setInterval(load,6e5);
+})();
+</script>
