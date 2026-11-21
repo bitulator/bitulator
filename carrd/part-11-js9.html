@@ -1,73 +1,83 @@
 <script>(()=>{const pa=document.getElementById("bsats");if(!pa)return;const st=document.createElement("style");st.textContent="#bsats .shb{background:#26334d!important;color:#fde047!important;border:1px solid #334155!important;border-radius:7px!important;padding:4px 10px!important;font-size:12.5px!important;font-weight:800!important;line-height:1.2!important;cursor:pointer;touch-action:manipulation;flex:none}";document.head.appendChild(st);
-const SITE=s=>"https://bitulator.github.io/bitulator/share/"+s+".html";
-const T=e=>e?e.textContent.trim().replace(/\s+/g," "):"";
-const V=id=>{const e=document.getElementById(id);return e?e.value:""};
-const clip=(s,n)=>s.length>n?s.slice(0,n-1).trim()+"…":s;
-const DEF={
-bp:"The live bitcoin price and sats converter.",
-bch:"Bitcoin's live price chart with the 200-week average.",
-bhw:"What one bitcoin cost on any date since 2015.",
-bda:"DCA calculator: steady bitcoin buys vs one lump sum.",
-bno:"The Bitcoin network right now: block height, halving countdown and send fees.",
-bgo:"The Fear & Greed gauge: a 0–100 snapshot of market mood.",
-bmyo:"The Mayer Multiple and the all-time high.",
-bwi:"What $100 did: cash vs bitcoin, inflation-adjusted.",
-bga:"Stack goal: how many sats to your goal and what they cost today.",
-bfa:"What your bitcoin stack would be worth at a future price.",
-bmto:"Moscow Time: how many sats one unit of your currency buys, as a clock.",
-bsuo:"Bitcoin supply: how much of the 21 million is mined, and what's left.",
-bdio:"The difficulty adjustment countdown and estimated change.",
-bhra:"Your hour in sats: what an hour of work buys in bitcoin.",
-bbbo:"What 1 BTC buys: gold, silver, oil, steaks, iPhones — even a slice of a house.",
-breso:"Bitcoin resources: the White Paper, 21 Lessons, the Nakamoto Institute and more.",
-bhp:"House down payment: how much bitcoin to stack for a house deposit.",byt:"Bitcoin-only YouTube: Pleb Underground, BTC Sessions, Bram Kanstein, The Jack Mallers Show, Canadian Bitcoiners.",blk:"The most recent blocks mined: sizes, transaction counts, fees and miners.",bln:"The Lightning Network: how much bitcoin it holds, and its channels and nodes.",blu:"Look up any bitcoin address or transaction: balance, history and confirmations.",bep:"The current halving epoch: how far through it we are and what miners earn per block.",bml:"Bitcoin milestones: block 1,000,000, 99% mined, and the last satoshi.",bfe:"Fee calculator: what a transaction costs in sats and dollars at each speed."};
-const OUT={bhw:"bho",bda:"bdo",bwi:"bwo",bga:"bgout",bfa:"bfo",bhra:"bhro",bfe:"bfeo"};
-function body(sig,card){
- const cur=document.getElementById("bc");
- const code=cur&&cur.value?cur.value:"USD";
- const price=parseFloat(V("bp").replace(/,/g,""))||0;
- if(card&&card.dataset&&card.dataset.share)return card.dataset.share;
- if(sig==="bp"){
-   const unit=document.getElementById("bbt")&&!document.getElementById("bbt").classList.contains("ghost")?"BTC":"sats";
-   const get=V("br");
-   if(get)return "₿ Bitcoin is "+V("bp")+" "+code+" — "+V("ba")+" "+code+" buys "+get+" "+unit+" right now.";
- }
- if(sig==="bch"){const p=T(document.getElementById("bcp"));if(p)return "₿ "+p+" — the live chart with the 200-week average."}
- const S=id=>T(document.getElementById(id));
- const M=(s,re)=>{const m=s.match(re);return m?m[1]:null};
- if(sig==="bno"){const s=S("bno"),h=M(s,/Block height([\d,]+)/),f=M(s,/next block (\d+)/),b=M(s,/Blocks to halving([\d,]+)/),d=M(s,/block [\d,]+([A-Z][a-z]{2} \d{4})/);
-   if(h&&f)return "₿ Bitcoin network: block "+h+" · next-block fee "+f+" sat/vB"+(b&&d?" · halving in "+b+" blocks ("+d+")":"")+"."}
- if(sig==="bgo"){const s=S("bgo"),n=M(s,/(\d{1,3})(Extreme Fear|Extreme Greed|Fear|Greed|Neutral)/),l=M(s,/\d{1,3}(Extreme Fear|Extreme Greed|Fear|Greed|Neutral)/);
-   if(n&&l)return "Fear & Greed: "+n+" — "+l+" today."}
- if(sig==="bmyo"){const s=S("bmyo"),m=M(s,/Mayer Multiple([\d.]+)/),p=M(s,/From all-time high(-[\d.]+%)/);
-   if(m)return "Mayer Multiple: "+m+"× — bitcoin is trading "+(parseFloat(m)>=1?"above":"below")+" its 200-day average"+(p?", and "+p+" from its all-time high":"")+"."}
- if(sig==="bmto"&&price>0){const n=Math.round(100000000/price);
-   const clock=n<10000?String(Math.floor(n/100)).padStart(2,"0")+":"+String(n%100).padStart(2,"0"):n.toLocaleString("en-US")+" sats";
-   return "Moscow Time: "+clock+" — one "+code+" buys "+n.toLocaleString("en-US")+" sats right now."}
- if(sig==="bsuo"){const s=S("bsuo"),m=M(s,/Mined so far([\d,]+) BTC/),p=M(s,/cap([\d.]+%)/);
-   if(m&&p)return "Bitcoin supply: "+m+" BTC mined — "+p+" of the 21 million cap. The rest trickles out until ~2140."}
- if(sig==="bdio"){const s=S("bdio"),b=M(s,/Blocks to go([\d,]+)/),c=M(s,/Expected change([+-][\d.]+%)/);
-   if(b&&c)return "Difficulty adjustment: "+b+" blocks to go, expected change "+c+"."}
- if(sig==="bbbo"){const s=S("bbbo"),g=M(s,/Gold, troy oz([\d.]+) oz/),r=M(s,/Ribeye steaks \(1 lb each\)([\d,]+)/),i=M(s,/iPhone 17 phones([\d,]+)/);
-   if(g&&r&&i)return "What 1 BTC buys right now: "+g+" oz of gold · "+r+" ribeye steaks · "+i+" iPhone 17s · and more."}
- if(sig==="bhp"){const o=document.getElementById("bhout");if(o&&o.dataset&&o.dataset.share)return o.dataset.share}
- const outId=OUT[sig];
- if(outId){const o=T(document.getElementById(outId));if(o)return clip(o,180)}
- const h2=card.querySelector("h2");
- return (DEF[sig]||(h2?T(h2):"A Bitulator tool"));
-}
-const SIG=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe"];
-[...pa.querySelectorAll(".card")].forEach(c=>{
- const hd=c.querySelector(".hd");if(!hd||hd.querySelector(".shb"))return;
- let sig=null;for(const s of SIG)if(c.querySelector("#"+s)){sig=s;break}
- if(!sig)return;
- const b=document.createElement("button");b.type="button";b.className="shb";b.textContent="Share";b.title="Share this card on X";b.setAttribute("aria-label","Share this card on X");
- b.addEventListener("pointerdown",e=>e.stopPropagation());
- b.addEventListener("mousedown",e=>e.stopPropagation());
- b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();
-   const text=clip(body(sig,c),215)+"\n\n₿ Bitulator — BTC/SATs Calculator";
-   const u="https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(SITE(sig));
-   window.open(u,"_blank","noopener,width=600,height=540");
- });
- hd.appendChild(b);
-})})();</script>
+						const SITE=s=>"https://bitulator.github.io/bitulator/share/"+s+".html";
+						const T=e=>e?e.textContent.trim().replace(/\s+/g," "):"";
+						const V=id=>{const e=document.getElementById(id);return e?e.value:""};
+						const clip=(s,n)=>s.length>n?s.slice(0,n-1).trim()+"…":s;
+						const DEF={
+						bp:"The live bitcoin price and sats converter.",
+						bch:"Bitcoin's live price chart with the 200-week average.",
+						bhw:"What one bitcoin cost on any date since 2015.",
+						bda:"DCA calculator: steady bitcoin buys vs one lump sum.",
+						bno:"The Bitcoin network right now: block height, halving countdown and send fees.",
+						bgo:"The Fear & Greed gauge: a 0–100 snapshot of market mood.",
+						bmyo:"The Mayer Multiple and the all-time high.",
+						bwi:"What $100 did: cash vs bitcoin, inflation-adjusted.",
+						bga:"Stack goal: how many sats to your goal and what they cost today.",bfa:"What your bitcoin stack would be worth at a future price.",
+						bmto:"Moscow Time: how many sats one unit of your currency buys, as a clock.",
+						bsuo:"Bitcoin supply: how much of the 21 million is mined, and what's left.",
+						bdio:"The difficulty adjustment countdown and estimated change.",
+						bhra:"Your hour in sats: what an hour of work buys in bitcoin.",
+						bbbo:"What 1 BTC buys: gold, silver, oil, steaks, iPhones — even a slice of a house.",
+						breso:"Bitcoin resources: the White Paper, 21 Lessons, the Nakamoto Institute and more.",
+						bhp:"House down payment: how much bitcoin to stack for a house deposit.",byt:"Bitcoin-only YouTube: the best bitcoin channels, no altcoins.",
+						blk:"The newest blocks: transactions, size, fees and who mined them.",
+						bln:"Lightning Network: capacity, channels and nodes.",
+						blu:"Look up any bitcoin address or transaction.",
+						bep:"Halving epochs: where we are in the current one.",
+						bml:"Bitcoin milestones: the millionth block, 99% mined, the last satoshi.",
+						bfe:"Transaction fees at each speed, in sats and dollars.",
+						bpb:"Gold and silver priced in bitcoin, then and now.",
+						bmn:"Mining stats: hash price and the chain rewrite time.",
+						bnw:"Bitcoin and macro headlines from CoinDesk, Cointelegraph and Decrypt.",
+						bse:"Bitcoin security news and software updates from Core, Lopp, Optech and more.",
+						bmc:"Bitcoin market cap: current market cap, the all-time-high market cap, and how far below the high Bitcoin sits today."};
+						const OUT={bhw:"bho",bda:"bdo",bwi:"bwo",bga:"bgout",bfa:"bfo",bhra:"bhro",bfe:"bfeo",bnw:"bnw",bse:"bseo",bmc:"bmc"};
+						function body(sig,card){
+						const cur=document.getElementById("bc");
+						const code=cur&&cur.value?cur.value:"USD";
+						const price=parseFloat(V("bp").replace(/,/g,""))||0;
+						if(card&&card.dataset&&card.dataset.share)return card.dataset.share;
+						if(sig==="bp"){
+						const unit=document.getElementById("bbt")&&!document.getElementById("bbt").classList.contains("ghost")?"sats":"BTC";
+						const get=V("br");
+						if(get)return "₿ Bitcoin is "+V("bp")+" "+code+" — "+V("ba")+" "+code+" buys "+get+" "+unit+" right now.";
+						}
+						if(sig==="bch"){const p=T(document.getElementById("bcp"));if(p)return "₿ "+p+" — the live chart with the 200-week average."}
+						const S=id=>T(document.getElementById(id));
+						const M=(s,re)=>{const m=s.match(re);return m?m[1]:null};
+						if(sig==="bno"){const s=S("bno"),h=M(s,/Block height([\d,]+)/),f=M(s,/next block (\d+)/),b=M(s,/Block (\d+),(\d+)\//),d=M(s,/halving in ([\d,]+) days/);
+						if(h&&f)return "₿ Bitcoin network: block "+h+" · next-block fee "+f+" sat/vB"+(b&&d?" · halving in "+d+" days":"")+"."}
+						if(sig==="bgo"){const s=S("bgo"),n=M(s,/(\d{1,3})(Extreme Fear|Extreme Greed|Fear|Greed|Neutral)/),l=M(s,/(Extreme Fear|Extreme Greed|Fear|Greed|Neutral)/);
+						if(n&&l)return "Fear & Greed: "+n+" — "+l+" today."}
+						if(sig==="bmyo"){const s=S("bmyo"),m=M(s,/Mayer Multiple([\d.]+)/),p=M(s,/From all-time high(-[\d.]+%)/);
+						if(m)return "Mayer Multiple: "+m+"× — bitcoin is trading "+(parseFloat(m)>=1?"above":"below")+" its 200-day average."+(p?" From all-time high "+p+".":"")}
+						if(sig==="bmto"&&price>0){const n=Math.round(100000000/price);
+						const clock=n<10000?String(Math.floor(n/100)).padStart(2,"0")+":"+String(n%100).padStart(2,"0"):n.toLocaleString("en-US");
+						return "Moscow Time: "+clock+" — one "+code+" buys "+n.toLocaleString("en-US")+" sats right now."}
+						if(sig==="bsuo"){const s=S("bsuo"),m=M(s,/Mined so far([\d,]+) BTC/),p=M(s,/cap([\d.]+%)/);
+						if(m&&p)return "Bitcoin supply: "+m+" BTC mined — "+p+" of the 21 million cap. The rest trickles out until about 2140."}
+						if(sig==="bdio"){const s=S("bdio"),b=M(s,/Blocks to go([\d,]+)/),c=M(s,/Expected change([+-][\d.]+%)/);
+						if(b&&c)return "Difficulty adjustment: "+b+" blocks to go, expected change "+c+"."}
+						if(sig==="bbbo"){const s=S("bbbo"),g=M(s,/Gold, troy oz([\d.]+) oz/),r=M(s,/Ribeye steaks \(1 lb each\)([\d,]+)/),i=M(s,/iPhone 17 Pro \$1,099\)([\d,]+)/);
+						if(g&&r&&i)return "What 1 BTC buys right now: "+g+" oz of gold · "+r+" ribeye steaks · "+i+" iPhones."}
+						if(sig==="bhp"){const o=document.getElementById("bhout");if(o&&o.dataset&&o.dataset.share)return o.dataset.share}
+						const outId=OUT[sig];
+						if(outId){const o=T(document.getElementById(outId));if(o)return clip(o,180)}
+						const h2=card.querySelector("h2");
+						return (DEF[sig]||(h2?T(h2):"A Bitulator tool"));
+						}
+						const SIG=["bp","bch","bhw","bda","bno","bgo","bmyo","bwi","bga","bfa","bmto","bsuo","bdio","bhra","bbbo","breso","bhp","byt","blk","bln","blu","bep","bml","bfe","bpb","bmn","bnw","bse","bmc"];
+						[...pa.querySelectorAll(".card")].forEach(c=>{
+						const hd=c.querySelector(".hd");if(!hd||hd.querySelector(".shb"))return;
+						let sig=null;for(const s of SIG)if(c.querySelector("#"+s)){sig=s;break}
+						if(!sig)return;
+						const b=document.createElement("button");b.type="button";b.className="shb";b.textContent="Share";b.title="Share this card";b.setAttribute("aria-label","Share this card");
+						b.addEventListener("pointerdown",e=>e.stopPropagation());
+						b.addEventListener("mousedown",e=>e.stopPropagation());
+						b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();
+						const text=clip(body(sig,c),215)+"\n\n₿ Bitulator — BTC/SATs Calculator";
+						const u="https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(SITE(sig));
+						window.open(u,"_blank","noopener,width=600,height=540");
+						});
+						hd.appendChild(b);
+						})})();</script>
