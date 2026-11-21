@@ -1,0 +1,28 @@
+<script>
+(function(){
+var el=document.getElementById("bnw");if(!el)return;
+var FEEDS=[["CoinDesk","https://www.coindesk.com/arc/outboundfeeds/rss"],["Cointelegraph","https://cointelegraph.com/rss"],["Decrypt","https://decrypt.co/feed"]];
+var POS=/bitcoin|btc/i;
+var MAC=/fed|federal reserve|interest rate|inflation|cpi|treasury|dollar|gold|liquidity|recession|tariff|jobs report|powell|central bank|money supply|yield/i;
+var NEG=/ethereum|solana|dogecoin|xrp|altcoin|memecoin|nft|cardano|bnb|tron|avalanche|chainlink|polygon|shiba|litecoin|stablecoin/i;
+function ago(t){var s=(Date.now()-t)/1e3;if(s<3600)return Math.max(1,Math.round(s/60))+"m ago";if(s<86400)return Math.round(s/3600)+"h ago";return Math.round(s/86400)+"d ago"}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function fetchFeed(f){
+var ctl=("AbortController" in window)?new AbortController():null;var tm=ctl?setTimeout(function(){ctl.abort()},15000):0;
+return fetch("https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(f[1]),ctl?{signal:ctl.signal}:{}).then(function(r){if(tm)clearTimeout(tm);if(!r.ok)throw 0;return r.json()}).then(function(j){
+if(!j||!j.items)throw 0;
+return j.items.map(function(it){return{t:it.title||"",l:it.link||"",d:new Date(String(it.pubDate).replace(" ","T")+"Z").getTime(),s:f[0]}}).filter(function(x){return x.t&&x.l&&x.d>0})})}
+function render(items){
+items.sort(function(a,b){return b.d-a.d});
+var seen={},out=[];
+for(var i=0;i<items.length&&out.length<24;i++){var k=items[i].t.toLowerCase().slice(0,60);if(seen[k])continue;seen[k]=1;out.push(items[i])}
+var list=out.filter(function(x){return POS.test(x.t)||(MAC.test(x.t)&&!NEG.test(x.t))}).slice(0,8);
+if(!list.length){fail();return}
+el.innerHTML=list.map(function(x){return '<p class="res"><a href="'+esc(x.l)+'" target="_blank" rel="noopener">'+esc(x.t)+'</a><span>'+esc(x.s)+" · "+ago(x.d)+'</span></p>'}).join("")+'<p class="note">Bitcoin &amp; macro headlines from CoinDesk, Cointelegraph and Decrypt — Bitcoin only, no altcoin news. Newest first. Tap a headline to read it.</p>';
+var c=el.closest(".card");if(c)c.dataset.share=list[0].t}
+function fail(){el.innerHTML='<p class="note">Couldn\'t load the news — tap to retry</p>'}
+function load(){Promise.all(FEEDS.map(function(f){return fetchFeed(f).catch(function(){return[]})})).then(function(rs){var all=[];rs.forEach(function(r){all=all.concat(r)});if(!all.length){fail();return}render(all)}).catch(fail)}
+el.addEventListener("click",function(){if(el.textContent.indexOf("Couldn")===0)load()});
+load();setInterval(load,3e5);
+})();
+</script>
