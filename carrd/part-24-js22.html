@@ -1,0 +1,72 @@
+<script>
+(function(){
+var el=document.getElementById("bmc");
+var smc=document.getElementById("bglmc"),smp=document.getElementById("bglmp");
+if(!el&&!smc)return;
+function fmt(v){if(v>=1e12)return "$"+(v/1e12).toFixed(2)+"T";if(v>=1e9)return "$"+(v/1e9).toFixed(1)+"B";return "$"+(v/1e6).toFixed(0)+"M"}
+function fdate(ts){var d=new Date(ts);var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return M[d.getUTCMonth()]+" "+d.getUTCDate()+", "+d.getUTCFullYear()}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function get(u,json){
+var ctl=("AbortController" in window)?new AbortController():null;var tm=ctl?setTimeout(function(){ctl.abort()},15000):0;
+return fetch(u,ctl?{signal:ctl.signal}:{}).then(function(r){if(tm)clearTimeout(tm);if(!r.ok)throw 0;return json?r.json():r.text()})}
+function render(now,ath,athTs,live){
+var pct=now/ath*100,below=pct-100;
+var ptxt=(below<=0?"−":"+")+Math.abs(below).toFixed(1)+"%";
+if(el){
+el.innerHTML='<p class="res">Market cap now<span>'+fmt(now)+(live?"":" (latest chart point)")+'</span></p>'
++'<p class="res">All-time high<span>'+fmt(ath)+" · "+fdate(athTs)+'</span></p>'
++'<p class="res">From ATH<span>'+ptxt+'</span></p>'
++'<div style="height:8px;background:#26334d;border-radius:4px;overflow:hidden;margin:2px 0 8px"><div style="height:100%;width:'+pct.toFixed(1)+'%;background:#fde047"></div></div>'
++'<p class="note">Market cap = price × coins in circulation. The bar shows today\'s market cap as a share of the all-time high. Data: Blockchain.info market-cap chart'+(live?', live price from Coinbase':'')+'.</p>';
+var c=el.closest(".card");if(c)c.dataset.share="Market cap "+fmt(now)+", "+ptxt+" from ATH"}
+if(smc)smc.textContent=fmt(now);
+if(smp)smp.textContent=ptxt+" ATH"}
+function fail(){if(el)el.innerHTML='<p class="note">Couldn\'t load market cap — tap to retry</p>'}
+function load(){
+get("https://api.blockchain.info/charts/market-cap?timespan=all&format=json&cors=true",true).then(function(j){
+if(!j||!j.values||!j.values.length)throw 0;
+var ath=0,athTs=0,last=j.values[j.values.length-1];
+for(var i=0;i<j.values.length;i++){if(j.values[i].y>ath){ath=j.values[i].y;athTs=j.values[i].x*1000}}
+var chartNow=last.y;
+Promise.all([
+get("https://api.coinbase.com/v2/prices/BTC-USD/spot",true).then(function(p){return parseFloat(p.data.amount)}).catch(function(){return 0}),
+get("https://blockchain.info/q/totalbc",false).then(function(t){return parseFloat(t)/1e8}).catch(function(){return 0})
+]).then(function(r){
+if(r[0]>0&&r[1]>0)render(r[0]*r[1],ath,athTs,true);
+else render(chartNow,ath,athTs,false)})}).catch(fail)}
+if(el)el.addEventListener("click",function(){if(el.textContent.indexOf("Couldn")===0)load()});
+load();setInterval(load,3e5);
+})();
+(function(){
+var gl=document.getElementById("bgl");if(!gl||!gl.parentNode)return;
+var TIPS=[
+["bglp","Live BTC price in US dollars (Coinbase), with the change over the last 24 hours. Refreshes every 30 seconds."],
+["bglb","The height of the latest block mined on the Bitcoin blockchain. A new block arrives about every 10 minutes."],
+["bglf","Estimated fee, in sats per vByte, for a transaction to make it into the next block."],
+["bglm","Transactions waiting unconfirmed in the mempool — Bitcoin's waiting room before miners include them in a block."],
+["bgls","Moscow Time: how many sats one unit of your currency buys right now. Lower is better — it means Bitcoin is worth more."],
+["bgla","Bitcoin's all-time high price: $126,080 on Oct 6, 2025 — and how long ago that was."],
+["bglmc","Bitcoin's total market value (price times coins in circulation) and how far it sits below its all-time high. See the Market Cap card for detail."],
+["bglh","Estimated time until the next halving, when the block subsidy drops from 3.125 to 1.5625 BTC."],
+["bgldf","When the mining difficulty next adjusts (every 2,016 blocks) and the estimated change — up means mining gets harder."]];
+var tip=document.createElement("div");tip.id="bgltip";
+tip.style.cssText="display:none;background:#131c2e;border:1px solid #26334d;border-radius:8px;padding:7px 10px;font-size:12.5px;line-height:1.45;color:#e8edf5;margin-top:6px;max-width:640px";
+gl.parentNode.insertBefore(tip,gl.nextSibling);
+var cur=null,pinned=false,hideTm=0;
+function segKey(sp){if(sp.id==="bgls")return "bgls";for(var i=0;i<TIPS.length;i++){if(sp.querySelector("#"+TIPS[i][0]))return TIPS[i][0]}return null}
+function tipText(k){for(var i=0;i<TIPS.length;i++)if(TIPS[i][0]===k)return TIPS[i][1];return ""}
+function mark(){gl.querySelectorAll(":scope > span").forEach(function(sp){var on=sp===cur;sp.style.background=on?"#26334d":"";sp.style.borderRadius=on?"6px":"";sp.style.boxShadow=on?"inset 0 0 0 1px #3d4c68":""})}
+function show(sp){var k=segKey(sp);if(!k)return;cur=sp;tip.textContent=tipText(k);tip.style.display="block";mark()}
+function hide(){cur=null;pinned=false;tip.style.display="none";mark()}
+var segs=gl.querySelectorAll(":scope > span:not(.sep)");
+segs.forEach(function(sp){
+if(!segKey(sp))return;
+sp.style.cursor="pointer";
+sp.addEventListener("click",function(){clearTimeout(hideTm);if(cur===sp&&pinned){hide()}else{show(sp);pinned=true}});
+if(window.matchMedia&&matchMedia("(hover:hover) and (pointer:fine)").matches){
+sp.addEventListener("mouseenter",function(){clearTimeout(hideTm);show(sp)});
+sp.addEventListener("mouseleave",function(){if(!pinned)hideTm=setTimeout(hide,250)});
+}});
+window.addEventListener("scroll",function(){if(cur)hide()},{passive:true});
+})();
+</script>
