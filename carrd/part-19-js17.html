@@ -4,8 +4,10 @@
 // tiles in a grid; each collapsed tile shows a scaled-down live copy of the
 // card's own content under its title (a miniature of the card), refreshed
 // every 6s. Tapping a tile expands it full-width; tapping its title again
-// collapses it. The open card is remembered per device (localStorage
-// 'bxopen'). On desktop (mouse) browsers, hovering a collapsed tile for
+// collapses it. The Live BTC chart card (bch) is the default expanded
+// card on every load (a ?card= link still wins); 'bxopen' still records
+// the last-opened card but no longer overrides the default. On desktop
+// (mouse) browsers, hovering a collapsed tile for
 // ~250ms shows an enlarged preview panel (#xpop) of that card next to the
 // tile, scaled to fit so the WHOLE card shows; it hides on
 // mouse-leave/scroll and never appears in Manage mode or
@@ -120,8 +122,7 @@ var sig=(location.search.match(/[?&]card=([a-z]+)/)||[])[1];
 var startCard=null;
 if(sig){startCard=bySig(sig);}
 if(!startCard){
-  var saved="";try{saved=localStorage.getItem("bxopen")||"";}catch(e){}
-  if(saved)startCard=bySig(saved);
+  startCard=bySig("bch");
   if(startCard&&startCard.style.display==="none")startCard=null;
 }
 if(!startCard)startCard=root.querySelector(".card.feat")||cards[0];
