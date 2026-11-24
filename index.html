@@ -209,6 +209,15 @@
   .mini-list li:last-child{border-bottom:0}
   .mini-list .d{color:var(--muted);font-size:.85rem;display:block}
   canvas.chart{width:100%;height:150px;display:block;background:var(--bg2);border:1px solid var(--line-soft);border-radius:10px}
+  /* Chart timeframe pills — same pill language as the channel chips */
+  .tf-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .tf-btn{
+    border:1px solid var(--line);background:var(--bg2);color:var(--ink);
+    border-radius:99px;padding:0 13px;font:inherit;font-size:.85rem;font-weight:600;
+    cursor:pointer;min-height:2.75rem;
+  }
+  .tf-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .tf-btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 
   /* YouTube player card */
   .card.wide{grid-column:1/-1}
@@ -536,9 +545,19 @@
     <div class="grid">
 
       <article class="card" data-card data-title="Live BTC chart" data-keys="live btc chart price graph candles trend sparkline">
-        <div class="card-top"><div class="t"><h3>Live BTC chart</h3><p class="sub">The last 90 days, scrubbed by your thumb.</p></div><button class="star" type="button" aria-label="Star Live BTC chart" aria-pressed="false">★</button></div>
+        <div class="card-top"><div class="t"><h3>Live BTC chart</h3><p class="sub" id="chart-range-sub">The last 3 months, scrubbed by your thumb.</p></div><button class="star" type="button" aria-label="Star Live BTC chart" aria-pressed="false">★</button></div>
         <div class="body">
-          <canvas class="chart" id="chart" width="640" height="300" aria-label="Bitcoin price chart, last 90 days"></canvas>
+          <div class="tf-row" role="group" aria-label="Chart time frame">
+            <button type="button" class="tf-btn" data-range="24H" aria-pressed="false">24H</button>
+            <button type="button" class="tf-btn" data-range="7D" aria-pressed="false">7D</button>
+            <button type="button" class="tf-btn" data-range="1M" aria-pressed="false">1M</button>
+            <button type="button" class="tf-btn" data-range="3M" aria-pressed="true">3M</button>
+            <button type="button" class="tf-btn" data-range="1Y" aria-pressed="false">1Y</button>
+            <button type="button" class="tf-btn" data-range="5Y" aria-pressed="false">5Y</button>
+            <button type="button" class="tf-btn" data-range="ALL" aria-pressed="false">ALL</button>
+            <span class="tag sample" id="chart-badge" style="align-self:center">Sample</span>
+          </div>
+          <canvas class="chart" id="chart" width="640" height="300" aria-label="Bitcoin price chart, last 3 months"></canvas>
           <div class="field" style="margin-top:10px"><label for="chart-scrub">Scrub the timeline</label><input type="range" id="chart-scrub" min="0" max="89" value="89" step="1"></div>
           <div class="out"><div class="big" id="chart-out">—</div><div class="note" id="chart-sub">—</div></div>
         </div>
@@ -1369,18 +1388,50 @@
   $("calc-unit-btc").addEventListener("click", function(){ setCalcUnit("btc"); });
   ["wage","fee-size"].forEach(function(id){ $(id).addEventListener("input", renderPriceCards); });
 
-  /* ---------- Chart ---------- */
+  /* ---------- Chart (timeframe-switchable) ---------- */
   var chartData = []; // {t: timestamp, p: price}
-  function sampleSeries(){
-    var out = [], p = S.price * 0.82, now = Date.now();
-    var seed = 42;
+  var chartLive = false;
+  var chartRange = "3M"; // default range — matches the original fixed 90-day view
+  var chartReq = 0;      // token so a slow earlier range can't overwrite a newer pick
+  var DAY = 864e5;
+  /* Per-range config: how far back, candle size for the live fetch, and how
+     to fake the series when live data can't load. */
+  var RANGES = {
+    "24H": { days:1,    gran:900,   granLabel:"15-minute closes", sub:"The last 24 hours, scrubbed by your thumb.",  aria:"last 24 hours", sample:{ n:96,  stepMs:15*60*1000, start:0.99, vol:0.004 } },
+    "7D":  { days:7,    gran:3600,  granLabel:"hourly closes",    sub:"The last 7 days, scrubbed by your thumb.",   aria:"last 7 days",   sample:{ n:168, stepMs:3600*1000,  start:0.97, vol:0.006 } },
+    "1M":  { days:30,   gran:21600, granLabel:"6-hour closes",    sub:"The last month, scrubbed by your thumb.",    aria:"last month",    sample:{ n:120, stepMs:6*3600*1000,start:0.92, vol:0.010 } },
+    "3M":  { days:90,   gran:86400, granLabel:"daily closes",     sub:"The last 3 months, scrubbed by your thumb.", aria:"last 3 months", sample:{ n:90,  stepMs:DAY,         start:0.82, vol:0.030 } },
+    "1Y":  { days:365,  gran:86400, granLabel:"daily closes",     sub:"The last year, scrubbed by your thumb.",     aria:"last year",     sample:{ n:365, stepMs:DAY,         start:0.65, vol:0.030 } },
+    "5Y":  { days:1825, gran:86400, granLabel:"daily closes",     sub:"The last 5 years, scrubbed by your thumb.",  aria:"last 5 years",  sample:{ n:260, stepMs:7*DAY,       start:0.25, vol:0.055 } },
+    "ALL": { days:0,    gran:86400, granLabel:"daily closes",     sub:"Bitcoin's whole chart, scrubbed by your thumb.", aria:"all available history", sample:{ n:288, stepMs:14*DAY, start:0.04, vol:0.075 } }
+  };
+  function sampleSeriesFor(key){
+    var cfg = RANGES[key].sample;
+    var out = [], p = S.price * cfg.start, now = Date.now();
+    var seed = 42 + key.length * 131 + cfg.n;
     function rnd(){ seed = (seed*1103515245 + 12345) % 2147483648; return seed/2147483648; }
-    for (var i=89; i>=0; i--){
-      p *= (1 + (rnd()-0.46)*0.03);
-      out.push({ t: now - i*864e5, p: p });
+    for (var i=cfg.n-1; i>=0; i--){
+      p *= (1 + (rnd()-0.46)*cfg.vol);
+      out.push({ t: now - i*cfg.stepMs, p: p });
     }
     out[out.length-1].p = S.price;
     return out;
+  }
+  function fmtPointWhen(t){
+    var dt = new Date(t);
+    if (chartRange === "24H")
+      return dt.toLocaleDateString("en-US",{month:"short", day:"numeric"}) + ", " +
+             dt.toLocaleTimeString("en-US",{hour:"numeric", minute:"2-digit"});
+    if (chartRange === "7D")
+      return dt.toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"}) + ", " +
+             dt.toLocaleTimeString("en-US",{hour:"numeric", minute:"2-digit"});
+    return dt.toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"});
+  }
+  function setChartBadge(){
+    var b = $("chart-badge"); if (!b) return;
+    b.textContent = chartLive ? "Live" : "Sample";
+    b.className = "tag " + (chartLive ? "live" : "sample");
+    b.style.alignSelf = "center";
   }
   function drawChart(idx){
     var cv = $("chart"); if (!cv || !chartData.length) return;
@@ -1402,14 +1453,67 @@
     ctx.beginPath(); ctx.arc(X(j), Y(chartData[j].p), 6, 0, Math.PI*2);
     ctx.fillStyle = "#fde047"; ctx.fill();
     ctx.strokeStyle = "#0a1128"; ctx.lineWidth = 2; ctx.stroke();
-    var dt = new Date(chartData[j].t);
     $("chart-out").textContent = fmtUSD(chartData[j].p);
-    $("chart-sub").textContent = dt.toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"}) + (chartLive ? " · live daily closes" : " · sample series");
+    $("chart-sub").textContent = fmtPointWhen(chartData[j].t) + (chartLive ? " · live " + RANGES[chartRange].granLabel : " · sample series");
   }
-  var chartLive = false;
+  function setChartData(data){
+    chartData = data;
+    var scrub = $("chart-scrub");
+    scrub.max = data.length - 1; scrub.value = data.length - 1;
+    setChartBadge();
+    drawChart(data.length - 1);
+  }
+  /* Coinbase Exchange candles, chunked: the API returns at most 300 candles
+     per request, so long ranges are fetched in windows and stitched. */
+  function fetchCandles(key){
+    var cfg = RANGES[key];
+    var endMs = Date.now();
+    var startMs = key === "ALL" ? Date.UTC(2015,0,1) : endMs - cfg.days*DAY;
+    var chunkMs = cfg.gran*1000*290, windows = [], s;
+    for (s=startMs; s<endMs; s+=chunkMs) windows.push([s, Math.min(s+chunkMs, endMs)]);
+    return Promise.all(windows.map(function(w){
+      var url = "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=" + cfg.gran +
+                "&start=" + new Date(w[0]).toISOString() + "&end=" + new Date(w[1]).toISOString();
+      return getJSON(url);
+    })).then(function(parts){
+      var byTime = {}, rows = [];
+      parts.forEach(function(rowsIn){
+        if (!rowsIn) return;
+        rowsIn.forEach(function(r){ if (r && isFinite(r[4])) byTime[r[0]] = r[4]; });
+      });
+      Object.keys(byTime).forEach(function(k){ rows.push({ t: parseInt(k,10)*1000, p: byTime[k] }); });
+      rows.sort(function(a,b){ return a.t - b.t; });
+      if (rows.length < 10) throw new Error("short");
+      return rows;
+    });
+  }
+  function loadChartRange(key){
+    if (!RANGES[key]) key = "3M";
+    chartRange = key;
+    var req = ++chartReq;
+    document.querySelectorAll(".tf-btn").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-range") === key ? "true" : "false");
+    });
+    $("chart-range-sub").textContent = RANGES[key].sub;
+    $("chart").setAttribute("aria-label", "Bitcoin price chart, " + RANGES[key].aria);
+    $("chart-sub").textContent = "Loading…";
+    fetchCandles(key).then(function(data){
+      if (req !== chartReq) return;
+      chartLive = true;
+      setChartData(data);
+    }).catch(function(){
+      if (req !== chartReq) return;
+      chartLive = false;
+      setChartData(sampleSeriesFor(key));
+    });
+  }
+  document.querySelectorAll(".tf-btn").forEach(function(b){
+    b.addEventListener("click", function(){ loadChartRange(b.getAttribute("data-range")); });
+  });
   $("chart-scrub").addEventListener("input", function(){ drawChart(parseInt(this.value,10)); });
-  chartData = sampleSeries();
-  drawChart(89);
+  chartData = sampleSeriesFor("3M");
+  setChartBadge();
+  drawChart(chartData.length - 1);
 
   /* ---------- Search / filter ---------- */
   var cards = Array.prototype.slice.call(document.querySelectorAll("[data-card]"));
@@ -1622,15 +1726,9 @@
     $("ln-nodes").textContent = "~16,500 (sample)";
   });
 
-  /* Chart: try Coinbase daily candles, else keep the sample series */
-  getJSON("https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400").then(function(rows){
-    if (!rows || rows.length < 30) throw new Error("short");
-    var data = rows.slice(0,90).map(function(r){ return { t: r[0]*1000, p: r[4] }; }).reverse();
-    chartData = data; chartLive = true;
-    var scrub = $("chart-scrub");
-    scrub.max = data.length - 1; scrub.value = data.length - 1;
-    drawChart(data.length - 1);
-  }).catch(function(){ chartLive = false; drawChart(89); });
+  /* Chart: load the default range (3M) live; loadChartRange falls back to
+     that range's sample series when Coinbase candles can't load. */
+  loadChartRange("3M");
 })();
 </script>
 
