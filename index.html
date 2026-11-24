@@ -165,6 +165,23 @@
   }
   .star:hover{color:var(--accent)}
   .star[aria-pressed="true"]{color:var(--accent)}
+  .share-btn{
+    flex:none;width:44px;height:44px;border-radius:10px;border:1px solid transparent;
+    background:transparent;color:var(--faint);cursor:pointer;line-height:1;position:relative;
+    display:inline-flex;align-items:center;justify-content:center;padding:0;
+  }
+  .share-btn:hover{color:var(--accent)}
+  .share-btn svg{width:20px;height:20px;display:block;flex:none}
+  .share-btn.copied{color:var(--green)}
+  .share-feedback{
+    position:absolute;top:-4px;right:0;transform:translateY(-100%);
+    background:var(--accent);color:var(--accent-ink);font-size:.72rem;font-weight:800;
+    padding:4px 8px;border-radius:99px;white-space:nowrap;pointer-events:none;
+    opacity:0;transition:opacity .18s ease;z-index:6;
+  }
+  .share-btn.copied .share-feedback{opacity:1}
+  .card{transition:border-color .35s ease,box-shadow .35s ease}
+  .card.deep-flash{border-color:var(--accent);box-shadow:0 0 0 2px rgba(253,224,71,.55),0 0 28px rgba(253,224,71,.28)}
   .card .body{font-size:.95rem}
   .stat-rows{display:flex;flex-direction:column}
   .stat-row{
@@ -558,8 +575,8 @@
     <div class="group-head"><h2>Market right now</h2><p>Price, mood, and momentum at a glance.</p></div>
     <div class="grid">
 
-      <article class="card" data-card data-title="Live BTC chart" data-keys="live btc chart price graph candles trend sparkline">
-        <div class="card-top"><div class="t"><h3>Live BTC chart</h3><p class="sub" id="chart-range-sub">The last 3 months, scrubbed by your thumb.</p></div><button class="star" type="button" aria-label="Star Live BTC chart" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bch" data-title="Live BTC chart" data-keys="live btc chart price graph candles trend sparkline">
+        <div class="card-top"><div class="t"><h3>Live BTC chart</h3><p class="sub" id="chart-range-sub">The last 3 months, scrubbed by your thumb.</p></div><button class="share-btn" type="button" aria-label="Share Live BTC chart" title="Share Live BTC chart" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Live BTC chart" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="chart-now" aria-label="Current Bitcoin price">
             <span class="chart-now-price" id="chart-now-price">—</span>
@@ -585,8 +602,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Fear & Greed" data-keys="fear greed index sentiment emotion market mood">
-        <div class="card-top"><div class="t"><h3>Fear &amp; Greed</h3><p class="sub">How the market feels today, 0–100.</p></div><button class="star" type="button" aria-label="Star Fear and Greed" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bgo" data-title="Fear & Greed" data-keys="fear greed index sentiment emotion market mood">
+        <div class="card-top"><div class="t"><h3>Fear &amp; Greed</h3><p class="sub">How the market feels today, 0–100.</p></div><button class="share-btn" type="button" aria-label="Share Fear &amp; Greed" title="Share Fear &amp; Greed" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Fear and Greed" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="out" style="text-align:center"><div class="big" id="fng-big" style="font-size:2.2rem">—</div><div class="note" id="fng-word">—</div></div>
           <div class="fng-track" role="img" aria-label="Fear and Greed scale: red fear on the left, flowing through orange and yellow, to green greed on the right"><i class="fng-needle" id="fng-bar" style="left:50%"></i></div>
@@ -594,8 +611,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Mayer Multiple & all-time high" data-keys="mayer multiple all-time high ath 200 day moving average overvalued">
-        <div class="card-top"><div class="t"><h3>Mayer Multiple &amp; all-time high</h3><p class="sub">Price vs. its own long-run average.</p></div><button class="star" type="button" aria-label="Star Mayer Multiple and all-time high" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bmyo" data-title="Mayer Multiple & all-time high" data-keys="mayer multiple all-time high ath 200 day moving average overvalued">
+        <div class="card-top"><div class="t"><h3>Mayer Multiple &amp; all-time high</h3><p class="sub">Price vs. its own long-run average.</p></div><button class="share-btn" type="button" aria-label="Share Mayer Multiple &amp; all-time high" title="Share Mayer Multiple &amp; all-time high" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Mayer Multiple and all-time high" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows">
             <div class="stat-row"><span class="k">Mayer Multiple</span><span class="v" id="mayer-v">—</span></div>
@@ -607,8 +624,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Bitcoin market cap" data-keys="market cap capitalization total value size dominance">
-        <div class="card-top"><div class="t"><h3>Bitcoin market cap</h3><p class="sub">Every bitcoin in existence, priced.</p></div><button class="star" type="button" aria-label="Star Bitcoin market cap" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bmc" data-title="Bitcoin market cap" data-keys="market cap capitalization total value size dominance">
+        <div class="card-top"><div class="t"><h3>Bitcoin market cap</h3><p class="sub">Every bitcoin in existence, priced.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin market cap" title="Share Bitcoin market cap" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin market cap" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="out"><div class="big" id="mcap-v">—</div><div class="note" id="mcap-sub">—</div></div>
           <div class="stat-rows">
@@ -618,8 +635,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Bitcoin News" data-keys="news headlines bitcoin economy fed rates stories">
-        <div class="card-top"><div class="t"><h3>Bitcoin News</h3><p class="sub">Top posts from Stacker News ~bitcoin.</p></div><button class="star" type="button" aria-label="Star Bitcoin News" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bnw" data-title="Bitcoin News" data-keys="news headlines bitcoin economy fed rates stories">
+        <div class="card-top"><div class="t"><h3>Bitcoin News</h3><p class="sub">Top posts from Stacker News ~bitcoin.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin News" title="Share Bitcoin News" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin News" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="tf-row" role="group" aria-label="News view">
             <button type="button" class="tf-btn" data-news-tab="new" aria-pressed="true">New</button>
@@ -640,8 +657,8 @@
     <div class="group-head"><h2>Network</h2><p>The machine underneath, in plain numbers.</p></div>
     <div class="grid">
 
-      <article class="card" data-card data-title="Bitcoin network" data-keys="bitcoin network hashrate mempool nodes health stats">
-        <div class="card-top"><div class="t"><h3>Bitcoin network</h3><p class="sub">Hashrate, backlog, and nodes.</p></div><button class="star" type="button" aria-label="Star Bitcoin network" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bno" data-title="Bitcoin network" data-keys="bitcoin network hashrate mempool nodes health stats">
+        <div class="card-top"><div class="t"><h3>Bitcoin network</h3><p class="sub">Hashrate, backlog, and nodes.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin network" title="Share Bitcoin network" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin network" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows">
             <div class="stat-row"><span class="k">Hashrate</span><span class="v" id="net-hashrate">—</span></div>
@@ -652,8 +669,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Latest blocks" data-keys="latest blocks blockchain recent mined height transactions">
-        <div class="card-top"><div class="t"><h3>Latest blocks</h3><p class="sub">Fresh from the chain, newest first.</p></div><button class="star" type="button" aria-label="Star Latest blocks" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="blk" data-title="Latest blocks" data-keys="latest blocks blockchain recent mined height transactions">
+        <div class="card-top"><div class="t"><h3>Latest blocks</h3><p class="sub">Fresh from the chain, newest first.</p></div><button class="share-btn" type="button" aria-label="Share Latest blocks" title="Share Latest blocks" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Latest blocks" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows" id="blocks-rows">
             <div class="stat-row"><span class="k">Loading…</span><span class="v"></span></div>
@@ -662,8 +679,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Difficulty adjustment" data-keys="difficulty adjustment mining retarget epoch estimate">
-        <div class="card-top"><div class="t"><h3>Difficulty adjustment</h3><p class="sub">Mining difficulty re-tunes itself.</p></div><button class="star" type="button" aria-label="Star Difficulty adjustment" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bdio" data-title="Difficulty adjustment" data-keys="difficulty adjustment mining retarget epoch estimate">
+        <div class="card-top"><div class="t"><h3>Difficulty adjustment</h3><p class="sub">Mining difficulty re-tunes itself.</p></div><button class="share-btn" type="button" aria-label="Share Difficulty adjustment" title="Share Difficulty adjustment" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Difficulty adjustment" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="bar" role="img" aria-label="Progress through current difficulty period"><i id="diff-bar" style="width:62%"></i></div>
           <div class="stat-rows">
@@ -675,8 +692,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Halving epoch" data-keys="halving epoch countdown reward subsidy 2028 next">
-        <div class="card-top"><div class="t"><h3>Halving epoch</h3><p class="sub">Countdown to the next supply cut.</p></div><button class="star" type="button" aria-label="Star Halving epoch" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bep" data-title="Halving epoch" data-keys="halving epoch countdown reward subsidy 2028 next">
+        <div class="card-top"><div class="t"><h3>Halving epoch</h3><p class="sub">Countdown to the next supply cut.</p></div><button class="share-btn" type="button" aria-label="Share Halving epoch" title="Share Halving epoch" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Halving epoch" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="out" style="text-align:center"><div class="big" id="halv-days" style="font-size:2rem">—</div><div class="note">estimated days to the next halving</div></div>
           <div class="bar" role="img" aria-label="Progress through current halving epoch"><i id="halv-bar" style="width:40%"></i></div>
@@ -689,8 +706,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Bitcoin supply" data-keys="bitcoin supply issued mined remaining 21 million scarcity">
-        <div class="card-top"><div class="t"><h3>Bitcoin supply</h3><p class="sub">How much exists, and how much is left.</p></div><button class="star" type="button" aria-label="Star Bitcoin supply" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bsuo" data-title="Bitcoin supply" data-keys="bitcoin supply issued mined remaining 21 million scarcity">
+        <div class="card-top"><div class="t"><h3>Bitcoin supply</h3><p class="sub">How much exists, and how much is left.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin supply" title="Share Bitcoin supply" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin supply" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="bar" role="img" aria-label="Share of total supply already mined"><i id="supply-bar" style="width:95%"></i></div>
           <div class="stat-rows">
@@ -702,8 +719,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Lightning Network" data-keys="lightning network capacity channels nodes payments layer 2">
-        <div class="card-top"><div class="t"><h3>Lightning Network</h3><p class="sub">Bitcoin's fast lane for small payments.</p></div><button class="star" type="button" aria-label="Star Lightning Network" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bln" data-title="Lightning Network" data-keys="lightning network capacity channels nodes payments layer 2">
+        <div class="card-top"><div class="t"><h3>Lightning Network</h3><p class="sub">Bitcoin's fast lane for small payments.</p></div><button class="share-btn" type="button" aria-label="Share Lightning Network" title="Share Lightning Network" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Lightning Network" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows">
             <div class="stat-row"><span class="k">Capacity</span><span class="v" id="ln-cap">—</span></div>
@@ -714,8 +731,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Address & transaction lookup" data-keys="address transaction lookup explorer search txid track confirm">
-        <div class="card-top"><div class="t"><h3>Address &amp; transaction lookup</h3><p class="sub">Check any address or payment on-chain.</p></div><button class="star" type="button" aria-label="Star Address and transaction lookup" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="blu" data-title="Address & transaction lookup" data-keys="address transaction lookup explorer search txid track confirm">
+        <div class="card-top"><div class="t"><h3>Address &amp; transaction lookup</h3><p class="sub">Check any address or payment on-chain.</p></div><button class="share-btn" type="button" aria-label="Share Address &amp; transaction lookup" title="Share Address &amp; transaction lookup" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Address and transaction lookup" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="field"><label for="lookup-q">Bitcoin address or transaction ID</label><input type="text" id="lookup-q" placeholder="bc1q… or a 64-character txid" autocomplete="off" spellcheck="false"></div>
           <button class="btn ghost" type="button" id="lookup-btn" style="width:100%">Look it up on mempool.space ↗</button>
@@ -731,8 +748,8 @@
     <div class="group-head"><h2>Convert &amp; calculate</h2><p>Everyday Bitcoin math, no spreadsheet.</p></div>
     <div class="grid">
 
-      <article class="card" data-card data-title="BTC/SATs Calculator" data-keys="btc sats calculator convert conversion bitcoin satoshis usd dollars">
-        <div class="card-top"><div class="t"><h3>BTC/SATs Calculator</h3><p class="sub">Flip between bitcoin, sats, and dollars.</p></div><button class="star" type="button" aria-label="Star BTC/SATs Calculator" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bp" data-title="BTC/SATs Calculator" data-keys="btc sats calculator convert conversion bitcoin satoshis usd dollars">
+        <div class="card-top"><div class="t"><h3>BTC/SATs Calculator</h3><p class="sub">Flip between bitcoin, sats, and dollars.</p></div><button class="share-btn" type="button" aria-label="Share BTC/SATs Calculator" title="Share BTC/SATs Calculator" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star BTC/SATs Calculator" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="field"><label for="calc-amount" id="calc-amount-label">Amount in BTC</label><input type="number" id="calc-amount" value="0.01" step="any" min="0" inputmode="decimal"></div>
           <div class="field">
@@ -749,8 +766,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Fee calculator" data-keys="fee calculator transaction cost sat vb mempool send on-chain">
-        <div class="card-top"><div class="t"><h3>Fee calculator</h3><p class="sub">What an on-chain send costs right now.</p></div><button class="star" type="button" aria-label="Star Fee calculator" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bfe" data-title="Fee calculator" data-keys="fee calculator transaction cost sat vb mempool send on-chain">
+        <div class="card-top"><div class="t"><h3>Fee calculator</h3><p class="sub">What an on-chain send costs right now.</p></div><button class="share-btn" type="button" aria-label="Share Fee calculator" title="Share Fee calculator" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Fee calculator" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="field"><label for="fee-size">Transaction size (vBytes)</label><input type="number" id="fee-size" value="140" min="50" step="1" inputmode="numeric"></div>
           <div class="stat-rows">
@@ -762,16 +779,16 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Your hour in sats" data-keys="hour wage salary sats earn work income hourly">
-        <div class="card-top"><div class="t"><h3>Your hour in sats</h3><p class="sub">Your paycheck, denominated in sats.</p></div><button class="star" type="button" aria-label="Star Your hour in sats" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bhra" data-title="Your hour in sats" data-keys="hour wage salary sats earn work income hourly">
+        <div class="card-top"><div class="t"><h3>Your hour in sats</h3><p class="sub">Your paycheck, denominated in sats.</p></div><button class="share-btn" type="button" aria-label="Share Your hour in sats" title="Share Your hour in sats" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Your hour in sats" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="field"><label for="wage">Hourly wage ($)</label><input type="number" id="wage" value="25" min="0" step="any" inputmode="decimal"></div>
           <div class="out"><div class="big" id="wage-out">—</div><div class="note">earned per hour, at the current price</div></div>
         </div>
       </article>
 
-      <article class="card" data-card data-title="What 1 BTC buys" data-keys="what 1 btc buys purchasing power car house gold compares worth">
-        <div class="card-top"><div class="t"><h3>What 1 BTC buys</h3><p class="sub">One bitcoin, in everyday things.</p></div><button class="star" type="button" aria-label="Star What 1 BTC buys" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bbbo" data-title="What 1 BTC buys" data-keys="what 1 btc buys purchasing power car house gold compares worth">
+        <div class="card-top"><div class="t"><h3>What 1 BTC buys</h3><p class="sub">One bitcoin, in everyday things.</p></div><button class="share-btn" type="button" aria-label="Share What 1 BTC buys" title="Share What 1 BTC buys" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star What 1 BTC buys" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows">
             <div class="stat-row"><span class="k">New cars <span class="note">(~$48k avg)</span></span><span class="v" id="buys-cars">—</span></div>
@@ -783,8 +800,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Moscow Time" data-keys="moscow time clock sats per dollar price ticker">
-        <div class="card-top"><div class="t"><h3>Moscow Time</h3><p class="sub">The price as a clock: sats per dollar.</p></div><button class="star" type="button" aria-label="Star Moscow Time" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bmto" data-title="Moscow Time" data-keys="moscow time clock sats per dollar price ticker">
+        <div class="card-top"><div class="t"><h3>Moscow Time</h3><p class="sub">The price as a clock: sats per dollar.</p></div><button class="share-btn" type="button" aria-label="Share Moscow Time" title="Share Moscow Time" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Moscow Time" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="out" style="text-align:center"><div class="big" id="moscow-clock" style="font-size:2.4rem;letter-spacing:.04em">—</div><div class="note" id="moscow-sub">—</div></div>
           <p class="note">Bitcoiners read the sats-per-dollar rate like a clock. Lower time = stronger dollar… for now.</p>
@@ -799,8 +816,8 @@
     <div class="group-head"><h2>Plan your stack</h2><p>Small buys, long horizons.</p></div>
     <div class="grid">
 
-      <article class="card" data-card data-title="DCA calculator" data-keys="dca calculator dollar cost average recurring buy weekly monthly invest">
-        <div class="card-top"><div class="t"><h3>DCA calculator</h3><p class="sub">What steady small buys add up to.</p></div><button class="star" type="button" aria-label="Star DCA calculator" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bda" data-title="DCA calculator" data-keys="dca calculator dollar cost average recurring buy weekly monthly invest">
+        <div class="card-top"><div class="t"><h3>DCA calculator</h3><p class="sub">What steady small buys add up to.</p></div><button class="share-btn" type="button" aria-label="Share DCA calculator" title="Share DCA calculator" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star DCA calculator" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="two">
             <div class="field"><label for="dca-amt">Buy amount ($)</label><input type="number" id="dca-amt" value="50" min="1" step="any" inputmode="decimal"></div>
@@ -817,8 +834,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Stack goal" data-keys="stack goal target save progress sats bitcoin target">
-        <div class="card-top"><div class="t"><h3>Stack goal</h3><p class="sub">How close are you to your target?</p></div><button class="star" type="button" aria-label="Star Stack goal" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bga" data-title="Stack goal" data-keys="stack goal target save progress sats bitcoin target">
+        <div class="card-top"><div class="t"><h3>Stack goal</h3><p class="sub">How close are you to your target?</p></div><button class="share-btn" type="button" aria-label="Share Stack goal" title="Share Stack goal" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Stack goal" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="two">
             <div class="field"><label for="goal-target">Goal (BTC)</label><input type="number" id="goal-target" value="0.1" min="0" step="any" inputmode="decimal"></div>
@@ -833,8 +850,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="My stack at a future price" data-keys="stack future price worth value what if moon scenario">
-        <div class="card-top"><div class="t"><h3>My stack at a future price</h3><p class="sub">Pick a price, see what your stack is worth.</p></div><button class="star" type="button" aria-label="Star My stack at a future price" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bfa" data-title="My stack at a future price" data-keys="stack future price worth value what if moon scenario">
+        <div class="card-top"><div class="t"><h3>My stack at a future price</h3><p class="sub">Pick a price, see what your stack is worth.</p></div><button class="share-btn" type="button" aria-label="Share My stack at a future price" title="Share My stack at a future price" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star My stack at a future price" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="field"><label for="fut-have">Your stack (BTC)</label><input type="number" id="fut-have" value="0.25" min="0" step="any" inputmode="decimal"></div>
           <div class="field"><label for="fut-price">Future price: <strong id="fut-price-lab">$250,000</strong></label><input type="range" id="fut-price" min="10000" max="1000000" value="250000" step="5000"></div>
@@ -842,8 +859,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="House down payment" data-keys="house down payment home mortgage save real estate">
-        <div class="card-top"><div class="t"><h3>House down payment</h3><p class="sub">A down payment, measured in bitcoin.</p></div><button class="star" type="button" aria-label="Star House down payment" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bhp" data-title="House down payment" data-keys="house down payment home mortgage save real estate">
+        <div class="card-top"><div class="t"><h3>House down payment</h3><p class="sub">A down payment, measured in bitcoin.</p></div><button class="share-btn" type="button" aria-label="Share House down payment" title="Share House down payment" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star House down payment" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="two">
             <div class="field"><label for="house-price">Home price ($)</label><input type="number" id="house-price" value="400000" min="0" step="any" inputmode="decimal"></div>
@@ -856,8 +873,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="What $100 did" data-keys="what 100 did historical bought past would be worth regret">
-        <div class="card-top"><div class="t"><h3>What $100 did</h3><p class="sub">$100 of Bitcoin bought back then, today.</p></div><button class="star" type="button" aria-label="Star What $100 did" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bwi" data-title="What $100 did" data-keys="what 100 did historical bought past would be worth regret">
+        <div class="card-top"><div class="t"><h3>What $100 did</h3><p class="sub">$100 of Bitcoin bought back then, today.</p></div><button class="share-btn" type="button" aria-label="Share What $100 did" title="Share What $100 did" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star What $100 did" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="field"><label for="hundo-year">Bought in</label>
             <select id="hundo-year">
@@ -871,8 +888,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Historical price" data-keys="historical price history past lookup year chart old">
-        <div class="card-top"><div class="t"><h3>Historical price</h3><p class="sub">What one bitcoin cost, year by year.</p></div><button class="star" type="button" aria-label="Star Historical price" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bhw" data-title="Historical price" data-keys="historical price history past lookup year chart old">
+        <div class="card-top"><div class="t"><h3>Historical price</h3><p class="sub">What one bitcoin cost, year by year.</p></div><button class="share-btn" type="button" aria-label="Share Historical price" title="Share Historical price" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Historical price" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows" id="hist-rows"><div class="stat-row"><span class="k">Loading…</span><span class="v">—</span></div></div>
           <p class="note" id="hist-note">Year-start prices: blockchain.info / Coinbase.</p>
@@ -887,8 +904,8 @@
     <div class="group-head"><h2>Learn &amp; watch</h2><p>Go deeper, from sources that stick to Bitcoin.</p></div>
     <div class="grid">
 
-      <article class="card" data-card data-title="Bitcoin resources" data-keys="bitcoin resources links learn books guides whitepaper start">
-        <div class="card-top"><div class="t"><h3>Bitcoin resources</h3><p class="sub">The short list worth bookmarking.</p></div><button class="star" type="button" aria-label="Star Bitcoin resources" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="breso" data-title="Bitcoin resources" data-keys="bitcoin resources links learn books guides whitepaper start">
+        <div class="card-top"><div class="t"><h3>Bitcoin resources</h3><p class="sub">The short list worth bookmarking.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin resources" title="Share Bitcoin resources" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin resources" aria-pressed="false">★</button></div>
         <div class="body">
           <ul class="mini-list">
             <li><a href="https://bitcoin.org/bitcoin.pdf" target="_blank" rel="noopener">The Bitcoin whitepaper</a><span class="d">Satoshi's original 9 pages — start here.</span></li>
@@ -899,8 +916,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Bitcoin security & updates" data-keys="security updates wallet safety seed phrase scam protect cold storage">
-        <div class="card-top"><div class="t"><h3>Bitcoin security &amp; updates</h3><p class="sub">The habits that keep a stack safe.</p></div><button class="star" type="button" aria-label="Star Bitcoin security and updates" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bse" data-title="Bitcoin security & updates" data-keys="security updates wallet safety seed phrase scam protect cold storage">
+        <div class="card-top"><div class="t"><h3>Bitcoin security &amp; updates</h3><p class="sub">The habits that keep a stack safe.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin security &amp; updates" title="Share Bitcoin security &amp; updates" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin security and updates" aria-pressed="false">★</button></div>
         <div class="body">
           <ul class="mini-list">
             <li><strong>Seed phrase stays offline.</strong><span class="d">Stamped or engraved in steel or titanium, never a photo, never typed into a website.</span></li>
@@ -911,8 +928,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-title="Bitcoin milestones" data-keys="bitcoin milestones history timeline genesis pizza day etf dates">
-        <div class="card-top"><div class="t"><h3>Bitcoin milestones</h3><p class="sub">Sixteen years in six lines.</p></div><button class="star" type="button" aria-label="Star Bitcoin milestones" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bml" data-title="Bitcoin milestones" data-keys="bitcoin milestones history timeline genesis pizza day etf dates">
+        <div class="card-top"><div class="t"><h3>Bitcoin milestones</h3><p class="sub">Sixteen years in six lines.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin milestones" title="Share Bitcoin milestones" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin milestones" aria-pressed="false">★</button></div>
         <div class="body">
           <ul class="mini-list">
             <li><strong>Jan 2009</strong> — Genesis block mined<span class="d">Bitcoin goes live.</span></li>
@@ -924,8 +941,8 @@
         </div>
       </article>
 
-      <article class="card wide" data-card data-title="Bitcoin-only YouTube" data-keys="youtube watch videos player channels podcasts bitcoin only creators pleb underground btc sessions what bitcoin did bitcoin layer bram kanstein jack mallers canadian bitcoiners nolan bauerle brandon gentile reckoning captive bid bugle walker america simon dixon eric yakes">
-        <div class="card-top"><div class="t"><h3>Bitcoin-only YouTube</h3><p class="sub">Pick a channel — its latest videos play right here.</p></div><button class="star" type="button" aria-label="Star Bitcoin-only YouTube" aria-pressed="false">★</button></div>
+      <article class="card wide" data-card data-share="byt" data-title="Bitcoin-only YouTube" data-keys="youtube watch videos player channels podcasts bitcoin only creators pleb underground btc sessions what bitcoin did bitcoin layer bram kanstein jack mallers canadian bitcoiners nolan bauerle brandon gentile reckoning captive bid bugle walker america simon dixon eric yakes">
+        <div class="card-top"><div class="t"><h3>Bitcoin-only YouTube</h3><p class="sub">Pick a channel — its latest videos play right here.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin-only YouTube" title="Share Bitcoin-only YouTube" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin-only YouTube" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="yt-frame">
             <iframe id="yt-player" src="https://www.youtube-nocookie.com/embed/videoseries?list=UULVVfMv5xEfrafk1rSthJ0t9g" title="Bitcoin-only YouTube player" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="lazy"></iframe>
@@ -943,8 +960,8 @@
   <section class="group" id="g-basics" data-group>
     <div class="group-head"><h2>New to Bitcoin? Start here.</h2><p>The basics in six short slides — plain words, no hype.</p></div>
     <div class="grid">
-      <article class="card wide" data-card data-title="Bitcoin basics guide — New to Bitcoin? Start here" data-keys="bitcoin basics guide learn what is start beginner new wallet sats satoshis seed phrase recovery words keys sending receiving lightning on-chain blockchain halving 21 million stay safe scam cash app strike">
-        <div class="card-top"><div class="t"><h3>Bitcoin basics guide</h3><p class="sub">One idea at a time. Tap Next to go through all six.</p></div><button class="star" type="button" aria-label="Star Bitcoin basics guide" aria-pressed="false">★</button></div>
+      <article class="card wide" data-card data-share="bbg" data-title="Bitcoin basics guide — New to Bitcoin? Start here" data-keys="bitcoin basics guide learn what is start beginner new wallet sats satoshis seed phrase recovery words keys sending receiving lightning on-chain blockchain halving 21 million stay safe scam cash app strike">
+        <div class="card-top"><div class="t"><h3>Bitcoin basics guide</h3><p class="sub">One idea at a time. Tap Next to go through all six.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin basics guide" title="Share Bitcoin basics guide" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin basics guide" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="bbg" id="bitcoin-basics">
             <div class="bbg-top"><span class="bbg-title">Start here</span><span class="bbg-count" data-b="count">1 of 6</span></div>
@@ -2514,5 +2531,89 @@
 })();
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "acd8ca31e24a420bbc8044a495ca27f0"}'></script>
+
+<script>
+/* ---------- Share buttons + ?card= deep links ---------- */
+(function(){
+  "use strict";
+  function showCopied(btn, originalLabel, originalTitle){
+    btn.classList.add("copied");
+    btn.setAttribute("title", "Link copied");
+    btn.setAttribute("aria-label", "Link copied");
+    setTimeout(function(){
+      btn.classList.remove("copied");
+      btn.setAttribute("title", originalTitle);
+      btn.setAttribute("aria-label", originalLabel);
+    }, 1500);
+  }
+  function fallbackCopy(text, done){
+    try{
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-9999px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(ta);
+    }catch(e){}
+    done();
+  }
+  function handleShare(btn, card){
+    var slug = card.getAttribute("data-share");
+    if (!slug) return;
+    var h3 = card.querySelector("h3");
+    var title = h3 ? h3.textContent.trim() : (card.getAttribute("data-title") || "Bitulator");
+    var url = "https://bitulator.xyz/share/" + slug + ".html";
+    if (navigator.share){
+      try{
+        var p = navigator.share({ title: title + " \u2014 Bitulator", url: url });
+        if (p && p.catch) p.catch(function(){});
+      }catch(e){}
+      return;
+    }
+    var originalLabel = btn.getAttribute("aria-label") || ("Share " + title);
+    var originalTitle = btn.getAttribute("title") || originalLabel;
+    function done(){ showCopied(btn, originalLabel, originalTitle); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done).catch(function(){ fallbackCopy(url, done); });
+    } else {
+      fallbackCopy(url, done);
+    }
+  }
+  var shareCards = document.querySelectorAll("[data-share]");
+  for (var i = 0; i < shareCards.length; i++){
+    (function(card){
+      var btn = card.querySelector("[data-share-btn]");
+      if (!btn) return;
+      btn.addEventListener("click", function(){ handleShare(btn, card); });
+    })(shareCards[i]);
+  }
+  /* Deep link: ?card=<slug> scrolls to that card and highlights it briefly */
+  try{
+    var params = new URLSearchParams(window.location.search);
+    var wanted = params.get("card");
+    if (wanted){
+      var target = null;
+      for (var j = 0; j < shareCards.length; j++){
+        if (shareCards[j].getAttribute("data-share") === wanted){ target = shareCards[j]; break; }
+      }
+      if (target){
+        setTimeout(function(){
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+          target.classList.add("deep-flash");
+          target.classList.add("flash");
+          setTimeout(function(){
+            target.classList.remove("deep-flash");
+            target.classList.remove("flash");
+          }, 2000);
+        }, 60);
+      }
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
