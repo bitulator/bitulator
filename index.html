@@ -619,6 +619,10 @@
       <article class="card" data-card data-title="Bitcoin macro news" data-keys="macro news headlines bitcoin economy fed rates stories">
         <div class="card-top"><div class="t"><h3>Bitcoin macro news</h3><p class="sub">Top posts from Stacker News ~bitcoin.</p></div><button class="star" type="button" aria-label="Star Bitcoin macro news" aria-pressed="false">★</button></div>
         <div class="body">
+          <div class="tf-row" role="group" aria-label="News view">
+            <button type="button" class="tf-btn" data-news-tab="new" aria-pressed="true">New</button>
+            <button type="button" class="tf-btn" data-news-tab="front" aria-pressed="false">Popular</button>
+          </div>
           <ul class="mini-list" id="news-list">
             <li>Loading headlines…</li>
           </ul>
@@ -2229,6 +2233,8 @@
      plain "couldn't load" line — never fake headlines. */
   var NEWS_FEED_URL = "https://stacker.news/rss?sub=bitcoin";
   var newsRendered = false;
+  var newsStories = [];
+  var newsTab = "new";
   function newsStripHtml(s){
     return String(s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   }
@@ -2266,6 +2272,47 @@
     var note = $("news-note");
     if (note) note.textContent = "Live from Stacker News.";
   }
+  function renderNewsList(){
+    var list = $("news-list");
+    if (!list || !newsStories.length) return;
+    var ordered = newsStories.slice();
+    if (newsTab === "new"){
+      ordered.sort(function(a, b){ return b.when - a.when; });
+    }
+    ordered = ordered.slice(0, 5);
+    list.innerHTML = "";
+    ordered.forEach(function(st){
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.className = "news-link";
+      a.href = st.link; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = st.title;
+      li.appendChild(a);
+      var d = document.createElement("span");
+      d.className = "d";
+      d.textContent = st.source + " \u00B7 " + newsRelTime(st.when);
+      li.appendChild(d);
+      list.appendChild(li);
+    });
+    newsRendered = true;
+    var note = $("news-note");
+    if (note) note.textContent = "Live from Stacker News.";
+  }
+  function setNewsTab(tab){
+    if (tab !== "front" && tab !== "new") return;
+    newsTab = tab;
+    var btns = document.querySelectorAll("[data-news-tab]");
+    for (var i = 0; i < btns.length; i++){
+      btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-news-tab") === tab ? "true" : "false");
+    }
+    if (newsStories.length) renderNewsList();
+  }
+  (function(){
+    var btns = document.querySelectorAll("[data-news-tab]");
+    for (var i = 0; i < btns.length; i++){
+      btns[i].addEventListener("click", function(){ setNewsTab(this.getAttribute("data-news-tab")); });
+    }
+  })();
   function refreshNews(){
     var list = $("news-list");
     if (!list) return;
@@ -2280,25 +2327,8 @@
         stories.push({ title: title, link: link, source: "Stacker News", when: newsParseDate(it.pubDate) });
       });
       if (!stories.length){ renderNewsError(); return; }
-      stories.sort(function(a, b){ return b.when - a.when; });
-      stories = stories.slice(0, 5);
-      list.innerHTML = "";
-      stories.forEach(function(st){
-        var li = document.createElement("li");
-        var a = document.createElement("a");
-        a.className = "news-link";
-        a.href = st.link; a.target = "_blank"; a.rel = "noopener";
-        a.textContent = st.title;
-        li.appendChild(a);
-        var d = document.createElement("span");
-        d.className = "d";
-        d.textContent = st.source + " \u00B7 " + newsRelTime(st.when);
-        li.appendChild(d);
-        list.appendChild(li);
-      });
-      newsRendered = true;
-      var note = $("news-note");
-      if (note) note.textContent = "Live from Stacker News.";
+      newsStories = stories;
+      renderNewsList();
     }).catch(function(){ renderNewsError(); });
   }
   refreshNews();
