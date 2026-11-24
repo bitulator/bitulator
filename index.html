@@ -389,6 +389,9 @@
   .bbg-steps li{margin:10px 0}
   .bbg-list{margin:8px 0 8px 22px;padding:0}
   .bbg-list li{margin:10px 0}
+  .bbg-fig{margin:4px auto 14px;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px 10px 8px;max-width:340px}
+  .bbg-fig svg{max-width:100%;height:auto}
+  .bbg-fig figcaption{font-size:14px;color:var(--muted);margin-top:7px;line-height:1.45}
   .bbg-note{font-size:15px;line-height:1.55;color:var(--muted);text-align:center;background:var(--bg2);border:1px solid var(--line-soft);border-radius:10px;padding:12px 14px;margin-top:14px}
   .bbg-note strong{color:var(--accent)}
   .bbg-apps{margin-top:16px}
@@ -941,6 +944,24 @@
             <div class="bbg-stage">
               <section class="bbg-slide on">
                 <h3>1. What is Bitcoin?</h3>
+                <figure class="bbg-fig">
+                  <svg viewBox="0 0 240 150" width="220" role="img" aria-label="Illustration of a Bitcoin coin at the center of a globe, connected to people all over the world">
+                    <line x1="36" y1="32" x2="80" y2="50" stroke="#9db0d4" stroke-width="2" stroke-dasharray="4 4"/>
+                    <line x1="204" y1="32" x2="160" y2="50" stroke="#9db0d4" stroke-width="2" stroke-dasharray="4 4"/>
+                    <line x1="36" y1="118" x2="80" y2="100" stroke="#9db0d4" stroke-width="2" stroke-dasharray="4 4"/>
+                    <line x1="204" y1="118" x2="160" y2="100" stroke="#9db0d4" stroke-width="2" stroke-dasharray="4 4"/>
+                    <circle cx="120" cy="75" r="54" fill="#0d1734" stroke="#9db0d4" stroke-width="3"/>
+                    <ellipse cx="120" cy="75" rx="24" ry="54" fill="none" stroke="#22335f" stroke-width="2.5"/>
+                    <path d="M68 55 H172 M66 75 H174 M68 95 H172" stroke="#22335f" stroke-width="2.5" fill="none"/>
+                    <circle cx="31" cy="29" r="7" fill="#0d1734" stroke="#9db0d4" stroke-width="2.5"/>
+                    <circle cx="209" cy="29" r="7" fill="#0d1734" stroke="#9db0d4" stroke-width="2.5"/>
+                    <circle cx="31" cy="121" r="7" fill="#0d1734" stroke="#9db0d4" stroke-width="2.5"/>
+                    <circle cx="209" cy="121" r="7" fill="#0d1734" stroke="#9db0d4" stroke-width="2.5"/>
+                    <circle cx="120" cy="75" r="27" fill="#fde047"/>
+                    <text x="120" y="88" font-size="30" font-weight="bold" text-anchor="middle" fill="#1a1602">₿</text>
+                  </svg>
+                  <figcaption>One network, all over the world — no bank in the middle.</figcaption>
+                </figure>
                 <p class="bbg-lead">Bitcoin is money that lives on the internet.</p>
                 <p>No bank or company runs it.</p>
                 <p>People send it straight to each other — anywhere in the world.</p>
@@ -948,6 +969,28 @@
               </section>
               <section class="bbg-slide">
                 <h3>2. You don't need a whole one</h3>
+                <figure class="bbg-fig">
+                  <svg viewBox="0 0 280 130" width="260" role="img" aria-label="Illustration of one bitcoin dividing into many small sats">
+                    <circle cx="52" cy="65" r="40" fill="#fde047"/>
+                    <text x="52" y="80" font-size="36" font-weight="bold" text-anchor="middle" fill="#1a1602">₿</text>
+                    <path d="M106 65 H134" stroke="#9db0d4" stroke-width="3" stroke-linecap="round"/>
+                    <polygon points="134,58 147,65 134,72" fill="#9db0d4"/>
+                    <circle cx="176" cy="33" r="10" fill="#fde047"/>
+                    <circle cx="206" cy="33" r="10" fill="#fde047" opacity="0.85"/>
+                    <circle cx="236" cy="33" r="10" fill="#fde047" opacity="0.7"/>
+                    <circle cx="264" cy="33" r="10" fill="#fde047" opacity="0.55"/>
+                    <circle cx="176" cy="65" r="10" fill="#fde047" opacity="0.85"/>
+                    <circle cx="206" cy="65" r="10" fill="#fde047"/>
+                    <circle cx="206" cy="65" r="12.5" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+                    <circle cx="236" cy="65" r="10" fill="#fde047" opacity="0.7"/>
+                    <circle cx="264" cy="65" r="10" fill="#fde047" opacity="0.55"/>
+                    <circle cx="176" cy="97" r="10" fill="#fde047" opacity="0.7"/>
+                    <circle cx="206" cy="97" r="10" fill="#fde047" opacity="0.55"/>
+                    <circle cx="236" cy="97" r="10" fill="#fde047" opacity="0.45"/>
+                    <circle cx="264" cy="97" r="10" fill="#fde047" opacity="0.35"/>
+                  </svg>
+                  <figcaption>One bitcoin breaks into 100,000,000 sats — own as little as you like.</figcaption>
+                </figure>
                 <p class="bbg-lead">You can start with just a few dollars.</p>
                 <p>One bitcoin divides into <strong>100,000,000</strong> tiny pieces.</p>
                 <p>Those pieces are called <strong>sats</strong> — short for “satoshis.”</p>
@@ -955,6 +998,26 @@
               </section>
               <section class="bbg-slide">
                 <h3>3. Your wallet and your keys</h3>
+                <figure class="bbg-fig">
+                  <svg viewBox="0 0 300 140" width="280" role="img" aria-label="Illustration of a wallet, a key, and a paper sheet of recovery words kept hidden">
+                    <circle cx="61" cy="34" r="17" fill="#fde047"/>
+                    <text x="61" y="41" font-size="17" font-weight="bold" text-anchor="middle" fill="#1a1602">₿</text>
+                    <rect x="18" y="44" width="86" height="62" rx="10" fill="#0d1734" stroke="#9db0d4" stroke-width="3"/>
+                    <path d="M104 62 h-18 a8 8 0 0 0 0 16 h18" fill="#0a1128" stroke="#9db0d4" stroke-width="2.5"/>
+                    <circle cx="90" cy="70" r="3.5" fill="#fde047"/>
+                    <circle cx="140" cy="52" r="16" fill="none" stroke="#fde047" stroke-width="5"/>
+                    <path d="M151 63 L188 100" stroke="#fde047" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M176 88 l10 2 M166 78 l2 10" stroke="#fde047" stroke-width="5" stroke-linecap="round"/>
+                    <rect x="214" y="24" width="68" height="94" rx="6" fill="#eef2fb"/>
+                    <rect x="214" y="24" width="68" height="16" rx="6" fill="#9db0d4"/>
+                    <text x="248" y="36" font-size="9.5" font-weight="bold" text-anchor="middle" fill="#0d1734">MY WORDS</text>
+                    <line x1="226" y1="56" x2="270" y2="56" stroke="#6d81ab" stroke-width="5" stroke-linecap="round" stroke-dasharray="0.5 8"/>
+                    <line x1="226" y1="72" x2="270" y2="72" stroke="#6d81ab" stroke-width="5" stroke-linecap="round" stroke-dasharray="0.5 8"/>
+                    <line x1="226" y1="88" x2="270" y2="88" stroke="#6d81ab" stroke-width="5" stroke-linecap="round" stroke-dasharray="0.5 8"/>
+                    <line x1="226" y1="104" x2="262" y2="104" stroke="#6d81ab" stroke-width="5" stroke-linecap="round" stroke-dasharray="0.5 8"/>
+                  </svg>
+                  <figcaption>Your wallet holds your keys — your recovery words stay on paper, never on a screen.</figcaption>
+                </figure>
                 <p>A <strong>wallet</strong> is an app that holds your keys.</p>
                 <p>Your keys are what prove the bitcoin is yours — like the only key to a safe.</p>
                 <p>When you set up a wallet, it gives you <strong>recovery words</strong> (also called a seed phrase). That is your master backup.</p>
@@ -967,6 +1030,28 @@
               </section>
               <section class="bbg-slide">
                 <h3>4. Sending and receiving</h3>
+                <figure class="bbg-fig">
+                  <svg viewBox="0 0 300 150" width="280" role="img" aria-label="Illustration of two phones sending bitcoin between them with a QR code and a lightning bolt">
+                    <rect x="16" y="20" width="62" height="112" rx="12" fill="#0d1734" stroke="#9db0d4" stroke-width="3"/>
+                    <rect x="38" y="27" width="18" height="4" rx="2" fill="#22335f"/>
+                    <text x="47" y="90" font-size="26" font-weight="bold" text-anchor="middle" fill="#fde047">₿</text>
+                    <rect x="222" y="20" width="62" height="112" rx="12" fill="#0d1734" stroke="#9db0d4" stroke-width="3"/>
+                    <rect x="244" y="27" width="18" height="4" rx="2" fill="#22335f"/>
+                    <text x="253" y="90" font-size="26" font-weight="bold" text-anchor="middle" fill="#fde047">₿</text>
+                    <circle cx="150" cy="24" r="14" fill="#fde047"/>
+                    <polygon points="153.5,14.5 144.5,26 149.2,26 147.2,34.5 157.5,22.5 152.4,22.5" fill="#1a1602"/>
+                    <path d="M92 44 H196" stroke="#9db0d4" stroke-width="3" stroke-linecap="round"/>
+                    <polygon points="196,37 209,44 196,51" fill="#9db0d4"/>
+                    <rect x="126" y="58" width="48" height="48" rx="4" fill="#eef2fb"/>
+                    <rect x="130" y="62" width="12" height="12" fill="#0d1734"/><rect x="133" y="65" width="6" height="6" fill="#eef2fb"/><rect x="135.5" y="67.5" width="2.5" height="2.5" fill="#0d1734"/>
+                    <rect x="158" y="62" width="12" height="12" fill="#0d1734"/><rect x="161" y="65" width="6" height="6" fill="#eef2fb"/><rect x="163.5" y="67.5" width="2.5" height="2.5" fill="#0d1734"/>
+                    <rect x="130" y="90" width="12" height="12" fill="#0d1734"/><rect x="133" y="93" width="6" height="6" fill="#eef2fb"/><rect x="135.5" y="95.5" width="2.5" height="2.5" fill="#0d1734"/>
+                    <rect x="149" y="64" width="4" height="4" fill="#0d1734"/><rect x="155" y="72" width="4" height="4" fill="#0d1734"/><rect x="147" y="79" width="4" height="4" fill="#0d1734"/><rect x="164" y="80" width="4" height="4" fill="#0d1734"/><rect x="151" y="91" width="4" height="4" fill="#0d1734"/><rect x="159" y="95" width="4" height="4" fill="#0d1734"/><rect x="148" y="99" width="4" height="4" fill="#0d1734"/><rect x="166" y="100" width="4" height="4" fill="#0d1734"/>
+                    <path d="M209 122 H92" stroke="#9db0d4" stroke-width="3" stroke-linecap="round"/>
+                    <polygon points="92,115 79,122 92,129" fill="#9db0d4"/>
+                  </svg>
+                  <figcaption>Share a code to receive — scan a code to send. Lightning makes it fast.</figcaption>
+                </figure>
                 <p>To receive, you share your <strong>address</strong> — or show a code to scan, like the ones on this page.</p>
                 <p>To send, you paste an address or scan a code, check it, and confirm.</p>
                 <ul class="bbg-list">
@@ -976,6 +1061,41 @@
               </section>
               <section class="bbg-slide">
                 <h3>5. Why only 21 million?</h3>
+                <figure class="bbg-fig">
+                  <svg viewBox="0 0 280 165" width="260" role="img" aria-label="Illustration of coin stacks getting shorter at each halving, under a fixed 21 million cap">
+                    <text x="140" y="17" font-size="14" font-weight="bold" text-anchor="middle" fill="#fde047">21M — that's all, ever</text>
+                    <line x1="16" y1="26" x2="264" y2="26" stroke="#fde047" stroke-width="2.5" stroke-dasharray="7 5"/>
+                    <line x1="14" y1="148" x2="266" y2="148" stroke="#22335f" stroke-width="3" stroke-linecap="round"/>
+                    <g fill="#fde047" stroke="#1a1602" stroke-opacity="0.25">
+                      <ellipse cx="58" cy="141" rx="24" ry="7"/>
+                      <ellipse cx="58" cy="130" rx="24" ry="7"/>
+                      <ellipse cx="58" cy="119" rx="24" ry="7"/>
+                      <ellipse cx="58" cy="108" rx="24" ry="7"/>
+                      <ellipse cx="58" cy="97" rx="24" ry="7"/>
+                      <ellipse cx="58" cy="86" rx="24" ry="7"/>
+                    </g>
+                    <text x="58" y="92" font-size="13" font-weight="bold" text-anchor="middle" fill="#1a1602">₿</text>
+                    <g fill="#fde047" stroke="#1a1602" stroke-opacity="0.25">
+                      <ellipse cx="140" cy="141" rx="24" ry="7"/>
+                      <ellipse cx="140" cy="130" rx="24" ry="7"/>
+                      <ellipse cx="140" cy="119" rx="24" ry="7"/>
+                    </g>
+                    <text x="140" y="125" font-size="13" font-weight="bold" text-anchor="middle" fill="#1a1602">₿</text>
+                    <g fill="#fde047" stroke="#1a1602" stroke-opacity="0.25">
+                      <ellipse cx="222" cy="141" rx="24" ry="7"/>
+                      <ellipse cx="222" cy="130" rx="24" ry="7"/>
+                    </g>
+                    <text x="222" y="136" font-size="13" font-weight="bold" text-anchor="middle" fill="#1a1602">₿</text>
+                    <path d="M92 66 h22" stroke="#9db0d4" stroke-width="2.5" stroke-linecap="round"/>
+                    <polygon points="114,60 124,66 114,72" fill="#9db0d4"/>
+                    <path d="M174 100 h22" stroke="#9db0d4" stroke-width="2.5" stroke-linecap="round"/>
+                    <polygon points="196,94 206,100 196,106" fill="#9db0d4"/>
+                    <text x="58" y="162" font-size="10.5" text-anchor="middle" fill="#9db0d4">at first</text>
+                    <text x="140" y="162" font-size="10.5" text-anchor="middle" fill="#9db0d4">after a halving</text>
+                    <text x="222" y="162" font-size="10.5" text-anchor="middle" fill="#9db0d4">and again</text>
+                  </svg>
+                  <figcaption>Each halving, half as many new coins — and the total stops at 21 million.</figcaption>
+                </figure>
                 <p class="bbg-lead">There will never be more than 21 million bitcoin. Ever.</p>
                 <p>New bitcoin are released slowly by <strong>mining</strong> — computers doing work to add new pages to that record book.</p>
                 <p>About every four years, the amount of new bitcoin is cut in half. That event is called the <strong>halving</strong>.</p>
@@ -983,6 +1103,13 @@
               </section>
               <section class="bbg-slide">
                 <h3>6. Stay safe</h3>
+                <figure class="bbg-fig">
+                  <svg viewBox="0 0 120 120" width="105" role="img" aria-label="Illustration of a shield with a checkmark">
+                    <path d="M60 12 L96 24 V58 C96 84 80 100 60 110 C40 100 24 84 24 58 V24 Z" fill="#0d1734" stroke="#fde047" stroke-width="3.5" stroke-linejoin="round"/>
+                    <path d="M42 60 l13 13 l24 -27" fill="none" stroke="#4ade80" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <figcaption>A few simple habits keep your bitcoin — and you — safe.</figcaption>
+                </figure>
                 <ul class="bbg-list">
                   <li><strong>Bitcoin payments can't be undone.</strong> Once sent, there is no undo button.</li>
                   <li><strong>Double-check the address.</strong> Scan a code instead of typing, when you can.</li>
