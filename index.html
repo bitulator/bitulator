@@ -617,12 +617,12 @@
       </article>
 
       <article class="card" data-card data-title="Bitcoin macro news" data-keys="macro news headlines bitcoin economy fed rates stories">
-        <div class="card-top"><div class="t"><h3>Bitcoin macro news</h3><p class="sub">Bitcoin-only headlines, no altcoin noise.</p></div><button class="star" type="button" aria-label="Star Bitcoin macro news" aria-pressed="false">★</button></div>
+        <div class="card-top"><div class="t"><h3>Bitcoin macro news</h3><p class="sub">Top posts from Stacker News.</p></div><button class="star" type="button" aria-label="Star Bitcoin macro news" aria-pressed="false">★</button></div>
         <div class="body">
           <ul class="mini-list" id="news-list">
             <li>Loading headlines…</li>
           </ul>
-          <p class="note" id="news-note">Live from CoinDesk, Cointelegraph and Decrypt.</p>
+          <p class="note" id="news-note">Live from Stacker News.</p>
         </div>
       </article>
 
@@ -2223,41 +2223,14 @@
     $("ln-nodes").textContent = "~16,500 (sample)";
   });
 
-  /* ---------- Bitcoin macro news: live RSS via rss2json ----------
-     Sources are the same three feeds the old live site used. STRICT
-     Bitcoin-only rule: a story runs only if its title/description is
-     about Bitcoin (bitcoin / BTC) AND it matches nothing on the
-     altcoin/other-crypto blocklist. Fewer headlines is fine — never
-     pad with non-Bitcoin stories. On total feed failure, show one
+  /* ---------- Bitcoin macro news: Stacker News RSS via rss2json ----------
+     Single source: Stacker News, shown UNFILTERED — posts run exactly
+     as they come from the feed, newest first. On feed failure, show one
      plain "couldn't load" line — never fake headlines. */
-  var NEWS_FEEDS = [
-    { name: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss/" },
-    { name: "Cointelegraph", url: "https://cointelegraph.com/rss" },
-    { name: "Decrypt", url: "https://decrypt.co/feed" }
-  ];
-  var NEWS_BLOCK = [
-    /bitcoin\s+cash/i, /\bbch\b/i,
-    /ethereum/i, /\beth\b/i, /\bether\b/i,
-    /solana/i, /\bxrp\b/i, /ripple/i,
-    /dogecoin/i, /\bdoge\b/i,
-    /cardano/i, /altcoin/i, /memecoin/i, /meme\s+coin/i,
-    /\bnft\b/i, /non[-\s]?fungible/i,
-    /litecoin/i, /\bltc\b/i,
-    /polkadot/i, /chainlink/i, /avalanche/i,
-    /uniswap/i, /shiba/i, /\btron\b/i,
-    /binance\s+coin/i, /\bbnb\b/i
-  ];
+  var NEWS_FEED_URL = "https://stacker.news/rss";
   var newsRendered = false;
   function newsStripHtml(s){
     return String(s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  }
-  function newsIsBitcoin(title, desc){
-    var text = title + " " + desc;
-    if (!(/bitcoin/i.test(text) || /\bBTC\b/.test(text))) return false;
-    for (var i = 0; i < NEWS_BLOCK.length; i++){
-      if (NEWS_BLOCK[i].test(text)) return false;
-    }
-    return true;
   }
   function newsRelTime(d){
     var diff = Date.now() - d.getTime();
@@ -2291,46 +2264,24 @@
     li.textContent = "Couldn\u2019t load headlines \u2014 check back shortly.";
     list.appendChild(li);
     var note = $("news-note");
-    if (note) note.textContent = "Live from CoinDesk, Cointelegraph and Decrypt.";
+    if (note) note.textContent = "Live from Stacker News.";
   }
   function refreshNews(){
     var list = $("news-list");
     if (!list) return;
-    var jobs = NEWS_FEEDS.map(function(feed){
-      var api = "https://api.rss2json.com/v1/api.json?count=20&rss_url=" + encodeURIComponent(feed.url);
-      return getJSON(api).then(function(j){
-        if (!j || j.status !== "ok" || !j.items) return { feed: feed, items: [] };
-        return { feed: feed, items: j.items };
-      }).catch(function(){ return { feed: feed, items: [] }; });
-    });
-    Promise.all(jobs).then(function(results){
-      var fetched = 0, seen = {}, stories = [];
-      results.forEach(function(res){
-        fetched += res.items.length;
-        res.items.forEach(function(it){
-          var title = newsStripHtml(it.title);
-          var desc = newsStripHtml(it.description || it.content || "");
-          var link = String(it.link || "");
-          if (!title || !/^https?:\/\//i.test(link)) return;
-          if (!newsIsBitcoin(title, desc)) return;
-          var key = link.toLowerCase();
-          if (seen[key]) return;
-          seen[key] = true;
-          stories.push({ title: title, link: link, source: res.feed.name, when: newsParseDate(it.pubDate) });
-        });
+    var api = "https://api.rss2json.com/v1/api.json?count=20&rss_url=" + encodeURIComponent(NEWS_FEED_URL);
+    getJSON(api).then(function(j){
+      if (!j || j.status !== "ok" || !j.items || !j.items.length){ renderNewsError(); return; }
+      var stories = [];
+      j.items.forEach(function(it){
+        var title = newsStripHtml(it.title);
+        var link = String(it.link || "");
+        if (!title || !/^https?:\/\//i.test(link)) return;
+        stories.push({ title: title, link: link, source: "Stacker News", when: newsParseDate(it.pubDate) });
       });
-      if (!fetched){ renderNewsError(); return; }
+      if (!stories.length){ renderNewsError(); return; }
       stories.sort(function(a, b){ return b.when - a.when; });
       stories = stories.slice(0, 5);
-      if (!stories.length){
-        if (!newsRendered){
-          list.innerHTML = "";
-          var li = document.createElement("li");
-          li.textContent = "No Bitcoin-only headlines right now \u2014 check back shortly.";
-          list.appendChild(li);
-        }
-        return;
-      }
       list.innerHTML = "";
       stories.forEach(function(st){
         var li = document.createElement("li");
@@ -2347,7 +2298,7 @@
       });
       newsRendered = true;
       var note = $("news-note");
-      if (note) note.textContent = "Live from CoinDesk, Cointelegraph and Decrypt \u00B7 Bitcoin-only filter on.";
+      if (note) note.textContent = "Live from Stacker News.";
     }).catch(function(){ renderNewsError(); });
   }
   refreshNews();
