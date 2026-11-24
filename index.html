@@ -617,7 +617,7 @@
       </article>
 
       <article class="card" data-card data-title="Bitcoin macro news" data-keys="macro news headlines bitcoin economy fed rates stories">
-        <div class="card-top"><div class="t"><h3>Bitcoin macro news</h3><p class="sub">Top posts from Stacker News.</p></div><button class="star" type="button" aria-label="Star Bitcoin macro news" aria-pressed="false">★</button></div>
+        <div class="card-top"><div class="t"><h3>Bitcoin macro news</h3><p class="sub">Top posts from Stacker News ~bitcoin.</p></div><button class="star" type="button" aria-label="Star Bitcoin macro news" aria-pressed="false">★</button></div>
         <div class="body">
           <ul class="mini-list" id="news-list">
             <li>Loading headlines…</li>
@@ -2227,7 +2227,7 @@
      Single source: Stacker News, shown UNFILTERED — posts run exactly
      as they come from the feed, newest first. On feed failure, show one
      plain "couldn't load" line — never fake headlines. */
-  var NEWS_FEED_URL = "https://stacker.news/rss";
+  var NEWS_FEED_URL = "https://stacker.news/rss?sub=bitcoin";
   var newsRendered = false;
   function newsStripHtml(s){
     return String(s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
