@@ -1619,7 +1619,7 @@
   /* Per-range config: how far back, candle size for the live fetch, and how
      to fake the series when live data can't load. */
   var RANGES = {
-    "1MIN":{ days:1/24, gran:60,    granLabel:"1-minute closes",  sub:"The last 60 minutes, minute by minute.",   aria:"last 60 minutes", sample:{ n:60,  stepMs:60*1000,    start:0.998, vol:0.0015 } },
+    "1MIN":{ days:1/48, gran:60,    granLabel:"1-minute closes",  sub:"The last 30 minutes, minute by minute.",   aria:"last 30 minutes", sample:{ n:30,  stepMs:60*1000,    start:0.998, vol:0.0015 } },
     "1H":  { days:1/24, gran:60,    granLabel:"1-minute closes",  sub:"The last hour, scrubbed by your thumb.",     aria:"last hour",     sample:{ n:60,  stepMs:60*1000,    start:0.998, vol:0.0015 } },
     "24H": { days:1,    gran:900,   granLabel:"15-minute closes", sub:"The last 24 hours, scrubbed by your thumb.",  aria:"last 24 hours", sample:{ n:96,  stepMs:15*60*1000, start:0.99, vol:0.004 } },
     "7D":  { days:7,    gran:3600,  granLabel:"hourly closes",    sub:"The last 7 days, scrubbed by your thumb.",   aria:"last 7 days",   sample:{ n:168, stepMs:3600*1000,  start:0.97, vol:0.006 } },
@@ -1811,10 +1811,10 @@
       rows.sort(function(a,b){ return a.t - b.t; });
       if (rows.length < 10) throw new Error("short");
       if (key === "1MIN"){
-        // Last 60 minutes only: keep the most recent ~60 one-minute candles.
-        var cutoff = endMs - 60*60*1000 - 1000;
+        // Last 30 minutes only: keep the most recent ~30 one-minute candles.
+        var cutoff = endMs - 30*60*1000 - 1000;
         rows = rows.filter(function(r){ return r.t >= cutoff; });
-        if (rows.length > 60) rows = rows.slice(rows.length - 60);
+        if (rows.length > 30) rows = rows.slice(rows.length - 30);
         if (rows.length < 10) throw new Error("short");
         // The still-forming current minute reads best from the live spot price.
         if (rows.length && typeof S !== "undefined" && S.live && S.live.price && S.price > 0){
@@ -2019,7 +2019,7 @@
     refresh1HIfActive();
   }, 30000);
   /* The 1 Min view is the live tape: while it is selected, refresh its
-     last-60-minutes line about every 20 seconds (spot price included)
+     last-30-minutes line about every 20 seconds (spot price included)
      so the still-forming minute keeps moving. Other ranges are untouched. */
   function refresh1MinIfActive(){
     if (chartRange !== "1MIN") return;
