@@ -218,6 +218,13 @@
   }
   .tf-btn:hover{border-color:var(--accent);color:var(--accent)}
   .tf-btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .chart-legend{display:flex;align-items:center;gap:8px;margin:8px 0 0;color:var(--muted);font-size:.82rem}
+  .chart-legend .swatch{display:inline-block;width:22px;height:3px;border-radius:2px;background:#fb923c;flex:none}
+  /* Current price headline on the chart card */
+  .chart-now{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
+  .chart-now-price{font-size:2.1rem;line-height:1;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .chart-now-change{font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums}
+  .chart-now-change.up{color:var(--green)} .chart-now-change.down{color:var(--red)}
 
   /* YouTube player card */
   .card.wide{grid-column:1/-1}
@@ -547,7 +554,13 @@
       <article class="card" data-card data-title="Live BTC chart" data-keys="live btc chart price graph candles trend sparkline">
         <div class="card-top"><div class="t"><h3>Live BTC chart</h3><p class="sub" id="chart-range-sub">The last 3 months, scrubbed by your thumb.</p></div><button class="star" type="button" aria-label="Star Live BTC chart" aria-pressed="false">★</button></div>
         <div class="body">
+          <div class="chart-now" aria-label="Current Bitcoin price">
+            <span class="chart-now-price" id="chart-now-price">—</span>
+            <span class="chart-now-change" id="chart-now-change">—</span>
+            <span class="tag sample" data-badge="price">Sample</span>
+          </div>
           <div class="tf-row" role="group" aria-label="Chart time frame">
+            <button type="button" class="tf-btn" data-range="1H" aria-pressed="false">1H</button>
             <button type="button" class="tf-btn" data-range="24H" aria-pressed="false">24H</button>
             <button type="button" class="tf-btn" data-range="7D" aria-pressed="false">7D</button>
             <button type="button" class="tf-btn" data-range="1M" aria-pressed="false">1M</button>
@@ -558,6 +571,7 @@
             <span class="tag sample" id="chart-badge" style="align-self:center">Sample</span>
           </div>
           <canvas class="chart" id="chart" width="640" height="300" aria-label="Bitcoin price chart, last 3 months"></canvas>
+          <p class="chart-legend" id="chart-legend"><span class="swatch" aria-hidden="true"></span>Orange line: 200-week moving average</p>
           <div class="field" style="margin-top:10px"><label for="chart-scrub">Scrub the timeline</label><input type="range" id="chart-scrub" min="0" max="89" value="89" step="1"></div>
           <div class="out"><div class="big" id="chart-out">—</div><div class="note" id="chart-sub">—</div></div>
         </div>
@@ -991,7 +1005,7 @@
 
   <!-- ================= DONATE ================= -->
   <section class="donate-zone" id="donate" aria-label="Donate to Bitulator">
-    <div class="donate-head"><h2>Support Bitulator</h2><p>Optional, any amount — it goes straight to the site's own wallet.</p></div>
+    <div class="donate-head"><h2>Support Bitulator</h2></div>
 
     <div class="dnc" id="dnc-bit">
       <div class="dnc-t">⚡ Donate to Bitulator</div>
@@ -1190,7 +1204,17 @@
     return supply;
   }
 
+  function renderChartNow(){
+    var pEl = $("chart-now-price"); if (!pEl) return;
+    pEl.textContent = fmtUSD(S.price);
+    var cEl = $("chart-now-change");
+    if (cEl){
+      cEl.textContent = (S.change24>=0?"+":"") + S.change24.toFixed(1) + "% · 24h";
+      cEl.className = "chart-now-change " + (S.change24>=0 ? "up" : "down");
+    }
+  }
   function renderGlance(){
+    renderChartNow();
     $("g-price").textContent = fmtUSD(S.price);
     var ch = $("g-change");
     ch.textContent = (S.change24>=0?"+":"") + S.change24.toFixed(1) + "%";
@@ -1394,9 +1418,13 @@
   var chartRange = "3M"; // default range — matches the original fixed 90-day view
   var chartReq = 0;      // token so a slow earlier range can't overwrite a newer pick
   var DAY = 864e5;
+  var maSeries = null;        // [{t, v}] true 200-week MA, built once from daily history
+  var maHistoryPromise = null; // cached single fetch of the long daily history
+  var dailyHistoryCache = null;
   /* Per-range config: how far back, candle size for the live fetch, and how
      to fake the series when live data can't load. */
   var RANGES = {
+    "1H":  { days:1/24, gran:60,    granLabel:"1-minute closes",  sub:"The last hour, scrubbed by your thumb.",     aria:"last hour",     sample:{ n:60,  stepMs:60*1000,    start:0.998, vol:0.0015 } },
     "24H": { days:1,    gran:900,   granLabel:"15-minute closes", sub:"The last 24 hours, scrubbed by your thumb.",  aria:"last 24 hours", sample:{ n:96,  stepMs:15*60*1000, start:0.99, vol:0.004 } },
     "7D":  { days:7,    gran:3600,  granLabel:"hourly closes",    sub:"The last 7 days, scrubbed by your thumb.",   aria:"last 7 days",   sample:{ n:168, stepMs:3600*1000,  start:0.97, vol:0.006 } },
     "1M":  { days:30,   gran:21600, granLabel:"6-hour closes",    sub:"The last month, scrubbed by your thumb.",    aria:"last month",    sample:{ n:120, stepMs:6*3600*1000,start:0.92, vol:0.010 } },
@@ -1415,10 +1443,81 @@
       out.push({ t: now - i*cfg.stepMs, p: p });
     }
     out[out.length-1].p = S.price;
+    // Plausible flat-ish sample 200-week MA: a heavily smoothed trail of the
+    // sample price, sitting under it. Only shown while badged "Sample".
+    var ema = out.length ? out[0].p * 0.88 : S.price * 0.6;
+    for (var k=0; k<out.length; k++){
+      ema = ema*0.985 + out[k].p*0.015;
+      out[k].ma = ema;
+    }
     return out;
+  }
+  /* ---------- 200-week moving average (from one long daily fetch) ---------- */
+  function buildMASeries(dailyRows){
+    // Sample a weekly close every 7 days from the daily closes, anchored to
+    // the most recent day so the latest weekly close is the current one.
+    var weekly = [];
+    for (var i=dailyRows.length-1; i>=0; i-=7) weekly.push(dailyRows[i]);
+    weekly.reverse();
+    var out = [], sum = 0;
+    for (var w=0; w<weekly.length; w++){
+      sum += weekly[w].p;
+      if (w >= 200) sum -= weekly[w-200].p;
+      if (w >= 199) out.push({ t: weekly[w].t, v: sum/200 });
+    }
+    return out;
+  }
+  function fetchDailyHistoryOnce(){
+    if (maHistoryPromise) return maHistoryPromise;
+    var endMs = Date.now();
+    var startMs = Date.UTC(2015,0,1);
+    var gran = 86400;
+    var chunkMs = gran*1000*290, windows = [], s;
+    for (s=startMs; s<endMs; s+=chunkMs) windows.push([s, Math.min(s+chunkMs, endMs)]);
+    maHistoryPromise = Promise.all(windows.map(function(w){
+      var url = "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=" + gran +
+                "&start=" + new Date(w[0]).toISOString() + "&end=" + new Date(w[1]).toISOString();
+      return getJSON(url);
+    })).then(function(parts){
+      var byTime = {}, rows = [];
+      parts.forEach(function(rowsIn){
+        if (!rowsIn) return;
+        rowsIn.forEach(function(r){ if (r && isFinite(r[4])) byTime[r[0]] = r[4]; });
+      });
+      Object.keys(byTime).forEach(function(k){ rows.push({ t: parseInt(k,10)*1000, p: byTime[k] }); });
+      rows.sort(function(a,b){ return a.t - b.t; });
+      if (rows.length < 300) throw new Error("short daily history");
+      dailyHistoryCache = rows;
+      maSeries = buildMASeries(rows);
+      if (!maSeries || maSeries.length < 10) throw new Error("short MA");
+      return maSeries;
+    });
+    // A failed history fetch clears the cache so a later range can retry.
+    maHistoryPromise.catch(function(){ maHistoryPromise = null; });
+    return maHistoryPromise;
+  }
+  function maAtTime(t){
+    if (!maSeries || !maSeries.length) return null;
+    if (t < maSeries[0].t) return null;
+    var lo = 0, hi = maSeries.length-1, ans = 0;
+    while (lo <= hi){
+      var mid = (lo+hi)>>1;
+      if (maSeries[mid].t <= t){ ans = mid; lo = mid+1; } else { hi = mid-1; }
+    }
+    return maSeries[ans].v;
+  }
+  function attachMA(data){
+    if (!maSeries) return data;
+    data.forEach(function(d){
+      var v = maAtTime(d.t);
+      if (v != null && isFinite(v)) d.ma = v; else if ("ma" in d) delete d.ma;
+    });
+    return data;
   }
   function fmtPointWhen(t){
     var dt = new Date(t);
+    if (chartRange === "1H")
+      return dt.toLocaleTimeString("en-US",{hour:"numeric", minute:"2-digit"});
     if (chartRange === "24H")
       return dt.toLocaleDateString("en-US",{month:"short", day:"numeric"}) + ", " +
              dt.toLocaleTimeString("en-US",{hour:"numeric", minute:"2-digit"});
@@ -1439,10 +1538,24 @@
     var W = cv.width, H = cv.height, pad = 10;
     ctx.clearRect(0,0,W,H);
     var min = Infinity, max = -Infinity, i, d;
-    for (i=0;i<chartData.length;i++){ if(chartData[i].p<min)min=chartData[i].p; if(chartData[i].p>max)max=chartData[i].p; }
+    for (i=0;i<chartData.length;i++){
+      if(chartData[i].p<min)min=chartData[i].p; if(chartData[i].p>max)max=chartData[i].p;
+      if(isFinite(chartData[i].ma)){ if(chartData[i].ma<min)min=chartData[i].ma; if(chartData[i].ma>max)max=chartData[i].ma; }
+    }
     var span = (max-min) || 1; min -= span*0.08; max += span*0.08; span = max-min;
     function X(i){ return pad + (W-2*pad) * i/(chartData.length-1); }
     function Y(p){ return H - pad - (H-2*pad) * (p-min)/span; }
+    // 200-week moving average first, underneath the price line: orange,
+    // slightly thinner than the price line.
+    ctx.beginPath();
+    var started = false, firstMaX = null;
+    for (i=0;i<chartData.length;i++){
+      d=chartData[i];
+      if (!isFinite(d.ma)) continue;
+      if (!started){ ctx.moveTo(X(i),Y(d.ma)); started = true; firstMaX = X(i); }
+      else ctx.lineTo(X(i),Y(d.ma));
+    }
+    if (started){ ctx.strokeStyle = "#fb923c"; ctx.lineWidth = 1.8; ctx.stroke(); }
     ctx.beginPath();
     for (i=0;i<chartData.length;i++){ d=chartData[i]; if(i===0) ctx.moveTo(X(i),Y(d.p)); else ctx.lineTo(X(i),Y(d.p)); }
     ctx.strokeStyle = "#fde047"; ctx.lineWidth = 2.5; ctx.stroke();
@@ -1450,18 +1563,35 @@
     ctx.fillStyle = "rgba(253,224,71,.10)"; ctx.fill();
     // scrub marker
     var j = Math.max(0, Math.min(chartData.length-1, idx));
+    if (isFinite(chartData[j].ma)){
+      ctx.beginPath(); ctx.arc(X(j), Y(chartData[j].ma), 4.5, 0, Math.PI*2);
+      ctx.fillStyle = "#fb923c"; ctx.fill();
+      ctx.strokeStyle = "#0a1128"; ctx.lineWidth = 2; ctx.stroke();
+    }
     ctx.beginPath(); ctx.arc(X(j), Y(chartData[j].p), 6, 0, Math.PI*2);
     ctx.fillStyle = "#fde047"; ctx.fill();
     ctx.strokeStyle = "#0a1128"; ctx.lineWidth = 2; ctx.stroke();
     $("chart-out").textContent = fmtUSD(chartData[j].p);
-    $("chart-sub").textContent = fmtPointWhen(chartData[j].t) + (chartLive ? " · live " + RANGES[chartRange].granLabel : " · sample series");
+    $("chart-sub").textContent = fmtPointWhen(chartData[j].t) + (chartLive ? " · live " + RANGES[chartRange].granLabel : " · sample series") +
+      (isFinite(chartData[j].ma) ? " · 200W MA " + fmtUSD(chartData[j].ma) : "");
   }
   function setChartData(data){
     chartData = data;
+    if (chartLive && maSeries) attachMA(chartData);
     var scrub = $("chart-scrub");
     scrub.max = data.length - 1; scrub.value = data.length - 1;
     setChartBadge();
     drawChart(data.length - 1);
+    if (chartLive && !maSeries){
+      var snapshot = chartData;
+      fetchDailyHistoryOnce().then(function(){
+        if (chartData === snapshot){
+          attachMA(chartData);
+          var cur = parseInt($("chart-scrub").value,10);
+          drawChart(isFinite(cur) ? cur : chartData.length - 1);
+        }
+      }).catch(function(){});
+    }
   }
   /* Coinbase Exchange candles, chunked: the API returns at most 300 candles
      per request, so long ranges are fetched in windows and stitched. */
@@ -1647,18 +1777,40 @@
   }
   renderAll(); applySearch(); markLive();
 
-  getJSON("https://api.coinbase.com/v2/prices/BTC-USD/spot").then(function(j){
-    var p = parseFloat(j && j.data && j.data.amount);
-    if (p > 0){ S.price = p; S.live.price = true; markLive(); renderAll(); drawChart(parseInt($("chart-scrub").value,10)); }
-  }).catch(function(){});
-
-  getJSON("https://api.kraken.com/0/public/Ticker?pair=XBTUSD").then(function(j){
-    var res = j && j.result && (j.result.XXBTZUSD || j.result.XBTUSD);
-    if (res && res.o){
-      var open = parseFloat(res.o), last = parseFloat(res.c && res.c[0]);
-      if (open > 0 && last > 0){ S.change24 = (last/open - 1) * 100; S.live.change = true; markLive(); renderGlance(); }
-    }
-  }).catch(function(){});
+  function refreshSpotPrice(){
+    return getJSON("https://api.coinbase.com/v2/prices/BTC-USD/spot").then(function(j){
+      var p = parseFloat(j && j.data && j.data.amount);
+      if (p > 0){ S.price = p; S.live.price = true; markLive(); renderAll(); drawChart(parseInt($("chart-scrub").value,10)); }
+    }).catch(function(){});
+  }
+  function refreshChange24(){
+    return getJSON("https://api.kraken.com/0/public/Ticker?pair=XBTUSD").then(function(j){
+      var res = j && j.result && (j.result.XXBTZUSD || j.result.XBTUSD);
+      if (res && res.o){
+        var open = parseFloat(res.o), last = parseFloat(res.c && res.c[0]);
+        if (open > 0 && last > 0){ S.change24 = (last/open - 1) * 100; S.live.change = true; markLive(); renderGlance(); }
+      }
+    }).catch(function(){});
+  }
+  refreshSpotPrice();
+  refreshChange24();
+  /* Keep the current price fresh (~30s) and, while the 1H range is
+     selected, silently refresh its 1-minute line on the same beat so
+     it feels live. A failed refresh keeps the data already on screen. */
+  function refresh1HIfActive(){
+    if (chartRange !== "1H") return;
+    var req = ++chartReq;
+    fetchCandles("1H").then(function(data){
+      if (req !== chartReq || chartRange !== "1H") return;
+      chartLive = true;
+      setChartData(data);
+    }).catch(function(){});
+  }
+  setInterval(function(){
+    refreshSpotPrice();
+    refreshChange24();
+    refresh1HIfActive();
+  }, 30000);
 
   getJSON("https://mempool.space/api/v1/fees/recommended").then(function(j){
     if (j && j.fastestFee){
