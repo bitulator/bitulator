@@ -204,6 +204,8 @@
     box-shadow:0 0 0 1px rgba(255,255,255,.4),0 2px 6px rgba(0,0,0,.55);
   }
   .note{color:var(--faint);font-size:.8rem}
+  .note a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+  .note a:hover{color:var(--accent)}
   .mini-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
   .mini-list li{padding:7px 0;border-bottom:1px dashed var(--line-soft);font-size:.93rem}
   .mini-list li:last-child{border-bottom:0}
@@ -626,7 +628,7 @@
           <ul class="mini-list" id="news-list">
             <li>Loading headlines…</li>
           </ul>
-          <p class="note" id="news-note">Live from Stacker News.</p>
+          <p class="note" id="news-note">Live from <a href="https://stacker.news/" target="_blank" rel="noopener noreferrer">Stacker News</a>.</p>
         </div>
       </article>
 
@@ -2270,7 +2272,7 @@
     li.textContent = "Couldn\u2019t load headlines \u2014 check back shortly.";
     list.appendChild(li);
     var note = $("news-note");
-    if (note) note.textContent = "Live from Stacker News.";
+    if (note) note.innerHTML = 'Live from <a href="https://stacker.news/" target="_blank" rel="noopener noreferrer">Stacker News</a>.';
   }
   function renderNewsList(){
     var list = $("news-list");
@@ -2296,7 +2298,7 @@
     });
     newsRendered = true;
     var note = $("news-note");
-    if (note) note.textContent = "Live from Stacker News.";
+    if (note) note.innerHTML = 'Live from <a href="https://stacker.news/" target="_blank" rel="noopener noreferrer">Stacker News</a>.';
   }
   function setNewsTab(tab){
     if (tab !== "front" && tab !== "new") return;
