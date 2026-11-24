@@ -189,6 +189,20 @@
   .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
   .bar{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1px solid var(--line-soft)}
   .bar > i{display:block;height:100%;background:var(--accent);border-radius:99px}
+  /* Fear & Greed meter: one flowing sentiment track — red fear on the left,
+     through orange and yellow, to green greed on the right — with a needle
+     marking today's value on top of it. */
+  .fng-track{
+    position:relative;height:12px;border-radius:99px;
+    border:1px solid var(--line-soft);
+    background:linear-gradient(90deg,#ef4444 0%,#f97316 28%,#facc15 50%,#a3e635 74%,#22c55e 100%);
+  }
+  .fng-needle{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:6px;height:22px;border-radius:3px;
+    background:#fff;border:2px solid #0a1128;
+    box-shadow:0 0 0 1px rgba(255,255,255,.4),0 2px 6px rgba(0,0,0,.55);
+  }
   .note{color:var(--faint);font-size:.8rem}
   .mini-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
   .mini-list li{padding:7px 0;border-bottom:1px dashed var(--line-soft);font-size:.93rem}
@@ -534,7 +548,7 @@
         <div class="card-top"><div class="t"><h3>Fear &amp; Greed</h3><p class="sub">How the market feels today, 0–100.</p></div><button class="star" type="button" aria-label="Star Fear and Greed" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="out" style="text-align:center"><div class="big" id="fng-big" style="font-size:2.2rem">—</div><div class="note" id="fng-word">—</div></div>
-          <div class="bar" aria-hidden="true"><i id="fng-bar" style="width:50%"></i></div>
+          <div class="fng-track" role="img" aria-label="Fear and Greed scale: red fear on the left, flowing through orange and yellow, to green greed on the right"><i class="fng-needle" id="fng-bar" style="left:50%"></i></div>
           <p class="note">0 = extreme fear, 100 = extreme greed. A mood ring, not a signal.</p>
         </div>
       </article>
@@ -1241,7 +1255,7 @@
     // F&G card
     $("fng-big").textContent = S.fng;
     $("fng-word").textContent = fngWord(S.fng) + (S.live.fng ? " · live" : " · sample");
-    $("fng-bar").style.width = S.fng + "%";
+    $("fng-bar").style.left = S.fng + "%";
   }
 
   function renderAll(){ renderGlance(); renderConverter(); renderPriceCards(); renderDCA(); renderGoal(); renderFuture(); renderHouse(); renderHundo(); }
