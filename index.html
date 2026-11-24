@@ -597,8 +597,8 @@
         <div class="body">
           <div class="stat-rows">
             <div class="stat-row"><span class="k">Mayer Multiple</span><span class="v" id="mayer-v">—</span></div>
-            <div class="stat-row"><span class="k">200-day average <span class="note">(sample)</span></span><span class="v" id="mayer-ma">—</span></div>
-            <div class="stat-row"><span class="k">All-time high <span class="note">(sample)</span></span><span class="v" id="ath-v">—</span></div>
+            <div class="stat-row"><span class="k">200-day average</span><span class="v" id="mayer-ma">—</span></div>
+            <div class="stat-row"><span class="k">All-time high</span><span class="v" id="ath-v">—</span></div>
             <div class="stat-row"><span class="k">Below ATH</span><span class="v" id="ath-off">—</span></div>
           </div>
           <p class="note">Above 2.4 has historically meant “frothy”; below 1, “cheap”.</p>
@@ -610,8 +610,8 @@
         <div class="body">
           <div class="out"><div class="big" id="mcap-v">—</div><div class="note" id="mcap-sub">—</div></div>
           <div class="stat-rows">
-            <div class="stat-row"><span class="k">Share of gold <span class="note">(~$18T sample)</span></span><span class="v" id="mcap-gold">—</span></div>
-            <div class="stat-row"><span class="k">Share of all crypto <span class="note">(sample)</span></span><span class="v" id="mcap-dom">—</span></div>
+            <div class="stat-row"><span class="k">Share of gold</span><span class="v" id="mcap-gold">—</span></div>
+            <div class="stat-row"><span class="k">Share of all crypto</span><span class="v" id="mcap-dom">—</span></div>
           </div>
         </div>
       </article>
@@ -638,10 +638,10 @@
         <div class="card-top"><div class="t"><h3>Bitcoin network</h3><p class="sub">Hashrate, backlog, and nodes.</p></div><button class="star" type="button" aria-label="Star Bitcoin network" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="stat-rows">
-            <div class="stat-row"><span class="k">Hashrate <span class="note">(sample)</span></span><span class="v">812 EH/s</span></div>
+            <div class="stat-row"><span class="k">Hashrate</span><span class="v" id="net-hashrate">—</span></div>
             <div class="stat-row"><span class="k">Waiting in mempool</span><span class="v" id="net-mempool">—</span></div>
-            <div class="stat-row"><span class="k">Reachable nodes <span class="note">(sample)</span></span><span class="v">~19,400</span></div>
-            <div class="stat-row"><span class="k">Avg block time <span class="note">(sample)</span></span><span class="v">9.8 min</span></div>
+            <div class="stat-row"><span class="k">Reachable nodes</span><span class="v" id="net-nodes">—</span></div>
+            <div class="stat-row"><span class="k">Avg block time</span><span class="v" id="net-blocktime">—</span></div>
           </div>
         </div>
       </article>
@@ -860,16 +860,16 @@
               <option value="2021">2021</option><option value="2022">2022</option>
               <option value="2023">2023</option><option value="2024">2024</option>
             </select></div>
-          <div class="out"><div class="big" id="hundo-out">—</div><div class="note" id="hundo-sub">—</div></div>
-          <p class="note">Uses round sample year-start prices, labeled on the live site with sourced history.</p>
+          <div class="out"><div class="big" id="hundo-out">—</div><div class="note" id="hundo-sub">Loading price history…</div></div>
+          <p class="note" id="hundo-note">Year-start prices: blockchain.info / Coinbase.</p>
         </div>
       </article>
 
       <article class="card" data-card data-title="Historical price" data-keys="historical price history past lookup year chart old">
         <div class="card-top"><div class="t"><h3>Historical price</h3><p class="sub">What one bitcoin cost, year by year.</p></div><button class="star" type="button" aria-label="Star Historical price" aria-pressed="false">★</button></div>
         <div class="body">
-          <div class="stat-rows" id="hist-rows"></div>
-          <p class="note">Sample year-start prices for the concept preview.</p>
+          <div class="stat-rows" id="hist-rows"><div class="stat-row"><span class="k">Loading…</span><span class="v">—</span></div></div>
+          <p class="note" id="hist-note">Year-start prices: blockchain.info / Coinbase.</p>
         </div>
       </article>
 
@@ -1381,7 +1381,11 @@
     fng: 74, height: 924318,
     live: { price:false, change:false, fee:false, fng:false, height:false }
   };
-  var SAMPLE_ATH = 126198, SAMPLE_MA200 = 88400;
+  /* Live-only stats — null until their source loads; the cards show "—"
+     meanwhile and never fall back to a hardcoded sample number. */
+  var liveMA200 = null, liveATH = null;       // from Coinbase daily history
+  var totalCryptoCap = null, goldCap = null;  // from CoinGecko (global + PAXG)
+  var YEAR_START = null;                      // { "2020": price, … } real year-start prices
 
   function badge(key, live){
     var els = document.querySelectorAll('[data-badge="'+key+'"]');
@@ -1468,17 +1472,28 @@
     $("fee-half").textContent = feeLine(S.fees.half);
     $("fee-hour").textContent = feeLine(S.fees.hour);
     $("fee-note").textContent = "140 vB ≈ a typical one-input, two-output SegWit send. Rates " + (S.feesLive ? "live from mempool.space." : "shown are samples — live rates didn't load.");
-    // Mayer & ATH
-    $("mayer-v").textContent = (S.price/SAMPLE_MA200).toFixed(2);
-    $("mayer-ma").textContent = fmtUSD(SAMPLE_MA200);
-    $("ath-v").textContent = fmtUSD(SAMPLE_ATH);
-    $("ath-off").textContent = Math.max(0,(1 - S.price/SAMPLE_ATH)*100).toFixed(1) + "%";
-    // Market cap
+    // Mayer & ATH — live from the Coinbase daily history; "—" until it loads
+    if (liveMA200 && liveMA200 > 0){
+      $("mayer-v").textContent = (S.price/liveMA200).toFixed(2);
+      $("mayer-ma").textContent = fmtUSD(liveMA200);
+    } else {
+      $("mayer-v").textContent = "—";
+      $("mayer-ma").textContent = "—";
+    }
+    if (liveATH && liveATH > 0){
+      $("ath-v").textContent = fmtUSD(liveATH);
+      $("ath-off").textContent = Math.max(0,(1 - S.price/liveATH)*100).toFixed(1) + "%";
+    } else {
+      $("ath-v").textContent = "—";
+      $("ath-off").textContent = "—";
+    }
+    // Market cap — cap itself is live price × live supply; the two shares
+    // are live from CoinGecko and stay "—" until those load.
     var supply = supplyAt(S.height), mcap = supply * S.price;
     $("mcap-v").textContent = "$" + (mcap/1e12).toFixed(2) + " trillion";
     $("mcap-sub").textContent = fmtNum(supply) + " BTC × " + fmtUSD(S.price);
-    $("mcap-gold").textContent = (mcap/18e12*100).toFixed(1) + "%";
-    $("mcap-dom").textContent = "~54%";
+    $("mcap-gold").textContent = (goldCap && goldCap > 0) ? (mcap/goldCap*100).toFixed(1) + "%" : "—";
+    $("mcap-dom").textContent = (totalCryptoCap && totalCryptoCap > 0) ? (mcap/totalCryptoCap*100).toFixed(1) + "%" : "—";
     // Supply card
     $("supply-mined").textContent = fmtNum(supply) + " BTC";
     $("supply-left").textContent = fmtNum(21000000 - supply) + " BTC";
@@ -1557,23 +1572,105 @@
   }
   ["house-price","house-pct"].forEach(function(id){ $(id).addEventListener("input", renderHouse); });
 
-  /* ---------- What $100 did / historical (sample year-start prices) ---------- */
-  var HIST = { "2015":314, "2016":434, "2017":998, "2018":13412, "2019":3843, "2020":7200, "2021":29374, "2022":47686, "2023":16547, "2024":42265, "2025":93576 };
+  /* ---------- What $100 did / historical (real year-start prices) ----------
+     One shared yearly series: the first available price of each year from
+     blockchain.info's market-price chart, supplemented per-year from the
+     cached Coinbase daily history. No sample table — if neither source
+     loads, both cards say so plainly. */
+  function fmtHistPrice(v){
+    if (!isFinite(v) || v == null) return "—";
+    if (v < 100) return "$" + Number(v).toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2});
+    if (v < 1000) return "$" + Number(v).toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2});
+    return fmtUSD(v);
+  }
   function renderHundo(){
-    var y = $("hundo-year").value, then = HIST[y];
-    if (!then) return;
+    var y = $("hundo-year").value;
+    var then = YEAR_START ? YEAR_START[y] : null;
+    if (!then || !isFinite(then) || then <= 0){
+      $("hundo-out").textContent = "—";
+      $("hundo-sub").textContent = YEAR_START ? ("No price history for " + y + " yet.") : "Loading price history…";
+      return;
+    }
     var btc = 100/then, now = btc * S.price;
     $("hundo-out").textContent = fmtUSD(now);
-    $("hundo-sub").textContent = "$100 at " + fmtUSD(then) + " in " + y + " bought " + btc.toFixed(4) + " BTC — a " + (now/100).toFixed(1) + "× return at today's price";
+    $("hundo-sub").textContent = "$100 at " + fmtHistPrice(then) + " in " + y + " bought " + btc.toFixed(4) + " BTC — a " + (now/100).toFixed(1) + "× return at today's price";
   }
   $("hundo-year").addEventListener("change", renderHundo);
-  (function(){
-    var rows = $("hist-rows"), html = "";
-    ["2025","2024","2023","2022","2021","2020","2019"].forEach(function(y){
-      html += '<div class="stat-row"><span class="k">Jan ' + y + '</span><span class="v">' + fmtUSD(HIST[y]) + '</span></div>';
+  function renderHistRows(){
+    var box = $("hist-rows"); if (!box) return;
+    if (!YEAR_START){
+      box.innerHTML = '<div class="stat-row"><span class="k">Loading…</span><span class="v">—</span></div>';
+      return;
+    }
+    var years = Object.keys(YEAR_START).filter(function(y){
+      var n = parseInt(y, 10); return isFinite(n) && n >= 2015 && YEAR_START[y] > 0;
+    }).sort(function(a, b){ return parseInt(b, 10) - parseInt(a, 10); }).slice(0, 8);
+    if (!years.length){
+      box.innerHTML = '<div class="stat-row"><span class="k">No history loaded</span><span class="v">—</span></div>';
+      return;
+    }
+    var html = "";
+    years.forEach(function(y){
+      html += '<div class="stat-row"><span class="k">Jan ' + y + '</span><span class="v">' + fmtHistPrice(YEAR_START[y]) + '</span></div>';
     });
-    rows.innerHTML = html;
-  })();
+    box.innerHTML = html;
+  }
+  function mergeYearStart(incoming){
+    if (!incoming) return;
+    var changed = false;
+    if (!YEAR_START) YEAR_START = {};
+    Object.keys(incoming).forEach(function(y){
+      if (!(y in YEAR_START) && isFinite(incoming[y]) && incoming[y] > 0){
+        YEAR_START[y] = incoming[y]; changed = true;
+      }
+    });
+    if (changed){ renderHundo(); renderHistRows(); }
+  }
+  function yearStartFromDailyRows(rows){
+    var map = {};
+    (rows || []).forEach(function(r){
+      if (!r || !isFinite(r.p) || r.p <= 0) return;
+      var y = String(new Date(r.t).getUTCFullYear());
+      if (!(y in map)) map[y] = r.p;
+    });
+    return map;
+  }
+  function yearStartFromBlockchain(values){
+    var map = {};
+    var sorted = (values || []).slice().sort(function(a, b){ return a.x - b.x; });
+    sorted.forEach(function(v){
+      if (!v || !isFinite(v.y) || v.y <= 0) return; // early years carry 0.0 placeholders
+      var y = String(new Date(v.x*1000).getUTCFullYear());
+      if (!(y in map)) map[y] = v.y;
+    });
+    return map;
+  }
+  function failYearHistory(){
+    if (YEAR_START) return;
+    $("hundo-out").textContent = "—";
+    $("hundo-sub").textContent = "Couldn’t load price history — check back shortly.";
+    var hn = $("hundo-note"); if (hn) hn.textContent = "Couldn’t load price history — check back shortly.";
+    var box = $("hist-rows");
+    if (box) box.innerHTML = '<div class="stat-row"><span class="k">Couldn’t load history</span><span class="v">—</span></div>';
+    var tn = $("hist-note"); if (tn) tn.textContent = "Couldn’t load price history — check back shortly.";
+  }
+  function loadYearHistory(){
+    getJSON("https://api.blockchain.info/charts/market-price?timespan=all&format=json&sampled=true").then(function(j){
+      var vals = j && j.values;
+      if (!vals || !vals.length) throw new Error("empty");
+      var map = yearStartFromBlockchain(vals);
+      if (!Object.keys(map).length) throw new Error("empty");
+      mergeYearStart(map);
+      if (dailyHistoryCache) mergeYearStart(yearStartFromDailyRows(dailyHistoryCache));
+    }).catch(function(){
+      // Fallback: the cached Coinbase daily history (2015 → today).
+      fetchDailyHistoryOnce().then(function(){
+        if (dailyHistoryCache) mergeYearStart(yearStartFromDailyRows(dailyHistoryCache));
+        if (!YEAR_START) failYearHistory();
+      }).catch(function(){ failYearHistory(); });
+    });
+  }
+  renderHistRows();
 
   /* ---------- Converter wiring ---------- */
   $("conv-amount").addEventListener("input", renderConverter);
@@ -1678,14 +1775,30 @@
       var byTime = {}, rows = [];
       parts.forEach(function(rowsIn){
         if (!rowsIn) return;
-        rowsIn.forEach(function(r){ if (r && isFinite(r[4])) byTime[r[0]] = r[4]; });
+        // Coinbase candle: [time, low, high, open, close, volume] — keep
+        // the close for averages and the high for the all-time high.
+        rowsIn.forEach(function(r){ if (r && isFinite(r[4])) byTime[r[0]] = { p: r[4], h: isFinite(r[2]) ? r[2] : r[4] }; });
       });
-      Object.keys(byTime).forEach(function(k){ rows.push({ t: parseInt(k,10)*1000, p: byTime[k] }); });
+      Object.keys(byTime).forEach(function(k){ rows.push({ t: parseInt(k,10)*1000, p: byTime[k].p, h: byTime[k].h }); });
       rows.sort(function(a,b){ return a.t - b.t; });
       if (rows.length < 300) throw new Error("short daily history");
       dailyHistoryCache = rows;
       maSeries = buildMASeries(rows);
       if (!maSeries || maSeries.length < 10) throw new Error("short MA");
+      // Mayer Multiple inputs from this same history: the 200-day average
+      // is the mean of the last 200 daily closes; the ATH is the highest
+      // daily high in the whole series (2015 → today covers the real ATH).
+      if (rows.length >= 200){
+        var sum200 = 0;
+        for (var li = rows.length - 200; li < rows.length; li++) sum200 += rows[li].p;
+        liveMA200 = sum200 / 200;
+      }
+      var ath = 0;
+      rows.forEach(function(r){ var hv = isFinite(r.h) ? r.h : r.p; if (hv > ath) ath = hv; });
+      if (ath > 0) liveATH = ath;
+      try { renderPriceCards(); } catch(e){}
+      // Recent years can also supplement the year-start series.
+      try { mergeYearStart(yearStartFromDailyRows(rows)); } catch(e){}
       return maSeries;
     });
     // A failed history fetch clears the cache so a later range can retry.
@@ -2055,8 +2168,8 @@
 
   getJSON("https://mempool.space/api/mempool").then(function(j){
     if (j && isFinite(j.count)) $("net-mempool").textContent = fmtNum(j.count) + " tx";
-    else $("net-mempool").textContent = "~128,000 tx (sample)";
-  }).catch(function(){ $("net-mempool").textContent = "~128,000 tx (sample)"; });
+    else $("net-mempool").textContent = "—";
+  }).catch(function(){ $("net-mempool").textContent = "—"; });
 
   getJSON("https://mempool.space/api/blocks").then(function(arr){
     if (!arr || !arr.length) throw new Error("empty");
@@ -2067,6 +2180,14 @@
     });
     $("blocks-rows").innerHTML = html;
     $("blocks-note").textContent = "Live from mempool.space. One new block roughly every 10 minutes.";
+    // Avg block time for the network card: mean interval across the last
+    // 10 blocks returned here (newest first, unix-second timestamps).
+    var recent = arr.slice(0, 10);
+    if (recent.length >= 2){
+      var newest = recent[0].timestamp, oldest = recent[recent.length-1].timestamp;
+      var avgMin = Math.abs(newest - oldest) / (recent.length - 1) / 60;
+      if (isFinite(avgMin) && avgMin > 0) $("net-blocktime").textContent = avgMin.toFixed(1) + " min";
+    }
   }).catch(function(){
     var html = "";
     [0,1,2].forEach(function(i){
@@ -2232,6 +2353,40 @@
   refreshNews();
   /* Refresh the headlines about every 15 minutes while the page is open. */
   setInterval(refreshNews, 15 * 60 * 1000);
+
+  /* ---------- Mayer / ATH + year-start supplement: the long Coinbase
+     daily history (also feeds the chart's 200-week MA — one cached fetch).
+     On failure the Mayer/ATH stats simply stay "—". ---------- */
+  fetchDailyHistoryOnce().then(function(){ renderPriceCards(); }).catch(function(){ renderPriceCards(); });
+
+  /* ---------- Real year-start history for What $100 did / Historical ---------- */
+  loadYearHistory();
+
+  /* ---------- Market-cap shares (CoinGecko, keyless) ---------- */
+  getJSON("https://api.coingecko.com/api/v3/global").then(function(j){
+    var tot = j && j.data && j.data.total_market_cap && parseFloat(j.data.total_market_cap.usd);
+    if (tot > 0){ totalCryptoCap = tot; renderPriceCards(); }
+  }).catch(function(){});
+  getJSON("https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd").then(function(j){
+    // PAXG is tokenized gold — 1 token ≈ 1 troy oz, so its price tracks
+    // spot gold. Gold cap ≈ spot × ~6.95B oz above ground.
+    var px = j && j["pax-gold"] && parseFloat(j["pax-gold"].usd);
+    if (px > 0){ goldCap = px * 6.95e9; renderPriceCards(); }
+  }).catch(function(){});
+
+  /* ---------- Bitcoin network: hashrate + reachable nodes ---------- */
+  getJSON("https://mempool.space/api/v1/mining/hashrate/3d").then(function(j){
+    var hr = j && (parseFloat(j.currentHashrate) ||
+      (j.hashrates && j.hashrates.length ? parseFloat(j.hashrates[j.hashrates.length-1].avgHashrate) : NaN));
+    var el = $("net-hashrate");
+    if (el) el.textContent = (isFinite(hr) && hr > 0) ? fmtNum(hr/1e18) + " EH/s" : "—";
+  }).catch(function(){ var el = $("net-hashrate"); if (el) el.textContent = "—"; });
+
+  getJSON("https://bitnodes.io/api/v1/snapshots/latest/").then(function(j){
+    var n = j && parseInt(j.total_nodes, 10);
+    var el = $("net-nodes");
+    if (el) el.textContent = (isFinite(n) && n > 0) ? fmtNum(n) : "—";
+  }).catch(function(){ var el = $("net-nodes"); if (el) el.textContent = "—"; });
 
   /* Chart: load the default range (3M) live; loadChartRange falls back to
      that range's sample series when Coinbase candles can't load. */
