@@ -6,6 +6,9 @@
 <meta name="color-scheme" content="dark" />
 <meta name="description" content="Convert dollars, sats and bitcoin, plan your stack, and keep an eye on the Bitcoin network and market — free tools, no account, no tracking." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23fde047'/%3E%3Ctext x='50' y='70' font-size='60' font-weight='900' text-anchor='middle' fill='%231a1602' font-family='Arial,sans-serif'%3E%E2%82%BF%3C/text%3E%3C/svg%3E" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0b0e1a" />
+<link rel="apple-touch-icon" href="icon-180.png" />
 <meta property="og:title" content="Bitulator — BTC/SATs Calculator &amp; Bitcoin Tools" />
 <meta property="og:description" content="Convert dollars, sats and bitcoin, plan your stack, and keep an eye on the Bitcoin network and market — free tools, no account, no tracking." />
 <meta property="og:type" content="website" />
@@ -71,6 +74,12 @@
      tags first, then block height, then Fear & Greed / fast fee. */
   @media (max-width:1120px){
     .glance-in .tag{display:none}
+  }
+  @media (max-width:1240px){
+    .g-item.opt-ath{display:none}
+  }
+  @media (max-width:1060px){
+    .g-item.opt-diff{display:none}
   }
   @media (max-width:980px){
     .g-item.opt-block{display:none}
@@ -476,6 +485,22 @@
      which is now visible on desktop as well as phone. */
   @media (prefers-reduced-motion:reduce){ .back-top{transition:none} }
 
+  /* ---------- New cards: My Stack / countdowns / power ---------- */
+  input[type="date"]{
+    width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;
+    color:var(--ink);padding:10px 12px;font-size:1rem;font:inherit;color-scheme:dark;
+  }
+  .pos{color:var(--green)} .neg{color:var(--red)}
+  .stk-row{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:8px 0;border-bottom:1px dashed var(--line-soft);font-size:.92rem;
+  }
+  .stk-row:last-child{border-bottom:0}
+  .stk-row .d{color:var(--muted);font-size:.83rem;display:block}
+  .stk-acts{display:flex;gap:6px;flex:none}
+  .stk-acts .btn{padding:0 12px;min-height:2.5rem;font-size:.85rem}
+  .stack-pane[hidden]{display:none}
+
   footer{border-top:1px solid var(--line-soft);margin-top:44px;padding:22px 0 30px;color:var(--faint);font-size:.88rem;text-align:center}
   .footer-credit{margin:0 0 14px;font-size:.95rem;color:var(--muted)}
   .footer-credit a{color:var(--ink);font-weight:700;text-decoration:none}
@@ -499,6 +524,8 @@
     <div class="g-item opt opt-fee"><span class="g-label">Fast fee</span><span class="g-val" id="g-fee">—</span><span class="tag sample" data-badge="fee">Sample</span></div>
     <div class="g-item opt opt-fng"><span class="g-label">Fear &amp; Greed</span><span class="g-val" id="g-fng">—</span><span class="tag sample" data-badge="fng">Sample</span></div>
     <div class="g-item opt opt-block"><span class="g-label">Block</span><span class="g-val" id="g-height">—</span><span class="tag sample" data-badge="height">Sample</span></div>
+    <div class="g-item opt opt-diff"><span class="g-label">Difficulty</span><span class="g-val" id="g-diff">—</span></div>
+    <div class="g-item opt opt-ath"><span class="g-label">Since ATH</span><span class="g-val" id="g-ath-days">—</span></div>
     <button type="button" class="donate-pill" id="donate-pill">Donate</button>
   </div>
 </header>
@@ -560,7 +587,7 @@
     <div class="search-meta" id="search-meta" aria-live="polite"></div>
     <div class="empty" id="search-empty" hidden>
       <strong>No tool matches that.</strong>
-      Try a shorter word — “fee”, “price”, “stack”, “block” — or clear the search to see all 28 tools.
+      Try a shorter word — “fee”, “price”, “stack”, “block” — or clear the search to see all 33 tools.
     </div>
   </div>
 
@@ -624,6 +651,32 @@
         </div>
       </article>
 
+      <article class="card" data-card data-share="botd" data-title="On this day" data-keys="on this day price history year ago years ago today anniversary change then now">
+        <div class="card-top"><div class="t"><h3>On this day</h3><p class="sub">Bitcoin's price on this date in past years.</p></div><button class="share-btn" type="button" aria-label="Share On this day" title="Share On this day" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star On this day" aria-pressed="false">★</button></div>
+        <div class="body">
+          <div class="stat-rows">
+            <div class="stat-row"><span class="k">1 year ago today</span><span class="v" id="otd-1y">—</span></div>
+            <div class="stat-row"><span class="k">2 years ago today</span><span class="v" id="otd-2y">—</span></div>
+            <div class="stat-row"><span class="k">4 years ago today</span><span class="v" id="otd-4y">—</span></div>
+          </div>
+          <p class="note" id="otd-note">From the Coinbase daily history — the nearest trading day when the exact date has no close.</p>
+        </div>
+      </article>
+
+      <article class="card" data-card data-share="bddr" data-title="Drawdown from ATH" data-keys="drawdown all-time high ath below peak drop correction down from top">
+        <div class="card-top"><div class="t"><h3>Drawdown from ATH</h3><p class="sub">How far below the all-time high we sit.</p></div><button class="share-btn" type="button" aria-label="Share Drawdown from ATH" title="Share Drawdown from ATH" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Drawdown from ATH" aria-pressed="false">★</button></div>
+        <div class="body">
+          <div class="out" style="text-align:center"><div class="big" id="dd-pct" style="font-size:2rem">—</div><div class="note">below the all-time high</div></div>
+          <div class="bar" role="img" aria-label="Depth of the drawdown below the all-time high"><i id="dd-bar" style="width:0%"></i></div>
+          <div class="stat-rows">
+            <div class="stat-row"><span class="k">All-time high</span><span class="v" id="dd-ath">—</span></div>
+            <div class="stat-row"><span class="k">ATH date</span><span class="v" id="dd-date">—</span></div>
+            <div class="stat-row"><span class="k">Days since the ATH</span><span class="v" id="dd-days">—</span></div>
+          </div>
+          <p class="note">The bar fills with the depth of the drop from the top. ATH from Coinbase daily highs since 2015.</p>
+        </div>
+      </article>
+
       <article class="card" data-card data-share="bmc" data-title="Bitcoin market cap" data-keys="market cap capitalization total value size dominance">
         <div class="card-top"><div class="t"><h3>Bitcoin market cap</h3><p class="sub">Every bitcoin in existence, priced.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin market cap" title="Share Bitcoin market cap" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin market cap" aria-pressed="false">★</button></div>
         <div class="body">
@@ -635,8 +688,8 @@
         </div>
       </article>
 
-      <article class="card" data-card data-share="bnw" data-title="Bitcoin News" data-keys="news headlines bitcoin economy fed rates stories">
-        <div class="card-top"><div class="t"><h3>Bitcoin News</h3><p class="sub">Top posts from Stacker News ~bitcoin.</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin News" title="Share Bitcoin News" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin News" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bnw" data-title="Stacker News Feed" data-keys="stacker news feed headlines posts bitcoin stories territory">
+        <div class="card-top"><div class="t"><h3>Stacker News Feed</h3><p class="sub">Top posts from Stacker News ~bitcoin.</p></div><button class="share-btn" type="button" aria-label="Share Stacker News Feed" title="Share Stacker News Feed" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Stacker News Feed" aria-pressed="false">★</button></div>
         <div class="body">
           <div class="tf-row" role="group" aria-label="News view">
             <button type="button" class="tf-btn" data-news-tab="new" aria-pressed="true">New</button>
@@ -646,6 +699,16 @@
             <li>Loading headlines…</li>
           </ul>
           <p class="note" id="news-note">Live from <a href="https://stacker.news/" target="_blank" rel="noopener noreferrer">Stacker News</a>.</p>
+        </div>
+      </article>
+
+      <article class="card" data-card data-share="bmn" data-title="Bitcoin Macro News" data-keys="bitcoin macro news coindesk cointelegraph decrypt headlines">
+        <div class="card-top"><div class="t"><h3>Bitcoin Macro News</h3><p class="sub">Bitcoin &amp; macro headlines</p></div><button class="share-btn" type="button" aria-label="Share Bitcoin Macro News" title="Share Bitcoin Macro News" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Bitcoin Macro News" aria-pressed="false">★</button></div>
+        <div class="body">
+          <ul class="mini-list" id="macro-news-list">
+            <li>Loading headlines…</li>
+          </ul>
+          <p class="note" id="macro-news-note">Bitcoin &amp; macro headlines from CoinDesk, Cointelegraph and Decrypt — Bitcoin only, no altcoin news. Newest first. Tap a headline to read it.</p>
         </div>
       </article>
 
@@ -679,30 +742,31 @@
         </div>
       </article>
 
-      <article class="card" data-card data-share="bdio" data-title="Difficulty adjustment" data-keys="difficulty adjustment mining retarget epoch estimate">
-        <div class="card-top"><div class="t"><h3>Difficulty adjustment</h3><p class="sub">Mining difficulty re-tunes itself.</p></div><button class="share-btn" type="button" aria-label="Share Difficulty adjustment" title="Share Difficulty adjustment" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Difficulty adjustment" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bdac" data-title="Difficulty Adjustment Countdown" data-keys="difficulty adjustment countdown next retarget estimate date when mining">
+        <div class="card-top"><div class="t"><h3>Difficulty Adjustment Countdown</h3><p class="sub">When mining difficulty next re-tunes itself.</p></div><button class="share-btn" type="button" aria-label="Share Difficulty Adjustment Countdown" title="Share Difficulty Adjustment Countdown" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Difficulty Adjustment Countdown" aria-pressed="false">★</button></div>
         <div class="body">
-          <div class="bar" role="img" aria-label="Progress through current difficulty period"><i id="diff-bar" style="width:62%"></i></div>
+          <div class="bar" role="img" aria-label="Progress through the current 2016-block difficulty period"><i id="dac-bar" style="width:0%"></i></div>
           <div class="stat-rows">
-            <div class="stat-row"><span class="k">Through this period</span><span class="v" id="diff-pct">—</span></div>
-            <div class="stat-row"><span class="k">Estimated change</span><span class="v" id="diff-est">—</span></div>
-            <div class="stat-row"><span class="k">Blocks remaining</span><span class="v" id="diff-left">—</span></div>
+            <div class="stat-row"><span class="k">Blocks remaining</span><span class="v" id="dac-left">—</span></div>
+            <div class="stat-row"><span class="k">Projected change</span><span class="v" id="dac-est">—</span></div>
+            <div class="stat-row"><span class="k">Adjustment around</span><span class="v" id="dac-when">—</span></div>
           </div>
-          <p class="note" id="diff-note">Every 2,016 blocks, difficulty adjusts to keep blocks near 10 minutes.</p>
+          <p class="note" id="dac-note">Live from mempool.space. The estimate moves as blocks arrive faster or slower than 10 minutes.</p>
         </div>
       </article>
 
-      <article class="card" data-card data-share="bep" data-title="Halving epoch" data-keys="halving epoch countdown reward subsidy 2028 next">
-        <div class="card-top"><div class="t"><h3>Halving epoch</h3><p class="sub">Countdown to the next supply cut.</p></div><button class="share-btn" type="button" aria-label="Share Halving epoch" title="Share Halving epoch" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Halving epoch" aria-pressed="false">★</button></div>
+      <article class="card" data-card data-share="bhcd" data-title="Halving Countdown" data-keys="halving countdown timer next halving 1050000 reward cut date 2028 clock">
+        <div class="card-top"><div class="t"><h3>Halving Countdown</h3><p class="sub">Counting down to block 1,050,000.</p></div><button class="share-btn" type="button" aria-label="Share Halving Countdown" title="Share Halving Countdown" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Halving Countdown" aria-pressed="false">★</button></div>
         <div class="body">
-          <div class="out" style="text-align:center"><div class="big" id="halv-days" style="font-size:2rem">—</div><div class="note">estimated days to the next halving</div></div>
-          <div class="bar" role="img" aria-label="Progress through current halving epoch"><i id="halv-bar" style="width:40%"></i></div>
+          <div class="out" style="text-align:center"><div class="big" id="hcd-count" style="font-size:1.7rem">—</div><div class="note">estimated time remaining</div></div>
+          <div class="bar" role="img" aria-label="Progress through the current halving epoch, blocks 840,000 to 1,050,000"><i id="hcd-bar" style="width:0%"></i></div>
           <div class="stat-rows">
-            <div class="stat-row"><span class="k">Next halving block</span><span class="v">1,050,000</span></div>
-            <div class="stat-row"><span class="k">Blocks to go</span><span class="v" id="halv-left">—</span></div>
-            <div class="stat-row"><span class="k">Reward drops to</span><span class="v">1.5625 BTC</span></div>
+            <div class="stat-row"><span class="k">Blocks to go</span><span class="v" id="hcd-left">—</span></div>
+            <div class="stat-row"><span class="k">Estimated date</span><span class="v" id="hcd-date">—</span></div>
+            <div class="stat-row"><span class="k">Block reward</span><span class="v">3.125 BTC → 1.5625 BTC</span></div>
+            <div class="stat-row"><span class="k">Supply already mined</span><span class="v" id="hcd-mined">—</span></div>
           </div>
-          <p class="note">Estimated from the current block height at ~10 minutes per block.</p>
+          <p class="note">Estimated from the live block height and recent block times — it shifts as blocks arrive faster or slower.</p>
         </div>
       </article>
 
@@ -816,6 +880,69 @@
     <div class="group-head"><h2>Plan your stack</h2><p>Small buys, long horizons.</p></div>
     <div class="grid">
 
+      <article class="card wide" data-card data-share="bmys" data-title="My Stack" data-keys="my stack tracker buys purchases portfolio holdings cost basis average cost profit loss track my bitcoin">
+        <div class="card-top"><div class="t"><h3>My Stack</h3><p class="sub">Track your own buys — what you put in, and what it's worth now.</p></div><button class="share-btn" type="button" aria-label="Share My Stack" title="Share My Stack" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star My Stack" aria-pressed="false">★</button></div>
+        <div class="body">
+          <div class="field">
+            <div class="toggle full" role="group" aria-label="How to track your stack">
+              <button type="button" id="ms-mode-buys" aria-pressed="true">Track buys</button>
+              <button type="button" id="ms-mode-total" aria-pressed="false">Just a total</button>
+            </div>
+          </div>
+
+          <div class="stack-pane" id="ms-pane-buys">
+            <div class="two">
+              <div class="field"><label for="ms-date">Date of buy</label><input type="date" id="ms-date"></div>
+              <div class="field"><label for="ms-price">Price paid per BTC ($)</label><input type="number" id="ms-price" min="0" step="any" inputmode="decimal"></div>
+            </div>
+            <div class="field"><label for="ms-amt" id="ms-amt-label">Amount spent (USD)</label><input type="number" id="ms-amt" min="0" step="any" inputmode="decimal" placeholder="e.g. 500"></div>
+            <div class="field">
+              <div class="toggle full" role="group" aria-label="Amount entered as">
+                <button type="button" id="ms-unit-usd" aria-pressed="true">USD spent</button>
+                <button type="button" id="ms-unit-btc" aria-pressed="false">BTC bought</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" type="button" id="ms-add" style="flex:1">Add buy</button>
+              <button class="btn ghost" type="button" id="ms-cancel" hidden>Cancel edit</button>
+            </div>
+            <p class="note" id="ms-form-note">Buying today? The price is pre-filled with the live price — type over it if you paid a different one.</p>
+            <div id="ms-list" style="margin-top:6px"></div>
+            <p class="note" id="ms-empty">No buys yet — add your first one above and your stack totals will live here.</p>
+          </div>
+
+          <div class="stack-pane" id="ms-pane-total" hidden>
+            <div class="two">
+              <div class="field"><label for="ms-t-btc">Total BTC you hold</label><input type="number" id="ms-t-btc" min="0" step="any" inputmode="decimal" placeholder="0.00"></div>
+              <div class="field"><label for="ms-t-usd">Total spent ($)</label><input type="number" id="ms-t-usd" min="0" step="any" inputmode="decimal" placeholder="0"></div>
+            </div>
+            <p class="note">Skip the list — just tell it the totals and it does the same math.</p>
+          </div>
+
+          <div class="out">
+            <div class="big" id="ms-tot-btc">0 BTC</div>
+            <div class="note" id="ms-tot-sats">0 sats</div>
+          </div>
+          <div class="stat-rows">
+            <div class="stat-row"><span class="k">Total invested</span><span class="v" id="ms-in">—</span></div>
+            <div class="stat-row"><span class="k">Average cost per BTC</span><span class="v" id="ms-avg">—</span></div>
+            <div class="stat-row"><span class="k">Worth now (live price)</span><span class="v" id="ms-val">—</span></div>
+            <div class="stat-row"><span class="k">Gain / loss</span><span class="v" id="ms-gl">—</span></div>
+          </div>
+
+          <div class="two">
+            <div class="field"><label for="ms-goal">Stack goal (BTC)</label><input type="number" id="ms-goal" min="0" step="any" inputmode="decimal"></div>
+            <div class="field"><label for="ms-whatif">What if BTC reaches: <strong id="ms-whatif-lab">$250,000</strong></label><input type="range" id="ms-whatif" min="10000" max="1000000" value="250000" step="5000"></div>
+          </div>
+          <div class="bar" role="img" aria-label="Progress toward your stack goal"><i id="ms-goal-bar" style="width:0%"></i></div>
+          <div class="stat-rows">
+            <div class="stat-row"><span class="k">Goal progress</span><span class="v" id="ms-goal-pct">—</span></div>
+            <div class="stat-row"><span class="k">Stack at that what-if price</span><span class="v" id="ms-whatif-out">—</span></div>
+          </div>
+          <p class="note">Saved only in this browser, on this device — nothing is uploaded, no account, no tracking. Clearing your browser data erases it.</p>
+        </div>
+      </article>
+
       <article class="card" data-card data-share="bda" data-title="DCA calculator" data-keys="dca calculator dollar cost average recurring buy weekly monthly invest">
         <div class="card-top"><div class="t"><h3>DCA calculator</h3><p class="sub">What steady small buys add up to.</p></div><button class="share-btn" type="button" aria-label="Share DCA calculator" title="Share DCA calculator" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star DCA calculator" aria-pressed="false">★</button></div>
         <div class="body">
@@ -885,6 +1012,25 @@
             </select></div>
           <div class="out"><div class="big" id="hundo-out">—</div><div class="note" id="hundo-sub">Loading price history…</div></div>
           <p class="note" id="hundo-note">Year-start prices: blockchain.info / Coinbase.</p>
+        </div>
+      </article>
+
+      <article class="card" data-card data-share="bppw" data-title="Purchasing power" data-keys="purchasing power inflation dollar cpi kept dollars vs bitcoin erosion what happened money">
+        <div class="card-top"><div class="t"><h3>Purchasing power</h3><p class="sub">The same money, two places: left in dollars, or put in Bitcoin.</p></div><button class="share-btn" type="button" aria-label="Share Purchasing power" title="Share Purchasing power" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Purchasing power" aria-pressed="false">★</button></div>
+        <div class="body">
+          <div class="two">
+            <div class="field"><label for="pp-year">Starting year</label>
+              <select id="pp-year">
+                <option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option>
+                <option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option>
+                <option value="2019">2019</option><option value="2020" selected>2020</option><option value="2021">2021</option><option value="2022">2022</option>
+                <option value="2023">2023</option><option value="2024">2024</option>
+              </select></div>
+            <div class="field"><label for="pp-amt">Amount ($)</label><input type="number" id="pp-amt" value="100" min="0" step="any" inputmode="decimal"></div>
+          </div>
+          <div class="out"><div class="note">Kept in dollars — the same basket of goods costs today</div><div class="big" id="pp-usd">—</div><div class="note" id="pp-usd-sub">—</div></div>
+          <div class="out"><div class="note">Put in Bitcoin on Jan 1 of that year — worth today</div><div class="big" id="pp-btc">—</div><div class="note" id="pp-btc-sub">—</div></div>
+          <p class="note">Prices: BLS CPI-U annual averages; Bitcoin: Jan 1 price. “Today” CPI: 337.511 (Oct 2026, latest published).</p>
         </div>
       </article>
 
@@ -1407,6 +1553,28 @@
   /* Live-only stats — null until their source loads; the cards show "—"
      meanwhile and never fall back to a hardcoded sample number. */
   var liveMA200 = null, liveATH = null;       // from Coinbase daily history
+  var liveATHDate = null;                     // date of that ATH (same history)
+  var glanceDiffChange = null, glanceDiffBlocks = null, glanceDiffSample = false; // glance-bar difficulty, from mempool.space
+  var avgBlockMin = 10;                       // recent avg block time; 10-min fallback
+  var halvTargetMs = null;                    // estimated halving timestamp (countdown)
+  /* My Stack — persisted in this browser only (nothing is uploaded). */
+  var STACK_KEY = "bitulator-mystack";
+  var stackState = { mode:"buys", buys:[], totalBtc:0, totalUsd:0, goal:0.1, whatif:250000 };
+  try {
+    var savedStack = JSON.parse(localStorage.getItem(STACK_KEY) || "null");
+    if (savedStack && typeof savedStack === "object"){
+      if (savedStack.mode === "total" || savedStack.mode === "buys") stackState.mode = savedStack.mode;
+      if (Array.isArray(savedStack.buys)) stackState.buys = savedStack.buys.filter(function(b){
+        return b && isFinite(b.usd) && isFinite(b.btc) && b.usd >= 0 && b.btc >= 0;
+      });
+      if (isFinite(savedStack.totalBtc)) stackState.totalBtc = savedStack.totalBtc;
+      if (isFinite(savedStack.totalUsd)) stackState.totalUsd = savedStack.totalUsd;
+      if (isFinite(savedStack.goal) && savedStack.goal > 0) stackState.goal = savedStack.goal;
+      if (isFinite(savedStack.whatif) && savedStack.whatif > 0) stackState.whatif = savedStack.whatif;
+    }
+  } catch(e){}
+  var stackEditingId = null;
+  var stackUnit = "usd";
   var totalCryptoCap = null, goldCap = null;  // from CoinGecko (global + PAXG)
   var YEAR_START = null;                      // { "2020": price, … } real year-start prices
 
@@ -1444,6 +1612,18 @@
     $("g-fee").textContent = S.fees.fast + " sat/vB";
     $("g-fng").textContent = S.fng + " · " + fngWord(S.fng);
     $("g-height").textContent = fmtNum(S.height);
+    var gd = $("g-diff");
+    if (gd){
+      gd.textContent = (glanceDiffChange !== null && glanceDiffBlocks !== null)
+        ? (glanceDiffChange >= 0 ? "+" : "−") + Math.abs(glanceDiffChange).toFixed(1) + "% · ~" + fmtNum(glanceDiffBlocks) + " blocks" + (glanceDiffSample ? " (sample)" : "")
+        : "—";
+    }
+    var ga = $("g-ath-days");
+    if (ga){
+      ga.textContent = liveATHDate
+        ? fmtNum(Math.max(0, Math.floor((Date.now() - liveATHDate.getTime()) / 864e5))) + " days"
+        : "—";
+    }
     $("live-dot").className = "dot" + (S.live.price ? " live" : "");
   }
   function fngWord(v){
@@ -1521,20 +1701,13 @@
     $("supply-mined").textContent = fmtNum(supply) + " BTC";
     $("supply-left").textContent = fmtNum(21000000 - supply) + " BTC";
     $("supply-bar").style.width = (supply/21000000*100).toFixed(2) + "%";
-    // Halving
-    var next = (Math.floor(S.height/210000)+1)*210000;
-    var left = next - S.height;
-    var days = Math.round(left * 10 / 60 / 24);
-    $("halv-days").textContent = "~" + fmtNum(days) + " days";
-    $("halv-left").textContent = fmtNum(left);
-    $("halv-bar").style.width = ((S.height % 210000)/210000*100).toFixed(1) + "%";
     // F&G card
     $("fng-big").textContent = S.fng;
     $("fng-word").textContent = fngWord(S.fng) + (S.live.fng ? " · live" : " · sample");
     $("fng-bar").style.left = S.fng + "%";
   }
 
-  function renderAll(){ renderGlance(); renderConverter(); renderPriceCards(); renderDCA(); renderGoal(); renderFuture(); renderHouse(); renderHundo(); }
+  function renderAll(){ renderGlance(); renderConverter(); renderPriceCards(); renderDCA(); renderGoal(); renderFuture(); renderHouse(); renderHundo(); renderMyStack(); renderPurchasingPower(); renderHalvingCountdown(); renderOnThisDay(); renderDrawdown(); }
 
   /* ---------- DCA ---------- */
   function renderDCA(){
@@ -1647,7 +1820,7 @@
         YEAR_START[y] = incoming[y]; changed = true;
       }
     });
-    if (changed){ renderHundo(); renderHistRows(); }
+    if (changed){ renderHundo(); renderHistRows(); renderPurchasingPower(); }
   }
   function yearStartFromDailyRows(rows){
     var map = {};
@@ -1694,6 +1867,274 @@
     });
   }
   renderHistRows();
+
+  /* ---------- My Stack ---------- */
+  function saveStack(){
+    try { localStorage.setItem(STACK_KEY, JSON.stringify(stackState)); } catch(e){}
+  }
+  function stackTotals(){
+    if (stackState.mode === "total") return { btc: stackState.totalBtc || 0, usd: stackState.totalUsd || 0 };
+    var btc = 0, usd = 0;
+    stackState.buys.forEach(function(b){ btc += b.btc; usd += b.usd; });
+    return { btc: btc, usd: usd };
+  }
+  function fmtStackDate(ds){
+    if (!ds) return "No date";
+    var d = new Date(ds + "T12:00:00");
+    return isFinite(d.getTime()) ? d.toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"}) : ds;
+  }
+  function renderMyStack(){
+    var list = $("ms-list"); if (!list) return;
+    // Buys list (rebuilt on render; the form itself is never clobbered)
+    list.innerHTML = "";
+    var sorted = stackState.buys.slice().sort(function(a, b){ return String(a.date||"") < String(b.date||"") ? -1 : 1; });
+    sorted.forEach(function(b){
+      var row = document.createElement("div");
+      row.className = "stk-row";
+      var left = document.createElement("span");
+      var main = document.createElement("span");
+      main.textContent = fmtBTC(b.btc) + " · " + fmtUSD(b.usd, 2);
+      var sub = document.createElement("span");
+      sub.className = "d";
+      var px = b.btc > 0 ? b.usd / b.btc : (isFinite(b.price) ? b.price : 0);
+      sub.textContent = fmtStackDate(b.date) + " @ " + fmtUSD(px) + " per BTC";
+      left.appendChild(main); left.appendChild(sub);
+      var acts = document.createElement("span");
+      acts.className = "stk-acts";
+      var eb = document.createElement("button");
+      eb.type = "button"; eb.className = "btn ghost"; eb.textContent = "Edit";
+      eb.setAttribute("aria-label", "Edit buy from " + fmtStackDate(b.date));
+      eb.addEventListener("click", function(){ startEditBuy(b.id); });
+      var db = document.createElement("button");
+      db.type = "button"; db.className = "btn ghost"; db.textContent = "Delete";
+      db.setAttribute("aria-label", "Delete buy from " + fmtStackDate(b.date));
+      db.addEventListener("click", function(){
+        stackState.buys = stackState.buys.filter(function(x){ return x.id !== b.id; });
+        if (stackEditingId === b.id) cancelEditBuy();
+        saveStack(); renderMyStack();
+      });
+      acts.appendChild(eb); acts.appendChild(db);
+      row.appendChild(left); row.appendChild(acts);
+      list.appendChild(row);
+    });
+    $("ms-empty").style.display = (stackState.mode === "buys" && stackState.buys.length === 0) ? "" : "none";
+    // Totals
+    var t = stackTotals();
+    $("ms-tot-btc").textContent = fmtBTC(t.btc);
+    $("ms-tot-sats").textContent = fmtSats(t.btc * 1e8) + " in total";
+    $("ms-in").textContent = fmtUSD(t.usd, 2);
+    $("ms-avg").textContent = t.btc > 0 ? fmtUSD(t.usd / t.btc) : "—";
+    var val = t.btc * S.price;
+    $("ms-val").textContent = fmtUSD(val, 2);
+    var glEl = $("ms-gl");
+    if (t.usd > 0){
+      var gl = val - t.usd, pct = gl / t.usd * 100;
+      glEl.textContent = (gl >= 0 ? "+" : "−") + fmtUSD(Math.abs(gl), 2) + " · " + (gl >= 0 ? "+" : "−") + Math.abs(pct).toFixed(1) + "%";
+      glEl.className = "v " + (gl >= 0 ? "pos" : "neg");
+    } else {
+      glEl.textContent = "—"; glEl.className = "v";
+    }
+    var goal = stackState.goal || 0;
+    var gpct = goal > 0 ? Math.min(100, t.btc / goal * 100) : 0;
+    $("ms-goal-bar").style.width = gpct + "%";
+    $("ms-goal-pct").textContent = goal > 0 ? gpct.toFixed(1) + "% of " + fmtBTC(goal) : "Set a goal";
+    $("ms-whatif-lab").textContent = fmtUSD(stackState.whatif || 250000);
+    $("ms-whatif-out").textContent = fmtUSD(t.btc * (stackState.whatif || 250000));
+    // Keep today's pre-filled price fresh unless the visitor is editing it.
+    var priceEl = $("ms-price");
+    if (priceEl && !stackEditingId && document.activeElement !== priceEl){
+      var todayStr = stackTodayStr();
+      if ($("ms-date").value === todayStr) priceEl.value = Math.round(S.price * 100) / 100;
+    }
+  }
+  function stackTodayStr(){
+    var d = new Date();
+    function pad(n){ return (n < 10 ? "0" : "") + n; }
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  function applyStackMode(){
+    var total = stackState.mode === "total";
+    $("ms-mode-buys").setAttribute("aria-pressed", total ? "false" : "true");
+    $("ms-mode-total").setAttribute("aria-pressed", total ? "true" : "false");
+    $("ms-pane-buys").hidden = total;
+    $("ms-pane-total").hidden = !total;
+    if (total){
+      $("ms-t-btc").value = stackState.totalBtc || "";
+      $("ms-t-usd").value = stackState.totalUsd || "";
+    }
+    renderMyStack();
+  }
+  function setStackUnit(u){
+    stackUnit = u;
+    $("ms-unit-usd").setAttribute("aria-pressed", u === "usd" ? "true" : "false");
+    $("ms-unit-btc").setAttribute("aria-pressed", u === "btc" ? "true" : "false");
+    $("ms-amt-label").textContent = u === "usd" ? "Amount spent (USD)" : "Amount bought (BTC)";
+  }
+  function resetBuyForm(){
+    $("ms-date").value = stackTodayStr();
+    $("ms-amt").value = "";
+    $("ms-price").value = Math.round(S.price * 100) / 100;
+    setStackUnit("usd");
+  }
+  function startEditBuy(id){
+    var b = null;
+    stackState.buys.forEach(function(x){ if (x.id === id) b = x; });
+    if (!b) return;
+    stackEditingId = id;
+    $("ms-date").value = b.date || stackTodayStr();
+    setStackUnit("usd");
+    $("ms-amt").value = Math.round(b.usd * 100) / 100;
+    $("ms-price").value = b.btc > 0 ? Math.round(b.usd / b.btc * 100) / 100 : (b.price || "");
+    $("ms-add").textContent = "Save changes";
+    $("ms-cancel").hidden = false;
+    $("ms-form-note").textContent = "Editing that buy — change anything, then Save changes.";
+    $("ms-date").focus();
+  }
+  function cancelEditBuy(){
+    stackEditingId = null;
+    $("ms-add").textContent = "Add buy";
+    $("ms-cancel").hidden = true;
+    $("ms-form-note").textContent = "Buying today? The price is pre-filled with the live price — type over it if you paid a different one.";
+    resetBuyForm();
+  }
+  (function wireMyStack(){
+    if (!$("ms-add")) return;
+    $("ms-date").value = stackTodayStr();
+    $("ms-price").value = Math.round(S.price * 100) / 100;
+    $("ms-goal").value = stackState.goal || "";
+    $("ms-whatif").value = stackState.whatif || 250000;
+    $("ms-mode-buys").addEventListener("click", function(){ stackState.mode = "buys"; saveStack(); applyStackMode(); });
+    $("ms-mode-total").addEventListener("click", function(){ stackState.mode = "total"; saveStack(); applyStackMode(); });
+    $("ms-unit-usd").addEventListener("click", function(){ setStackUnit("usd"); });
+    $("ms-unit-btc").addEventListener("click", function(){ setStackUnit("btc"); });
+    $("ms-add").addEventListener("click", function(){
+      var amt = parseFloat($("ms-amt").value);
+      var price = parseFloat($("ms-price").value);
+      var date = $("ms-date").value || stackTodayStr();
+      if (!(amt > 0) || !(price > 0)){
+        $("ms-form-note").textContent = "Enter an amount and the price you paid, then try again.";
+        return;
+      }
+      var usd, btc;
+      if (stackUnit === "usd"){ usd = amt; btc = amt / price; }
+      else { btc = amt; usd = amt * price; }
+      if (stackEditingId){
+        stackState.buys.forEach(function(x){
+          if (x.id === stackEditingId){ x.date = date; x.usd = usd; x.btc = btc; x.price = price; }
+        });
+        cancelEditBuy();
+      } else {
+        stackState.buys.push({ id: Date.now(), date: date, usd: usd, btc: btc, price: price });
+        resetBuyForm();
+        $("ms-form-note").textContent = "Added. Your totals below are up to date.";
+      }
+      saveStack(); renderMyStack();
+    });
+    $("ms-cancel").addEventListener("click", function(){ cancelEditBuy(); renderMyStack(); });
+    $("ms-t-btc").addEventListener("input", function(){ stackState.totalBtc = parseFloat(this.value) || 0; saveStack(); renderMyStack(); });
+    $("ms-t-usd").addEventListener("input", function(){ stackState.totalUsd = parseFloat(this.value) || 0; saveStack(); renderMyStack(); });
+    $("ms-goal").addEventListener("input", function(){ stackState.goal = parseFloat(this.value) || 0; saveStack(); renderMyStack(); });
+    $("ms-whatif").addEventListener("input", function(){ stackState.whatif = parseFloat(this.value) || 250000; saveStack(); renderMyStack(); });
+    applyStackMode();
+  })();
+
+  /* ---------- Purchasing power (BLS CPI-U, embedded — no CPI API) ---------- */
+  var CPI_U = { "2011":224.939, "2012":229.594, "2013":232.957, "2014":236.736, "2015":237.017, "2016":240.007, "2017":245.120, "2018":251.107, "2019":255.657, "2020":258.811, "2021":270.970, "2022":292.655, "2023":304.702, "2024":313.689 };
+  var CPI_TODAY = 337.511; // Oct 2026, latest published
+  function renderPurchasingPower(){
+    var yEl = $("pp-year"); if (!yEl) return;
+    var y = yEl.value, amt = parseFloat($("pp-amt").value) || 0;
+    var cpiThen = CPI_U[y];
+    if (cpiThen && amt > 0){
+      var basket = amt * (CPI_TODAY / cpiThen);
+      var lost = (1 - cpiThen / CPI_TODAY) * 100;
+      $("pp-usd").textContent = fmtUSD(basket, 2);
+      $("pp-usd-sub").textContent = "Your " + fmtUSD(amt) + " from " + y + " buys " + lost.toFixed(1) + "% less than it did — inflation quietly took the rest.";
+    } else {
+      $("pp-usd").textContent = "—"; $("pp-usd-sub").textContent = "Enter an amount to compare.";
+    }
+    var then = YEAR_START ? YEAR_START[y] : null;
+    if (then && isFinite(then) && then > 0 && amt > 0){
+      var btcBought = amt / then, nowVal = btcBought * S.price;
+      $("pp-btc").textContent = fmtUSD(nowVal);
+      $("pp-btc-sub").textContent = fmtUSD(amt) + " at " + fmtHistPrice(then) + " on Jan 1, " + y + " bought " + btcBought.toFixed(4) + " BTC — a " + (nowVal / amt).toFixed(1) + "× at today's price.";
+    } else {
+      $("pp-btc").textContent = "—";
+      $("pp-btc-sub").textContent = YEAR_START ? ("No Jan 1 price loaded for " + y + ".") : "Loading the Jan 1 price history…";
+    }
+  }
+  if ($("pp-year")){
+    $("pp-year").addEventListener("change", renderPurchasingPower);
+    $("pp-amt").addEventListener("input", renderPurchasingPower);
+  }
+
+  /* ---------- Halving Countdown ---------- */
+  function renderHalvingCountdown(){
+    var leftEl = $("hcd-left"); if (!leftEl) return;
+    var next = (Math.floor(S.height / 210000) + 1) * 210000;
+    var left = next - S.height;
+    leftEl.textContent = fmtNum(left) + " blocks";
+    $("hcd-bar").style.width = ((S.height % 210000) / 210000 * 100).toFixed(1) + "%";
+    var supply = supplyAt(S.height);
+    $("hcd-mined").textContent = (supply / 21000000 * 100).toFixed(2) + "% of 21M";
+    halvTargetMs = Date.now() + left * avgBlockMin * 60000;
+    $("hcd-date").textContent = new Date(halvTargetMs).toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"});
+    tickHalvingCountdown();
+  }
+  function tickHalvingCountdown(){
+    var el = $("hcd-count"); if (!el || !halvTargetMs) return;
+    var ms = Math.max(0, halvTargetMs - Date.now());
+    var d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1000);
+    el.textContent = fmtNum(d) + "d " + h + "h " + m + "m " + s + "s";
+  }
+  setInterval(tickHalvingCountdown, 1000);
+
+  /* ---------- On This Day + Drawdown (Coinbase daily history) ---------- */
+  function priceNear(ts){
+    if (!dailyHistoryCache || !dailyHistoryCache.length) return null;
+    var best = null, bestDiff = Infinity;
+    for (var i = 0; i < dailyHistoryCache.length; i++){
+      var diff = Math.abs(dailyHistoryCache[i].t - ts);
+      if (diff < bestDiff){ bestDiff = diff; best = dailyHistoryCache[i]; }
+    }
+    if (!best || bestDiff > 12 * 864e5) return null;
+    return best.p;
+  }
+  function renderOnThisDay(){
+    var el = $("otd-1y"); if (!el) return;
+    function fill(id, yearsAgo){
+      var target = new Date();
+      target.setFullYear(target.getFullYear() - yearsAgo);
+      var p = priceNear(target.getTime());
+      var node = $(id);
+      if (!node) return;
+      if (p && p > 0){
+        var chg = (S.price / p - 1) * 100;
+        node.textContent = fmtUSD(p) + " · " + (chg >= 0 ? "+" : "−") + Math.abs(chg).toFixed(1) + "% since";
+      } else {
+        node.textContent = "—";
+      }
+    }
+    fill("otd-1y", 1); fill("otd-2y", 2); fill("otd-4y", 4);
+  }
+  function renderDrawdown(){
+    var el = $("dd-pct"); if (!el) return;
+    if (liveATH && liveATH > 0){
+      var below = Math.max(0, (1 - S.price / liveATH) * 100);
+      el.textContent = "−" + below.toFixed(1) + "%";
+      $("dd-bar").style.width = Math.min(100, below).toFixed(1) + "%";
+      $("dd-ath").textContent = fmtUSD(liveATH);
+      if (liveATHDate){
+        $("dd-date").textContent = liveATHDate.toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"});
+        $("dd-days").textContent = fmtNum(Math.max(0, Math.floor((Date.now() - liveATHDate.getTime()) / 864e5))) + " days";
+      } else {
+        $("dd-date").textContent = "—"; $("dd-days").textContent = "—";
+      }
+    } else {
+      el.textContent = "—";
+      $("dd-ath").textContent = "—"; $("dd-date").textContent = "—"; $("dd-days").textContent = "—";
+    }
+  }
 
   /* ---------- Converter wiring ---------- */
   $("conv-amount").addEventListener("input", renderConverter);
@@ -1816,10 +2257,10 @@
         for (var li = rows.length - 200; li < rows.length; li++) sum200 += rows[li].p;
         liveMA200 = sum200 / 200;
       }
-      var ath = 0;
-      rows.forEach(function(r){ var hv = isFinite(r.h) ? r.h : r.p; if (hv > ath) ath = hv; });
-      if (ath > 0) liveATH = ath;
-      try { renderPriceCards(); } catch(e){}
+      var ath = 0, athT = 0;
+      rows.forEach(function(r){ var hv = isFinite(r.h) ? r.h : r.p; if (hv > ath){ ath = hv; athT = r.t; } });
+      if (ath > 0){ liveATH = ath; if (athT > 0) liveATHDate = new Date(athT); }
+      try { renderPriceCards(); renderGlance(); renderDrawdown(); } catch(e){}
       // Recent years can also supplement the year-start series.
       try { mergeYearStart(yearStartFromDailyRows(rows)); } catch(e){}
       return maSeries;
@@ -2007,7 +2448,7 @@
     $("search-empty").hidden = !(q && shown === 0);
     $("search-meta").textContent = q
       ? (shown === 0 ? "" : shown + (shown===1 ? " tool matches" : " tools match") + " “" + $("tool-search").value.trim() + "”")
-      : "28 tools in 6 groups — or type to filter instantly.";
+      : "33 tools in 6 groups — or type to filter instantly.";
   }
   $("tool-search").addEventListener("input", applySearch);
   $("nav-search").addEventListener("click", function(){
@@ -2210,7 +2651,7 @@
     if (recent.length >= 2){
       var newest = recent[0].timestamp, oldest = recent[recent.length-1].timestamp;
       var avgMin = Math.abs(newest - oldest) / (recent.length - 1) / 60;
-      if (isFinite(avgMin) && avgMin > 0) $("net-blocktime").textContent = avgMin.toFixed(1) + " min";
+      if (isFinite(avgMin) && avgMin > 0){ $("net-blocktime").textContent = avgMin.toFixed(1) + " min"; avgBlockMin = avgMin; renderHalvingCountdown(); }
     }
   }).catch(function(){
     var html = "";
@@ -2222,16 +2663,23 @@
 
   getJSON("https://mempool.space/api/v1/difficulty-adjustment").then(function(j){
     if (!j || !isFinite(j.progressPercent)) throw new Error("bad");
-    $("diff-bar").style.width = j.progressPercent.toFixed(1) + "%";
-    $("diff-pct").textContent = j.progressPercent.toFixed(1) + "%";
-    $("diff-est").textContent = (j.difficultyChange>=0?"+":"") + j.difficultyChange.toFixed(2) + "%";
-    $("diff-left").textContent = fmtNum(j.remainingBlocks);
-    $("diff-note").textContent = "Live from mempool.space. Every 2,016 blocks, difficulty adjusts to keep blocks near 10 minutes.";
+    // Countdown card — live response, plus the estimated retarget time.
+    $("dac-bar").style.width = j.progressPercent.toFixed(1) + "%";
+    $("dac-left").textContent = fmtNum(j.remainingBlocks) + " blocks";
+    $("dac-est").textContent = (j.difficultyChange>=0?"+":"") + j.difficultyChange.toFixed(2) + "%" + (j.difficultyChange>=0 ? " (harder)" : " (easier)");
+    var whenMs = isFinite(j.estimatedRetargetDate) && j.estimatedRetargetDate > 0
+      ? j.estimatedRetargetDate
+      : Date.now() + j.remainingBlocks * avgBlockMin * 60000;
+    $("dac-when").textContent = new Date(whenMs).toLocaleDateString("en-US",{month:"short", day:"numeric", year:"numeric"}) + ", " +
+      new Date(whenMs).toLocaleTimeString("en-US",{hour:"numeric", minute:"2-digit"});
+    glanceDiffChange = j.difficultyChange; glanceDiffBlocks = j.remainingBlocks; glanceDiffSample = false; renderGlance();
   }).catch(function(){
-    $("diff-bar").style.width = "62%";
-    $("diff-pct").textContent = "62% (sample)";
-    $("diff-est").textContent = "+1.8% (sample)";
-    $("diff-left").textContent = "~766 (sample)";
+    glanceDiffChange = 1.8; glanceDiffBlocks = 766; glanceDiffSample = true; renderGlance();
+    $("dac-bar").style.width = "62%";
+    $("dac-left").textContent = "~766 blocks (sample)";
+    $("dac-est").textContent = "+1.8% (sample)";
+    $("dac-when").textContent = "—";
+    $("dac-note").textContent = "Live data didn't load — showing sample figures. Live from mempool.space when it loads.";
   });
 
   getJSON("https://mempool.space/api/v1/lightning/statistics/latest").then(function(j){
@@ -2247,7 +2695,7 @@
     $("ln-nodes").textContent = "~16,500 (sample)";
   });
 
-  /* ---------- Bitcoin News: Stacker News RSS via rss2json ----------
+  /* ---------- Stacker News Feed: Stacker News RSS via rss2json ----------
      Single source: Stacker News, shown UNFILTERED — posts run exactly
      as they come from the feed, newest first. On feed failure, show one
      plain "couldn't load" line — never fake headlines. */
@@ -2354,6 +2802,104 @@
   refreshNews();
   /* Refresh the headlines about every 15 minutes while the page is open. */
   setInterval(refreshNews, 15 * 60 * 1000);
+
+  /* ---------- Bitcoin Macro News: CoinDesk, Cointelegraph and Decrypt
+     via rss2json — Bitcoin-only filter, exactly as the original card:
+     a headline shows if it matches /bitcoin|btc/i, OR it matches the
+     macro list AND does not match the altcoin blocklist. All three
+     feeds are merged, deduped by title, sorted newest first, and the
+     newest 8 are shown. On total failure, show one plain
+     "couldn't load" line that retries on tap — never fake headlines. */
+  var MACRO_NEWS_FEEDS = [
+    { source: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss" },
+    { source: "Cointelegraph", url: "https://cointelegraph.com/rss" },
+    { source: "Decrypt", url: "https://decrypt.co/feed" }
+  ];
+  var MACRO_BTC_RE = /bitcoin|btc/i;
+  var MACRO_MACRO_RE = /fed|federal reserve|interest rate|inflation|cpi|treasury|dollar|gold|liquidity|recession|tariff|jobs report|powell|central bank|money supply|yield/i;
+  var MACRO_BLOCK_RE = /ethereum|solana|dogecoin|xrp|altcoin|memecoin|nft|cardano|bnb|tron|avalanche|chainlink|polygon|shiba|litecoin|stablecoin/i;
+  var macroNewsRendered = false;
+  var macroNewsStories = [];
+  function macroTitleAllowed(title){
+    if (MACRO_BTC_RE.test(title)) return true;
+    return MACRO_MACRO_RE.test(title) && !MACRO_BLOCK_RE.test(title);
+  }
+  function renderMacroNewsError(){
+    if (macroNewsRendered) return; // keep good headlines if a refresh fails
+    var list = $("macro-news-list");
+    if (!list) return;
+    list.innerHTML = "";
+    var li = document.createElement("li");
+    li.textContent = "Couldn\u2019t load the news \u2014 tap to retry";
+    li.style.cursor = "pointer";
+    li.setAttribute("role", "button");
+    li.setAttribute("tabindex", "0");
+    li.setAttribute("aria-label", "Retry loading Bitcoin Macro News");
+    li.addEventListener("click", function(){ refreshMacroNews(); });
+    li.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); refreshMacroNews(); }
+    });
+    list.appendChild(li);
+  }
+  function renderMacroNewsList(){
+    var list = $("macro-news-list");
+    if (!list || !macroNewsStories.length) return;
+    var ordered = macroNewsStories.slice();
+    ordered.sort(function(a, b){ return b.when - a.when; });
+    ordered = ordered.slice(0, 8);
+    list.innerHTML = "";
+    ordered.forEach(function(st){
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.className = "news-link";
+      a.href = st.link; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = st.title;
+      li.appendChild(a);
+      var d = document.createElement("span");
+      d.className = "d";
+      d.textContent = st.source + " \u00B7 " + newsRelTime(st.when);
+      li.appendChild(d);
+      list.appendChild(li);
+    });
+    macroNewsRendered = true;
+  }
+  function refreshMacroNews(){
+    var list = $("macro-news-list");
+    if (!list) return;
+    var jobs = MACRO_NEWS_FEEDS.map(function(feed){
+      var api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(feed.url);
+      return getJSON(api).then(function(j){
+        if (!j || j.status !== "ok" || !j.items || !j.items.length) return [];
+        var out = [];
+        j.items.forEach(function(it){
+          var title = newsStripHtml(it.title);
+          var link = String(it.link || "");
+          if (!title || !/^https?:\/\//i.test(link)) return;
+          if (!macroTitleAllowed(title)) return;
+          out.push({ title: title, link: link, source: feed.source, when: newsParseDate(it.pubDate) });
+        });
+        return out;
+      }).catch(function(){ return []; });
+    });
+    Promise.all(jobs).then(function(results){
+      var seen = {};
+      var merged = [];
+      results.forEach(function(stories){
+        stories.forEach(function(st){
+          var key = st.title.toLowerCase();
+          if (seen[key]) return;
+          seen[key] = true;
+          merged.push(st);
+        });
+      });
+      if (!merged.length){ renderMacroNewsError(); return; }
+      macroNewsStories = merged;
+      renderMacroNewsList();
+    }).catch(function(){ renderMacroNewsError(); });
+  }
+  refreshMacroNews();
+  /* Refresh the macro headlines every 5 minutes while the page is open. */
+  setInterval(refreshMacroNews, 5 * 60 * 1000);
 
   /* ---------- Mayer / ATH + year-start supplement: the long Coinbase
      daily history (also feeds the chart's 200-week MA — one cached fetch).
@@ -2612,6 +3158,18 @@
           }, 2000);
         }, 60);
       }
+    }
+  }catch(e){}
+})();
+</script>
+<script>
+/* ---------- PWA: register the service worker (file ships with the site) ---------- */
+(function(){
+  try{
+    if ("serviceWorker" in navigator && window.location.protocol === "https:"){
+      window.addEventListener("load", function(){
+        navigator.serviceWorker.register("sw.js").catch(function(){});
+      });
     }
   }catch(e){}
 })();
