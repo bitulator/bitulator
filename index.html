@@ -491,6 +491,9 @@
     color:var(--ink);padding:10px 12px;font-size:1rem;font:inherit;color-scheme:dark;
   }
   .pos{color:var(--green)} .neg{color:var(--red)}
+  /* Difficulty change is inverted by design: an increase (+) is red,
+     a decrease (−) is green; zero keeps the normal text color. */
+  .diff-pos{color:var(--red)} .diff-neg{color:var(--green)}
   .stk-row{
     display:flex;justify-content:space-between;align-items:center;gap:10px;
     padding:8px 0;border-bottom:1px dashed var(--line-soft);font-size:.92rem;
@@ -1492,7 +1495,7 @@
 
   <footer>
     <p class="footer-credit">Made by <a href="https://x.com/countbitcoin" target="_blank" rel="noopener">Unit of A Count</a> w/ ❤️</p>
-    <p class="footer-updated">Last updated November 25, 2026 · v2.0</p>
+    <p class="footer-updated">Last updated November 25, 2026 · v2.1</p>
     <div class="footer-socials" aria-label="Bitulator on social media">
       <a href="https://github.com/bitulator/bitulator" target="_blank" rel="noopener" aria-label="Bitulator on GitHub" title="GitHub"><svg viewBox="0 0 24 24" width="20" height="20" fill="#fde047" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28.41.97.72 2.19.72 1.21v3.13c0 .3.2.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg></a>
       <a href="https://x.com/Bitulatorxyz" target="_blank" rel="noopener" aria-label="Bitulator on X" title="X"><svg viewBox="0 0 24 24" width="20" height="20" fill="#fde047" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/></svg></a>
@@ -1605,6 +1608,20 @@
       cEl.className = "chart-now-change " + (S.change24>=0 ? "up" : "down");
     }
   }
+  /* Render a difficulty-change percentage with only the percentage figure
+     (sign + number + %) colored by sign — positive red, negative green,
+     zero uncolored — followed by an uncolored suffix (blocks text,
+     "(harder)"/"(easier)", or "(sample)"). */
+  function setDiffPct(el, pctText, suffix, value){
+    if (!el) return;
+    el.innerHTML = "";
+    var s = document.createElement("span");
+    if (value > 0) s.className = "diff-pos";
+    else if (value < 0) s.className = "diff-neg";
+    s.textContent = pctText;
+    el.appendChild(s);
+    if (suffix) el.appendChild(document.createTextNode(suffix));
+  }
   function renderGlance(){
     renderChartNow();
     $("g-price").textContent = fmtUSD(S.price);
@@ -1616,9 +1633,14 @@
     $("g-height").textContent = fmtNum(S.height);
     var gd = $("g-diff");
     if (gd){
-      gd.textContent = (glanceDiffChange !== null && glanceDiffBlocks !== null)
-        ? (glanceDiffChange >= 0 ? "+" : "−") + Math.abs(glanceDiffChange).toFixed(1) + "% · ~" + fmtNum(glanceDiffBlocks) + " blocks" + (glanceDiffSample ? " (sample)" : "")
-        : "—";
+      if (glanceDiffChange !== null && glanceDiffBlocks !== null){
+        setDiffPct(gd,
+          (glanceDiffChange >= 0 ? "+" : "−") + Math.abs(glanceDiffChange).toFixed(1) + "%",
+          " · ~" + fmtNum(glanceDiffBlocks) + " blocks" + (glanceDiffSample ? " (sample)" : ""),
+          glanceDiffChange);
+      } else {
+        gd.textContent = "—";
+      }
     }
     var ga = $("g-ath-days");
     if (ga){
@@ -2668,7 +2690,7 @@
     // Countdown card — live response, plus the estimated retarget time.
     $("dac-bar").style.width = j.progressPercent.toFixed(1) + "%";
     $("dac-left").textContent = fmtNum(j.remainingBlocks) + " blocks";
-    $("dac-est").textContent = (j.difficultyChange>=0?"+":"") + j.difficultyChange.toFixed(2) + "%" + (j.difficultyChange>=0 ? " (harder)" : " (easier)");
+    setDiffPct($("dac-est"), (j.difficultyChange>=0?"+":"") + j.difficultyChange.toFixed(2) + "%", (j.difficultyChange>=0 ? " (harder)" : " (easier)"), j.difficultyChange);
     var whenMs = isFinite(j.estimatedRetargetDate) && j.estimatedRetargetDate > 0
       ? j.estimatedRetargetDate
       : Date.now() + j.remainingBlocks * avgBlockMin * 60000;
@@ -2679,7 +2701,7 @@
     glanceDiffChange = 1.8; glanceDiffBlocks = 766; glanceDiffSample = true; renderGlance();
     $("dac-bar").style.width = "62%";
     $("dac-left").textContent = "~766 blocks (sample)";
-    $("dac-est").textContent = "+1.8% (sample)";
+    setDiffPct($("dac-est"), "+1.8%", " (sample)", 1.8);
     $("dac-when").textContent = "—";
     $("dac-note").textContent = "Live data didn't load — showing sample figures. Live from mempool.space when it loads.";
   });
