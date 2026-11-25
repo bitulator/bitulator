@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="color-scheme" content="dark" />
+<meta name="color-scheme" content="light dark" />
 <meta name="description" content="Convert dollars, sats and bitcoin, plan your stack, and keep an eye on the Bitcoin network and market — free tools, no account, no tracking." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23fde047'/%3E%3Ctext x='50' y='70' font-size='60' font-weight='900' text-anchor='middle' fill='%231a1602' font-family='Arial,sans-serif'%3E%E2%82%BF%3C/text%3E%3C/svg%3E" />
 <link rel="manifest" href="manifest.webmanifest" />
@@ -14,16 +14,31 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://bitulator.xyz/" />
 <title>Bitulator — BTC/SATs Calculator &amp; Bitcoin Tools</title>
+<script>(function(){var t="dark";try{t=localStorage.getItem("bitulator-theme")==="light"?"light":"dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>
 <style>
   :root{
+    color-scheme:dark;
     --bg:#0a1128; --bg2:#0d1734; --panel:#111c3d; --panel2:#0f1936;
     --line:#22335f; --line-soft:#1a2850;
     --ink:#eef2fb; --muted:#9db0d4; --faint:#6d81ab;
     --accent:#fde047; --accent-ink:#1a1602;
     --green:#4ade80; --amber:#fbbf24; --red:#f87171;
+    --chrome-bg:rgba(10,17,40,.96); --chrome-bg-solid:rgba(10,17,40,.97);
+    --guide-ink:#cfd9ef; --guide-ink-2:#dbe4f5; --needle-border:#0a1128;
     --radius:14px;
     --bar-h:54px;
   }
+  /* Light theme — same accent family, light surfaces and dark ink.
+     Accent yellow/orange and the red/green signals stay identical. */
+  [data-theme="light"]{
+    color-scheme:light;
+    --bg:#f2f5fa; --bg2:#e8edf6; --panel:#ffffff; --panel2:#eef2f9;
+    --line:#bfcde3; --line-soft:#d8e0ee;
+    --ink:#141c31; --muted:#46587a; --faint:#67799c;
+    --chrome-bg:rgba(255,255,255,.96); --chrome-bg-solid:rgba(255,255,255,.97);
+    --guide-ink:#33415e; --guide-ink-2:#2c3a57; --needle-border:#141c31;
+  }
+  [data-theme="light"] input[type="date"]{color-scheme:light}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
@@ -42,7 +57,7 @@
   /* ---------- Glance bar ---------- */
   .glance{
     position:sticky; top:0; z-index:60;
-    background:rgba(10,17,40,.96); backdrop-filter:blur(6px);
+    background:var(--chrome-bg); backdrop-filter:blur(6px);
     border-bottom:1px solid var(--line);
   }
   .glance-in{
@@ -226,7 +241,7 @@
   .fng-needle{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     width:6px;height:22px;border-radius:3px;
-    background:#fff;border:2px solid #0a1128;
+    background:#fff;border:2px solid var(--needle-border);
     box-shadow:0 0 0 1px rgba(255,255,255,.4),0 2px 6px rgba(0,0,0,.55);
   }
   .note{color:var(--faint);font-size:.8rem}
@@ -297,7 +312,7 @@
   /* Bottom nav */
   .bottomnav{
     position:fixed;left:0;right:0;bottom:0;z-index:70;
-    background:rgba(10,17,40,.97);border-top:1px solid var(--line);
+    background:var(--chrome-bg-solid);border-top:1px solid var(--line);
     display:flex;padding-bottom:env(safe-area-inset-bottom);
   }
   .bottomnav a,.bottomnav button{
@@ -309,6 +324,16 @@
   .bottomnav a:active,.bottomnav button:active{color:var(--accent)}
   /* The bottom nav shows at ALL widths, phone and full-screen desktop
      alike — no width-based hiding. */
+
+  /* ---------- Theme toggle (glance bar) ---------- */
+  .theme-toggle{
+    margin-left:auto;flex:0 0 auto;width:2.4rem;height:2.4rem;min-height:2.4rem;padding:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;border:1px solid var(--line);background:var(--bg2);color:var(--ink);
+    font-size:1.05rem;line-height:1;cursor:pointer;
+  }
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+  .theme-toggle + .donate-pill{margin-left:0}
 
   /* ---------- Donate pill (glance bar) ---------- */
   .donate-pill{
@@ -378,7 +403,7 @@
   .htg-slide{display:none}
   .htg-slide.on{display:block}
   .htg h3{font-size:18px;margin:2px 0 6px;color:var(--accent);text-align:center}
-  .htg p,.htg li{font-size:15.5px;line-height:1.55;color:#cfd9ef}
+  .htg p,.htg li{font-size:15.5px;line-height:1.55;color:var(--guide-ink)}
   .htg strong{color:var(--ink)}
   .htg-big{text-align:center;font-size:16.5px}
   .htg-c{text-align:center}
@@ -411,7 +436,7 @@
   .bbg-slide{display:none}
   .bbg-slide.on{display:block}
   .bbg h3{font-size:22px;line-height:1.25;margin:2px 0 14px;color:var(--accent);text-align:center}
-  .bbg p,.bbg li{font-size:17.5px;line-height:1.65;color:#dbe4f5}
+  .bbg p,.bbg li{font-size:17.5px;line-height:1.65;color:var(--guide-ink-2)}
   .bbg p{margin:0 0 12px}
   .bbg strong{color:var(--ink)}
   .bbg .bbg-lead{font-size:19px;line-height:1.55;text-align:center;color:var(--ink);font-weight:600}
@@ -530,6 +555,7 @@
     <div class="g-item opt opt-block"><span class="g-label">Block</span><span class="g-val" id="g-height">—</span><span class="tag sample" data-badge="height">Sample</span></div>
     <div class="g-item opt opt-diff"><span class="g-label">Difficulty</span><span class="g-val" id="g-diff">—</span></div>
     <div class="g-item opt opt-ath"><span class="g-label">Since ATH</span><span class="g-val" id="g-ath-days">—</span></div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" aria-pressed="false" title="Switch to light mode"><span id="theme-icon" aria-hidden="true">☀</span></button>
     <button type="button" class="donate-pill" id="donate-pill">Donate</button>
   </div>
 </header>
@@ -591,7 +617,7 @@
     <div class="search-meta" id="search-meta" aria-live="polite"></div>
     <div class="empty" id="search-empty" hidden>
       <strong>No tool matches that.</strong>
-      Try a shorter word — “fee”, “price”, “stack”, “block” — or clear the search to see all 33 tools.
+      Try a shorter word — “fee”, “price”, “stack”, “block” — or clear the search to see all 34 tools.
     </div>
   </div>
 
@@ -805,6 +831,30 @@
           <div class="field"><label for="lookup-q">Bitcoin address or transaction ID</label><input type="text" id="lookup-q" placeholder="bc1q… or a 64-character txid" autocomplete="off" spellcheck="false"></div>
           <button class="btn ghost" type="button" id="lookup-btn" style="width:100%">Look it up on mempool.space ↗</button>
           <p class="note" id="lookup-note">Opens the public explorer in a new tab. Nothing is sent anywhere else.</p>
+        </div>
+      </article>
+
+      <article class="card" data-card data-share="bexp" data-title="Block Explorer" data-keys="block explorer lookup transaction txid address block mempool testnet signet liquid blockstream">
+        <div class="card-top"><div class="t"><h3>Block Explorer</h3><p class="sub">Look up a transaction, block, or address</p></div><button class="share-btn" type="button" aria-label="Share Block Explorer" title="Share Block Explorer" data-share-btn><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span class="share-feedback" aria-hidden="true">Link copied</span></button><button class="star" type="button" aria-label="Star Block Explorer" aria-pressed="false">★</button></div>
+        <div class="body">
+          <div class="field">
+            <div class="toggle full" role="group" aria-label="Explorer source">
+              <button type="button" id="bexp-src-mempool" aria-pressed="true">mempool.space</button>
+              <button type="button" id="bexp-src-blockstream" aria-pressed="false">Blockstream</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="toggle full" role="group" aria-label="Explorer network">
+              <button type="button" id="bexp-net-mainnet" aria-pressed="true">Mainnet</button>
+              <button type="button" id="bexp-net-testnet" aria-pressed="false">Testnet</button>
+              <button type="button" id="bexp-net-signet" aria-pressed="false">Signet</button>
+              <button type="button" id="bexp-net-liquid" aria-pressed="false">Liquid</button>
+            </div>
+          </div>
+          <div class="field"><label for="bexp-q">Transaction ID, block height or hash, or address</label><input type="text" id="bexp-q" placeholder="Paste a txid, block number, or bc1… address" autocomplete="off" spellcheck="false"></div>
+          <button class="btn" type="button" id="bexp-btn" style="width:100%">Look up</button>
+          <div id="bexp-result" aria-live="polite"></div>
+          <p class="note" id="bexp-note">Live from mempool.space. Paste a transaction ID, a block height like 840000, a block hash, or any Bitcoin address.</p>
         </div>
       </article>
 
@@ -1495,7 +1545,7 @@
 
   <footer>
     <p class="footer-credit">Made by <a href="https://x.com/countbitcoin" target="_blank" rel="noopener">Unit of A Count</a> w/ ❤️</p>
-    <p class="footer-updated">Last updated November 25, 2026 · v2.1</p>
+    <p class="footer-updated">Last updated November 25, 2026 · v2.2</p>
     <div class="footer-socials" aria-label="Bitulator on social media">
       <a href="https://github.com/bitulator/bitulator" target="_blank" rel="noopener" aria-label="Bitulator on GitHub" title="GitHub"><svg viewBox="0 0 24 24" width="20" height="20" fill="#fde047" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28.41.97.72 2.19.72 1.21v3.13c0 .3.2.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg></a>
       <a href="https://x.com/Bitulatorxyz" target="_blank" rel="noopener" aria-label="Bitulator on X" title="X"><svg viewBox="0 0 24 24" width="20" height="20" fill="#fde047" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/></svg></a>
@@ -2472,7 +2522,7 @@
     $("search-empty").hidden = !(q && shown === 0);
     $("search-meta").textContent = q
       ? (shown === 0 ? "" : shown + (shown===1 ? " tool matches" : " tools match") + " “" + $("tool-search").value.trim() + "”")
-      : "33 tools in 6 groups — or type to filter instantly.";
+      : "34 tools in 6 groups — or type to filter instantly.";
   }
   $("tool-search").addEventListener("input", applySearch);
   $("nav-search").addEventListener("click", function(){
@@ -2520,6 +2570,26 @@
   });
   renderFavs();
 
+  /* ---------- Theme toggle (dark default, light optional) ---------- */
+  (function(){
+    var btn = $("theme-toggle"), icon = $("theme-icon");
+    if (!btn || !icon) return;
+    function sync(){
+      var light = document.documentElement.getAttribute("data-theme") === "light";
+      icon.textContent = light ? "\u263E" : "\u2600";
+      btn.setAttribute("aria-label", light ? "Switch to dark mode" : "Switch to light mode");
+      btn.setAttribute("title", light ? "Switch to dark mode" : "Switch to light mode");
+      btn.setAttribute("aria-pressed", light ? "true" : "false");
+    }
+    sync();
+    btn.addEventListener("click", function(){
+      var next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("bitulator-theme", next); } catch(e){}
+      sync();
+    });
+  })();
+
   /* ---------- Lookup ---------- */
   $("lookup-btn").addEventListener("click", function(){
     var q = $("lookup-q").value.trim();
@@ -2527,6 +2597,224 @@
     var kind = /^[0-9a-fA-F]{64}$/.test(q) ? "tx/" : "address/";
     window.open("https://mempool.space/" + kind + encodeURIComponent(q), "_blank", "noopener");
   });
+
+  /* ---------- Block Explorer (Esplora API: mempool.space or Blockstream) ---------- */
+  var BEXP_SOURCES = {
+    mempool:     { name: "mempool.space", site: "https://mempool.space" },
+    blockstream: { name: "Blockstream",   site: "https://blockstream.info" }
+  };
+  var BEXP_NETWORKS = {
+    mainnet: { name: "Mainnet", segment: "",         unit: "BTC" },
+    testnet: { name: "Testnet", segment: "/testnet", unit: "BTC" },
+    signet:  { name: "Signet",  segment: "/signet",  unit: "BTC" },
+    liquid:  { name: "Liquid",  segment: "/liquid",  unit: "L-BTC" }
+  };
+  var BEXP_NET_ORDER = ["mainnet", "testnet", "signet", "liquid"];
+  var bexpSource = "mempool";
+  try { if (localStorage.getItem("bitulator-explorer") === "blockstream") bexpSource = "blockstream"; } catch(e){}
+  var bexpNetwork = "mainnet";
+  try { var _bn = localStorage.getItem("bitulator-explorer-net"); if (_bn && BEXP_NETWORKS[_bn]) bexpNetwork = _bn; } catch(e){}
+  var bexpLastQuery = "";
+  var bexpSeq = 0;
+  function bexpNet(){ return BEXP_NETWORKS[bexpNetwork] || BEXP_NETWORKS.mainnet; }
+  function bexpApiBase(){ return BEXP_SOURCES[bexpSource].site + bexpNet().segment + "/api"; }
+  function bexpSiteBase(){ return BEXP_SOURCES[bexpSource].site + bexpNet().segment; }
+  function bexpCaptionText(){ return bexpNet().name + " \u00B7 " + BEXP_SOURCES[bexpSource].name; }
+  function bexpCaptionEl(){
+    var cap = document.createElement("p");
+    cap.className = "note"; cap.style.marginTop = "10px"; cap.style.marginBottom = "2px"; cap.style.fontWeight = "700";
+    cap.textContent = bexpCaptionText();
+    return cap;
+  }
+  function bexpUpdateNote(){
+    var note = $("bexp-note");
+    if (note) note.textContent = "Live from " + BEXP_SOURCES[bexpSource].name + " \u00B7 " + bexpNet().name + ". Paste a transaction ID, a block height like 840000, a block hash, or any address on this network.";
+  }
+
+  function bexpFetch(path, asText){
+    var url = bexpApiBase() + path;
+    function attempt(){
+      return new Promise(function(resolve, reject){
+        var settled = false;
+        var ctrl = ("AbortController" in window) ? new AbortController() : null;
+        var timer = setTimeout(function(){
+          if (settled) return; settled = true;
+          if (ctrl){ try { ctrl.abort(); } catch(e){} }
+          var er = new Error("timeout"); er.retryable = true; reject(er);
+        }, 45000);
+        fetch(url, ctrl ? { signal: ctrl.signal } : undefined).then(function(r){
+          if (!r.ok){ var er = new Error("HTTP " + r.status); er.status = r.status; throw er; }
+          return asText ? r.text() : r.json();
+        }).then(function(v){
+          if (!settled){ settled = true; clearTimeout(timer); resolve(v); }
+        }, function(e){
+          if (settled) return; settled = true; clearTimeout(timer);
+          if (e && e.status) reject(e);
+          else { var er2 = new Error("network"); er2.retryable = true; reject(er2); }
+        });
+      });
+    }
+    return attempt().catch(function(e){ if (e && e.retryable) return attempt(); throw e; });
+  }
+  function bexpMsg(text){
+    var box = $("bexp-result"); if (!box) return;
+    box.innerHTML = "";
+    box.appendChild(bexpCaptionEl());
+    var par = document.createElement("p");
+    par.className = "note"; par.style.marginTop = "4px";
+    par.textContent = text;
+    box.appendChild(par);
+  }
+  function bexpShow(rows, linkPath){
+    var box = $("bexp-result"); if (!box) return;
+    box.innerHTML = "";
+    box.appendChild(bexpCaptionEl());
+    var wrap = document.createElement("div");
+    wrap.className = "stat-rows"; wrap.style.marginTop = "6px";
+    rows.forEach(function(r){
+      var row = document.createElement("div"); row.className = "stat-row";
+      var k = document.createElement("span"); k.className = "k"; k.textContent = r[0];
+      var v = document.createElement("span"); v.className = "v"; v.textContent = r[1];
+      row.appendChild(k); row.appendChild(v);
+      wrap.appendChild(row);
+    });
+    box.appendChild(wrap);
+    var par = document.createElement("p"); par.className = "note"; par.style.marginTop = "10px";
+    var a = document.createElement("a");
+    a.href = bexpSiteBase() + linkPath;
+    a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "View on " + BEXP_SOURCES[bexpSource].name + " \u2192";
+    par.appendChild(a);
+    box.appendChild(par);
+  }
+  function bexpTime(sec){
+    return new Date(sec * 1000).toLocaleString("en-US", { month:"short", day:"numeric", year:"numeric", hour:"numeric", minute:"2-digit" });
+  }
+  function bexpBTC(sats){
+    var unit = bexpNet().unit;
+    var b = fmtBTC(sats / 1e8);
+    if (unit !== "BTC" && b.slice(-4) === " BTC") b = b.slice(0, -4) + " " + unit;
+    return b + " (" + fmtSats(sats) + ")";
+  }
+  function bexpRenderTx(tx, txid){
+    var rows = [];
+    var confirmed = !!(tx.status && tx.status.confirmed);
+    rows.push(["Status", confirmed ? "Confirmed" : "Unconfirmed \u2014 in mempool"]);
+    if (confirmed && isFinite(tx.status.block_height)) rows.push(["Block height", fmtNum(tx.status.block_height)]);
+    if (confirmed && isFinite(tx.status.block_time) && tx.status.block_time > 0) rows.push(["Time", bexpTime(tx.status.block_time)]);
+    var vsize = isFinite(tx.weight) && tx.weight > 0 ? tx.weight / 4 : (isFinite(tx.size) ? tx.size : NaN);
+    if (isFinite(tx.fee)) rows.push(["Fee", fmtSats(tx.fee) + (isFinite(vsize) && vsize > 0 ? " \u00B7 " + (tx.fee / vsize).toFixed(1) + " sat/vB" : "")]);
+    if (isFinite(vsize)) rows.push(["Size", fmtNum(Math.ceil(vsize)) + " vB"]);
+    if (Array.isArray(tx.vin)) rows.push(["Inputs", fmtNum(tx.vin.length)]);
+    if (Array.isArray(tx.vout)){
+      rows.push(["Outputs", fmtNum(tx.vout.length)]);
+      var total = 0, ok = true;
+      tx.vout.forEach(function(o){ if (isFinite(o.value)) total += o.value; else ok = false; });
+      if (ok) rows.push(["Total out", bexpBTC(total)]);
+    }
+    bexpShow(rows, "/tx/" + txid);
+  }
+  function bexpRenderBlock(b, hash){
+    var rows = [];
+    if (isFinite(b.height)) rows.push(["Height", fmtNum(b.height)]);
+    if (isFinite(b.timestamp) && b.timestamp > 0) rows.push(["Time", bexpTime(b.timestamp)]);
+    if (isFinite(b.tx_count)) rows.push(["Transactions", fmtNum(b.tx_count)]);
+    if (isFinite(b.size)) rows.push(["Size", b.size >= 1000000 ? (b.size / 1000000).toFixed(2) + " MB" : fmtNum(Math.round(b.size / 1000)) + " KB"]);
+    if (isFinite(b.weight)) rows.push(["Weight", fmtNum(b.weight) + " WU"]);
+    if (b.extras && b.extras.pool && b.extras.pool.name) rows.push(["Mined by", String(b.extras.pool.name)]);
+    if (isFinite(b.difficulty)) rows.push(["Difficulty", b.difficulty >= 1e12 ? (b.difficulty / 1e12).toFixed(2) + " trillion" : fmtNum(b.difficulty)]);
+    bexpShow(rows, "/block/" + hash);
+  }
+  function bexpRenderAddress(a, addr){
+    var cs = a.chain_stats || {}, ms = a.mempool_stats || {};
+    var received = (cs.funded_txo_sum || 0) + (ms.funded_txo_sum || 0);
+    var sent = (cs.spent_txo_sum || 0) + (ms.spent_txo_sum || 0);
+    var rows = [
+      ["Balance", bexpBTC(received - sent)],
+      ["Total received", bexpBTC(received)],
+      ["Total sent", bexpBTC(sent)],
+      ["Transactions", fmtNum((cs.tx_count || 0) + (ms.tx_count || 0))]
+    ];
+    bexpShow(rows, "/address/" + encodeURIComponent(addr));
+  }
+  function bexpRun(){
+    var input = $("bexp-q"), box = $("bexp-result"), btn = $("bexp-btn");
+    if (!input || !box || !btn) return;
+    var q = input.value.trim().replace(/\s+/g, "");
+    if (!q){ bexpMsg("Paste a transaction ID, block height or hash, or an address first."); return; }
+    bexpLastQuery = q;
+    var seq = ++bexpSeq;
+    btn.disabled = true; btn.textContent = "Looking up\u2026";
+    bexpMsg("Looking that up on " + bexpNet().name + " via " + BEXP_SOURCES[bexpSource].name + "\u2026");
+    function done(){ if (seq === bexpSeq){ btn.disabled = false; btn.textContent = "Look up"; } }
+    function fail(){ if (seq !== bexpSeq) return; done(); bexpMsg("Couldn\u2019t find that \u2014 check the ID and try again"); }
+    function ok(fn){ return function(v){ if (seq !== bexpSeq) return; done(); fn(v); }; }
+    if (/^\d{1,10}$/.test(q)){
+      bexpFetch("/block-height/" + q, true).then(function(hash){
+        hash = String(hash || "").trim();
+        if (!/^[0-9a-fA-F]{64}$/.test(hash)) throw new Error("bad hash");
+        return bexpFetch("/block/" + hash).then(ok(function(b){ bexpRenderBlock(b, hash); }));
+      }).catch(fail);
+    } else if (/^[0-9a-fA-F]{64}$/.test(q)){
+      bexpFetch("/tx/" + q).then(ok(function(tx){ bexpRenderTx(tx, q); })).catch(function(){
+        if (seq !== bexpSeq) return;
+        bexpFetch("/block/" + q).then(ok(function(b){ bexpRenderBlock(b, q); })).catch(fail);
+      });
+    } else {
+      /* Any other non-empty input is treated as an address and validated
+         by the selected network's API — this covers mainnet, testnet and
+         signet (tb1 / m / n / 2…) and Liquid (lq1 / VJL…) formats without
+         hardcoding prefixes. Invalid ones fall through to fail(). */
+      bexpFetch("/address/" + encodeURIComponent(q)).then(ok(function(a){ bexpRenderAddress(a, q); })).catch(fail);
+    }
+  }
+  function bexpSetSource(src, rerun){
+    if (!BEXP_SOURCES[src]) src = "mempool";
+    var changed = src !== bexpSource;
+    bexpSource = src;
+    try { localStorage.setItem("bitulator-explorer", src); } catch(e){}
+    var bm = $("bexp-src-mempool"), bb = $("bexp-src-blockstream");
+    if (bm) bm.setAttribute("aria-pressed", src === "mempool" ? "true" : "false");
+    if (bb) bb.setAttribute("aria-pressed", src === "blockstream" ? "true" : "false");
+    bexpUpdateNote();
+    if (rerun && changed && bexpLastQuery){
+      var input = $("bexp-q");
+      if (input) input.value = bexpLastQuery;
+      bexpRun();
+    }
+  }
+  function bexpSetNetwork(net, rerun){
+    if (!BEXP_NETWORKS[net]) net = "mainnet";
+    var changed = net !== bexpNetwork;
+    bexpNetwork = net;
+    try { localStorage.setItem("bitulator-explorer-net", net); } catch(e){}
+    BEXP_NET_ORDER.forEach(function(id){
+      var el = $("bexp-net-" + id);
+      if (el) el.setAttribute("aria-pressed", id === net ? "true" : "false");
+    });
+    bexpUpdateNote();
+    if (rerun && changed && bexpLastQuery){
+      var input = $("bexp-q");
+      if (input) input.value = bexpLastQuery;
+      bexpRun();
+    }
+  }
+  (function(){
+    var btn = $("bexp-btn"), input = $("bexp-q");
+    if (!btn || !input) return;
+    btn.addEventListener("click", bexpRun);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); bexpRun(); } });
+    var bm = $("bexp-src-mempool"), bb = $("bexp-src-blockstream");
+    if (bm) bm.addEventListener("click", function(){ bexpSetSource("mempool", true); });
+    if (bb) bb.addEventListener("click", function(){ bexpSetSource("blockstream", true); });
+    BEXP_NET_ORDER.forEach(function(id){
+      var el = $("bexp-net-" + id);
+      if (el) el.addEventListener("click", function(){ bexpSetNetwork(id, true); });
+    });
+    bexpSetSource(bexpSource, false);
+    bexpSetNetwork(bexpNetwork, false);
+  })();
+
 
   /* ---------- YouTube player (same channels & playlists as the live site) ---------- */
   var YT_CHANNELS = [
